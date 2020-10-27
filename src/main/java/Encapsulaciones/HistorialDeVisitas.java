@@ -4,9 +4,9 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-//@Entity
-//@Table(name="HISTORIAL_DE_VISITAS")
-@javax.persistence.Entity(name = "HISTORIAL_DE_VISITAS")
+@Entity
+@Table(name="HISTORIAL_DE_VISITAS")
+//@javax.persistence.Entity(name = "HISTORIAL_DE_VISITAS")
 public class HistorialDeVisitas implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +20,6 @@ public class HistorialDeVisitas implements Serializable {
     @ManyToOne
     @JoinColumn(name="id_dispensador", nullable=false)
     private Dispensador dispensador;
-
     private Date fecha;
     private boolean is_comio;
 
@@ -32,6 +31,14 @@ public class HistorialDeVisitas implements Serializable {
         this.dispensador = dispensador;
         this.fecha = fecha;
         this.is_comio = is_comio;
+    }
+
+    public int getId_historialdevisitas() {
+        return id_historialdevisitas;
+    }
+
+    public void setId_historialdevisitas(int id_historialdevisitas) {
+        this.id_historialdevisitas = id_historialdevisitas;
     }
 
     public Perro getPerro() {

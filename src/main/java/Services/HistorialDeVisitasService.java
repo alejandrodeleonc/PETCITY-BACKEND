@@ -28,11 +28,23 @@ public class HistorialDeVisitasService extends DBManage<HistorialDeVisitas>{
 
     public List<HistorialDeVisitas> getHistorialByPerroId(String id_perro)  throws PersistenceException {
         EntityManager em = getEntityManager();
+        List<HistorialDeVisitas> historial = new ArrayList<HistorialDeVisitas>();
+        try{
+            historial = em.createNativeQuery("SELECT * FROM HISTORIAL_DE_VISITAS where ID_PERRO = '" + id_perro + "'", HistorialDeVisitas.class).getResultList();
+
+        } finally {
+            em.close();
+        }
+
+        return historial;
+    }
+    public List<HistorialDeVisitas> getHistorialByPerroIdAndDate(String id_perro, Date fecha)  throws PersistenceException {
+        EntityManager em = getEntityManager();
         List<HistorialDeVisitas> historial;
         try{
-            historial = em.createQuery("SELECT h FROM HISTORIAL_DE_VISITAS h WHERE h.id_perro LIKE :id_perro")
-                          .setParameter("id_perro", id_perro)
-                          .getResultList();
+            historial = em.createNativeQuery("SELECT * FROM HISTORIAL_DE_VISITAS where (ID_PERRO = '" + id_perro + "') and " +
+                    "(IS_COMIO = true) and (CAST(FECHA AS DATE) = CAST(GETDATE() AS DATE))", HistorialDeVisitas.class).getResultList();
+
         } finally {
             em.close();
         }
@@ -41,23 +53,28 @@ public class HistorialDeVisitasService extends DBManage<HistorialDeVisitas>{
     }
 
 
+
+
     public boolean canEat(Perro perro){
         boolean aux = true;
-        List<HistorialDeVisitas> historial = this.getHistorialByPerroId(perro.getId_perro());
-        Date date = new Date();
-        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        int today =  localDate.getDayOfMonth();
-        int i = 0;
-        for(HistorialDeVisitas reg : historial){
-            if(reg.getFecha().getDay() == today){
-                i++;
-            }
+        EntityManager em = getEntityManager();
+        List<HistorialDeVisitas> historial;
+        try{
+            historial = em.createNativeQuery("SELECT * FROM HISTORIAL_DE_VISITAS where (ID_PERRO = '" + perro.getId_perro()+ "') and " +
+                    "(IS_COMIO = true) and (CAST(FECHA AS DATE) = CAST(GETDATE() AS DATE))", HistorialDeVisitas.class).getResultList();
+
+        } finally {
+            em.close();
+        }
+        System.out.println("Tamano =>" + historial.size());
+        for (HistorialDeVisitas his : historial) {
+        System.out.println("Historial => " + his.getFecha());
         }
 
-        if(i>perro.getLimite_repeticion_comida()){
+        if(historial.size()>=perro.getLimite_repeticion_comida()){
             aux = false;
-            i = 0;
         }
+
 
         return aux;
     }

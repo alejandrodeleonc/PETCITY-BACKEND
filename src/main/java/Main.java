@@ -16,9 +16,11 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
+import static java.lang.Integer.*;
 
 public class Main {
 
@@ -38,7 +40,7 @@ public class Main {
                 "admin", "admin", "sdfsasdf");
         PersonaServices.getInstancia().editar(persona);
 
-        Format forma = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Format forma = new SimpleDateFormat("dd/MM/yyyy");
         Perro per = new Perro("1928DAS","Billy", forma.format(new Date()), 2) ;
         PerroServices.getInstancia().crear(per);
 
@@ -47,6 +49,8 @@ public class Main {
 
         Dispensador dispen = new Dispensador("0013A20040A4D103", "1234", "1234","Calle 7");
         DispensadorServices.getInstancia().crear(dispen);
+        HistorialDeVisitas vis = new HistorialDeVisitas(per, dispen, new Date() , true);
+        HistorialDeVisitasService.getInstancia().crear(vis);
 
         app.routes(() -> {
             path("/api/v1", ()->{
@@ -70,7 +74,7 @@ public class Main {
                     String nombre = ctx.formParam("nombre");
                     Date fecha_registro = new Date();
                     int limite_repeticion_comida = 2;
-                    Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Format formatter = new SimpleDateFormat("dd/MM/yyyy");
                     Perro perro = new Perro(id_perro,nombre, formatter.format(fecha_registro), limite_repeticion_comida) ;
 
                     PerroServices.getInstancia().crear(perro);
@@ -94,9 +98,11 @@ public class Main {
                     ctx.json(res.toMap());
                 });
 
-                get("mantenimiento/visita", ctx -> {
-
-                });
+//                post("mantenimiento/historial_visita", ctx -> {
+//                    String id_perro = ctx.formParam("perro");
+//                    List<HistorialDeVisitas> historial = HistorialDeVisitasService.getInstancia().getHistorialByPerroId(id_perro);
+//                    ctx.json(historial);
+//                });
 
                 post("mantenimiento/comio", ctx -> {
                     JSONObject res = new JSONObject();
@@ -130,8 +136,8 @@ public class Main {
                     JSONObject res = new JSONObject();
                      String nombre = ctx.formParam("nombre");
                      float costo = Float.parseFloat(ctx.formParam("costo"));
-                     int meses_actividad = Integer.parseInt(ctx.formParam("meses_actividad"));
-                     int cantidad_maxima_de_perros = Integer.parseInt(ctx.formParam("cantidad_maxima_de_perros"));
+                     int meses_actividad = parseInt(ctx.formParam("meses_actividad"));
+                     int cantidad_maxima_de_perros = parseInt(ctx.formParam("cantidad_maxima_de_perros"));
 
 
                     Plan plan = new Plan(nombre, costo, meses_actividad, cantidad_maxima_de_perros);
@@ -187,7 +193,7 @@ public class Main {
                         String coddigo_retiro = enc.encodeToString(usuario.getBytes());
 
                         if(!PersonaServices.getInstancia().userExists(usuario)){
-                            Persona persona_registrada = new Persona(nombre, Integer.parseInt(identificacion), fecha_nacimiento, direccion,                             usuario, password, coddigo_retiro  );
+                            Persona persona_registrada = new Persona(nombre, parseInt(identificacion), fecha_nacimiento, direccion,                             usuario, password, coddigo_retiro  );
 
                             PersonaServices.getInstancia().crear(persona_registrada);
 
