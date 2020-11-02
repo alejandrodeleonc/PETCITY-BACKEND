@@ -12,7 +12,6 @@ public class Subscripcion implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id_subscripcion;
-    private String mes;
     private boolean pago;
     private float monto;
     @ManyToOne
@@ -29,13 +28,9 @@ public class Subscripcion implements Serializable {
     public Subscripcion() {
     }
 
-    public Subscripcion(String mes, boolean pago, float monto, Plan plan, Persona persona) {
-        this.mes = mes;
-        this.pago = pago;
-        this.monto = monto;
+    public Subscripcion(Plan plan, Persona persona) {
         this.plan = plan;
         this.persona = persona;
-//        this.perrosSusb = new ArrayList<SubscripcionPerro>();
     }
 
     public int getId_subscripcion() {
@@ -44,14 +39,6 @@ public class Subscripcion implements Serializable {
 
     public void setId_subscripcion(int id_subscripcion) {
         this.id_subscripcion = id_subscripcion;
-    }
-
-    public String getMes() {
-        return mes;
-    }
-
-    public void setMes(String mes) {
-        this.mes = mes;
     }
 
     public boolean isPago() {

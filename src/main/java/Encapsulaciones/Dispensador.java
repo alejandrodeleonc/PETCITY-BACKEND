@@ -2,17 +2,18 @@ package Encapsulaciones;
 
 import org.hibernate.type.StringNVarcharType;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
 @Table(name="DISPENSADOR")
 public class Dispensador implements Serializable {
 
+
     @Id
-    private String id_dispensador;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id_dispensador;
+    private String dispensador;
     private String longitud;
     private String latitud;
     private String direccion;
@@ -20,19 +21,19 @@ public class Dispensador implements Serializable {
     public Dispensador() {
     }
 
-    public Dispensador(String id_dispensador, String longitud, String latitud, String direccion) {
-        this.id_dispensador = id_dispensador;
+    public Dispensador(String dispensador, String longitud, String latitud, String direccion) {
+        this.dispensador = dispensador;
         this.longitud = longitud;
         this.latitud = latitud;
         this.direccion = direccion;
     }
 
     public String getId_dispensador() {
-        return id_dispensador;
+        return dispensador;
     }
 
-    public void setId_dispensador(String id_dispensador) {
-        this.id_dispensador = id_dispensador;
+    public void setId_dispensador(String dispensador) {
+        this.dispensador = dispensador;
     }
 
     public String getLongitud() {

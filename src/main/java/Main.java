@@ -35,10 +35,12 @@ public class Main {
         });
         app.start(8000);
         DBStart.getInstancia().init();
-
         Persona persona = new Persona("Alejandro", 4021527, new Date(), "j amor",
                 "admin", "admin", "sdfsasdf");
+        Persona pi = new Persona("Raspberry Pi", 000000, new Date(), "La zursa",
+                "pi", "raspberry", "ninguno");
         PersonaServices.getInstancia().editar(persona);
+        PersonaServices.getInstancia().editar(pi);
 
         Format forma = new SimpleDateFormat("dd/MM/yyyy");
         Perro per = new Perro("1928DAS","Billy", forma.format(new Date()), 2) ;
@@ -66,6 +68,9 @@ public class Main {
                         System.out.println("No hay");
                         throw new ForbiddenResponse("No tiene permiso para acceder al recurso");
                     }
+
+
+
                 });
 
                 post("/mantenimiento/registrar_perro", ctx ->{
@@ -82,20 +87,40 @@ public class Main {
                     ctx.json(res.toMap());
                 });
 
+                post("/mantenimiento/subscribirme", ctx ->{
+                    JSONObject res = new JSONObject();
+                    Plan plan = PlanServices.getInstancia().find(Integer.valueOf(ctx.formParam("plan")));
+                    Persona person = PersonaServices.getInstancia().find(Integer.valueOf(ctx.formParam("persona")));
+
+
+                    Subscripcion subscripcion = new Subscripcion(plan, person);
+                    SubcripcionServices.getInstancia().crear(subscripcion);
+
+                    res.put("resultado", "Susbcripcion correcta!");
+                    ctx.json(res.toMap());
+
+                });
+
 
                 post("/mantenimiento/visita", ctx -> {
                     JSONObject res = new JSONObject();
                     String id_perro = ctx.formParam("perro");
                     Perro perro = PerroServices.getInstancia().find(id_perro);
-                    String id_dispensador = ctx.formParam("dispensador");
-                    Dispensador dispensador = DispensadorServices.getInstancia().find(id_dispensador);
-                    Date fecha = new Date();
-                    boolean is_comio = Boolean.valueOf(ctx.formParam("is_comio"));
+                    if(ctx.header("FROM") != null){
+                        int id_dispensador = Integer.valueOf(ctx.header("FROM"));
+                        System.out.println("El id =>"+id_dispensador);
+                        Dispensador dispensador = DispensadorServices.getInstancia().find(id_dispensador);
+                        Date fecha = new Date();
+                        boolean is_comio = Boolean.valueOf(ctx.formParam("is_comio"));
 
-                    HistorialDeVisitas visita = new HistorialDeVisitas(perro, dispensador, fecha, is_comio);
-                    HistorialDeVisitasService.getInstancia().crear(visita);
-                    res.put("msg", "Perro Registrado correctamente!");
-                    ctx.json(res.toMap());
+                        HistorialDeVisitas visita = new HistorialDeVisitas(perro, dispensador, fecha, is_comio);
+                        HistorialDeVisitasService.getInstancia().crear(visita);
+                        res.put("msg", "Perro Registrado correctamente!");
+                        ctx.json(res.toMap());
+                    }else{
+                        throw new ForbiddenResponse("Falto el dispensador de origen");
+                    }
+
                 });
 
 //                post("mantenimiento/historial_visita", ctx -> {
@@ -122,7 +147,7 @@ public class Main {
 
                 post("/mantenimiento/administracion/crear_dispensador", ctx ->{
                     JSONObject res = new JSONObject();
-                     String id_dispensador = ctx.formParam("id_dispensador");
+                     String id_dispensador = ctx.formParam("dispensador");
                      String longitud = ctx.formParam("longitud");
                      String latitud = ctx.formParam("latitud");
                      String direccion = ctx.formParam("direccion");
