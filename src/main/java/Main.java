@@ -4,10 +4,12 @@ import Services.*;
 import io.javalin.http.ForbiddenResponse;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
+import java.lang.reflect.Field;
 import java.text.Format;
-import java.util.Base64;
+import java.util.*;
 import java.util.Base64.Encoder;
 import java.util.Base64.Decoder;
 import javax.crypto.SecretKey;
@@ -15,9 +17,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+
+import com.google.gson.Gson;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
 import static java.lang.Integer.*;
@@ -123,11 +124,31 @@ public class Main {
 
                 });
 
-//                post("mantenimiento/historial_visita", ctx -> {
-//                    String id_perro = ctx.formParam("perro");
-//                    List<HistorialDeVisitas> historial = HistorialDeVisitasService.getInstancia().getHistorialByPerroId(id_perro);
-//                    ctx.json(historial);
-//                });
+
+                get("mantenimiento/perros", ctx -> {
+                    Map<String, Object> res = new HashMap<>();
+
+                    List<Perro> perros = PerroServices.getInstancia().findAll();
+
+                    Gson gson = new Gson();
+                    String jsonString = gson.toJson(perros);
+                    System.out.println(jsonString);
+                    res.put("perros", perros);
+                    ctx.json(res);
+                });
+
+                get("mantenimiento/usuarios/:id/perros", ctx -> {
+                    int id = ctx.pathParam("id", Integer.class).get();
+                    Map<String, Object> res = new HashMap<>();
+                    Persona person = PersonaServices.getInstancia().find(id);
+                    List<Perro> perros = SubcripcionServices.getInstancia().getPerrosOfAnUser(person);
+                    Gson gson = new Gson();
+                    String jsonString = gson.toJson(perros);
+                    System.out.println("El arreglo => "+ jsonString);
+
+                    res.put("perros",perros);
+                    ctx.json(res);
+                });
 
                 post("mantenimiento/comio", ctx -> {
                     JSONObject res = new JSONObject();
@@ -157,6 +178,7 @@ public class Main {
                     res.put("msg", "Dispensador Registrado correctamente!");
                     ctx.json(res.toMap());
                 });
+
                 post("/mantenimiento/administracion/crear_plan", ctx ->{
                     JSONObject res = new JSONObject();
                      String nombre = ctx.formParam("nombre");

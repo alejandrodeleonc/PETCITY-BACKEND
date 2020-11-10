@@ -16,7 +16,7 @@ public class Perro implements Serializable {
     private int limite_repeticion_comida;
 
 
-    @OneToMany(mappedBy="perro_vacuna")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy="perro_vacuna")
     private List<Vacuna> vacunas;
 
     public Perro(String id_perro, String nombre, String fecha_registro, int limite_repeticion_comida) {

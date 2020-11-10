@@ -23,11 +23,11 @@ public class Persona  implements Serializable {
     private String password;
     private String Codigo_Retiro;
 
-    @OneToMany(mappedBy="persona")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy="persona")
     private List<Subscripcion> subcripciones;
 
 
-    @ManyToMany(mappedBy = "personasroles")
+    @ManyToMany( mappedBy = "personasroles")
     List<Rol> rolespersona = new ArrayList<Rol>();
     public Persona() {
     }
