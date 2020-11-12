@@ -23,8 +23,6 @@ public class Subscripcion implements Serializable {
     private Persona persona;
 
 
-
-
     public Subscripcion() {
     }
 

@@ -25,6 +25,8 @@ public class SubcripcionServices extends DBManage<Subscripcion> {
 
         if (user.getSubcripciones().size() > 0) {
             List<Subscripcion> subs =  user.getSubcripciones();
+            System.out.println("Las suscribciones => ");
+            System.out.println(subs);
             for(Subscripcion sub : subs){
                 SubscripcionPerro aux = SubscripcionPerroServices.getInstancia().getIdSubcripcionPerroBySubcripcionID(sub.getId_subscripcion());
 

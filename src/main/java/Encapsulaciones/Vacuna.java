@@ -1,5 +1,7 @@
 package Encapsulaciones;
 
+import com.sun.istack.NotNull;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -9,8 +11,9 @@ import java.util.Date;
 public class Vacuna implements Serializable {
     @Id
     private int id_vacuna;
-
+    @NotNull
     private String nombreVacuna;
+    @NotNull
     private Date fechaQueSePuso;
 
     @ManyToOne

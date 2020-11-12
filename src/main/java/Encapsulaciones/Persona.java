@@ -2,6 +2,8 @@ package Encapsulaciones;
 
 
 
+import com.sun.istack.NotNull;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,12 +17,25 @@ public class Persona  implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id_persona;
+    @NotNull
     private String nombre;
-    private int identificacion;
+
+    @NotNull
+    private String identificacion;
+
+    @NotNull
     private Date fecha_nacimiento;
+
+    @NotNull
     private String direccion;
+
+    @NotNull
     private String usuario;
+
+    @NotNull
     private String password;
+
+    @NotNull
     private String Codigo_Retiro;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy="persona")
@@ -32,7 +47,7 @@ public class Persona  implements Serializable {
     public Persona() {
     }
 
-    public Persona(String nombre, int identificacion, Date fecha_nacimiento, String direccion, String usuario, String password, String codigo_Retiro) {
+    public Persona(String nombre, String identificacion, Date fecha_nacimiento, String direccion, String usuario, String password, String codigo_Retiro) {
         this.nombre = nombre;
         this.identificacion = identificacion;
         this.fecha_nacimiento = fecha_nacimiento;
@@ -59,11 +74,11 @@ public class Persona  implements Serializable {
         this.nombre = nombre;
     }
 
-    public int getIdentificacion() {
+    public String getIdentificacion() {
         return identificacion;
     }
 
-    public void setIdentificacion(int identificacion) {
+    public void setIdentificacion(String identificacion) {
         this.identificacion = identificacion;
     }
 

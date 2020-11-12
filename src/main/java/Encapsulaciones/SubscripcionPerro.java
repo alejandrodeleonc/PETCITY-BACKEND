@@ -1,5 +1,7 @@
 package Encapsulaciones;
 
+import com.sun.istack.NotNull;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -14,9 +16,11 @@ public class SubscripcionPerro implements Serializable {
 
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @NotNull
     private Perro perro;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @NotNull
     private Subscripcion subscripcion;
 
 
@@ -33,7 +37,8 @@ public class SubscripcionPerro implements Serializable {
     public SubscripcionPerro() {
     }
 
-    public SubscripcionPerro(Perro perro, boolean perdido) {
+    public SubscripcionPerro(Subscripcion subscripcion,Perro perro, boolean perdido) {
+        this.subscripcion = subscripcion;
         this.perro = perro;
         this.perdido = perdido;
     }

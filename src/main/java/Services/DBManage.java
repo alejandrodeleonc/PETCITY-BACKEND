@@ -62,19 +62,39 @@ public class DBManage<T> {
      *
      * @param entidad
      */
-    public T crear(T entidad) throws IllegalArgumentException, EntityExistsException, PersistenceException{
+    public boolean crear(T entidad) throws IllegalArgumentException, EntityExistsException, PersistenceException{
         EntityManager em = getEntityManager();
-
+        boolean status = true;
         try {
 
             em.getTransaction().begin();
             em.persist(entidad);
             em.getTransaction().commit();
+        }catch (Exception error){
+            status = false;
+        }finally  {
+            em.close();
+        }
+        return status;
+    }
+
+    public boolean crear(List<T> entidad) throws IllegalArgumentException, EntityExistsException, PersistenceException{
+        EntityManager em = getEntityManager();
+        boolean status = true;
+        try {
+            for(T e : entidad){
+            em.getTransaction().begin();
+            em.persist(e);
+            em.getTransaction().commit();
+            }
+
+        }catch (Exception error){
+            status = false;
 
         }finally {
             em.close();
         }
-        return entidad;
+        return status;
     }
 
     /**

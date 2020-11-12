@@ -36,15 +36,15 @@ public class Main {
         });
         app.start(8000);
         DBStart.getInstancia().init();
-        Persona persona = new Persona("Alejandro", 4021527, new Date(), "j amor",
+        Persona persona = new Persona("Alejandro", "4021527", new Date(), "j amor",
                 "admin", "admin", "sdfsasdf");
-        Persona pi = new Persona("Raspberry Pi", 000000, new Date(), "La zursa",
+        Persona pi = new Persona("Raspberry Pi", "000000", new Date(), "La zursa",
                 "pi", "raspberry", "ninguno");
         PersonaServices.getInstancia().editar(persona);
         PersonaServices.getInstancia().editar(pi);
 
         Format forma = new SimpleDateFormat("dd/MM/yyyy");
-        Perro per = new Perro("1928DAS","Billy", forma.format(new Date()), 2) ;
+        Perro per = new Perro("484849535648495350491310","Billy", forma.format(new Date()), 2) ;
         PerroServices.getInstancia().crear(per);
 
         Plan pl = new Plan("Prueba", Float.parseFloat("870.89") , 3, 3);
@@ -75,6 +75,7 @@ public class Main {
                 });
 
                 post("/mantenimiento/registrar_perro", ctx ->{
+                    int status= 200;
                     JSONObject res = new JSONObject();
                     String id_perro = ctx.formParam("RFID_CODE");
                     String nombre = ctx.formParam("nombre");
@@ -83,25 +84,69 @@ public class Main {
                     Format formatter = new SimpleDateFormat("dd/MM/yyyy");
                     Perro perro = new Perro(id_perro,nombre, formatter.format(fecha_registro), limite_repeticion_comida) ;
 
-                    PerroServices.getInstancia().crear(perro);
-                    res.put("msg", "Perro Registrado correctamente!");
+                    if(PerroServices.getInstancia().crear(perro)){
+                        res.put("msg", "Perro Registrado correctamente!");
+                    }else{
+                        res.put("msg", "Fallo la insercion en la base de datos!");
+                        status=401;
+                    }
+
+                    ctx.status(status);
                     ctx.json(res.toMap());
                 });
 
                 post("/mantenimiento/subscribirme", ctx ->{
+                    int status= 200;
                     JSONObject res = new JSONObject();
                     Plan plan = PlanServices.getInstancia().find(Integer.valueOf(ctx.formParam("plan")));
                     Persona person = PersonaServices.getInstancia().find(Integer.valueOf(ctx.formParam("persona")));
 
 
                     Subscripcion subscripcion = new Subscripcion(plan, person);
-                    SubcripcionServices.getInstancia().crear(subscripcion);
-
-                    res.put("resultado", "Susbcripcion correcta!");
+                    if(SubcripcionServices.getInstancia().crear(subscripcion)){
+                        res.put("resultado", "Susbcripcion correcta!");
+                    }else{
+                        res.put("msg", "Fallo la insercion en la base de datos!");
+                        status = 401;
+                    }
+                    ctx.status(status);
                     ctx.json(res.toMap());
 
                 });
 
+                post("/mantenimiento/subscribir/:id/perros", ctx ->{
+                    JSONObject res = new JSONObject();
+                    int status = 200;
+                    int id = ctx.pathParam("id", Integer.class).get();
+                    Subscripcion sub = SubcripcionServices.getInstancia().find(id);
+                    Map<String, List<String>> id_perros = ctx.formParamMap();
+                    System.out.println("Arreglo =>");
+                    System.out.println(id_perros.get("perro"));
+
+                    List<SubscripcionPerro> subper = new ArrayList<SubscripcionPerro>();
+                    for(String p : id_perros.get("perro")){
+                        System.out.println("Perro =>"+p);
+                        Perro perro_aux = PerroServices.getInstancia().find(p);
+                        if(perro_aux != null){
+                        subper.add(new SubscripcionPerro( sub, perro_aux, false));
+                        }
+                    }
+                    if(subper.size() == id_perros.get("perro").size()){
+                        if(SubscripcionPerroServices.getInstancia().crear(subper)){
+                        res.put("msg", "Susbcripcion correcta!");
+                        }else{
+                        res.put("msg", "Error asociando perro!");
+                        status = 401;
+                        }
+                    }else{
+                        res.put("msg", "Los parametros proporcionados son incorrectos!");
+                        status = 409;
+                    }
+
+                    ctx.status(status);
+                    ctx.json(res.toMap());
+
+                });
 
                 post("/mantenimiento/visita", ctx -> {
                     JSONObject res = new JSONObject();
@@ -125,6 +170,7 @@ public class Main {
                 });
 
 
+
                 get("mantenimiento/perros", ctx -> {
                     Map<String, Object> res = new HashMap<>();
 
@@ -141,6 +187,7 @@ public class Main {
                     int id = ctx.pathParam("id", Integer.class).get();
                     Map<String, Object> res = new HashMap<>();
                     Persona person = PersonaServices.getInstancia().find(id);
+                    System.out.print("Persona => "+ person.getNombre() +"\n");
                     List<Perro> perros = SubcripcionServices.getInstancia().getPerrosOfAnUser(person);
                     Gson gson = new Gson();
                     String jsonString = gson.toJson(perros);
@@ -161,12 +208,19 @@ public class Main {
                     ctx.json(res.toMap());
                 });
 
+
+
+
+
+
+
                 before("/mantenimiento/administracion/*", ctx->{
                     System.out.println("Aqui es donde se manejaran los permisos");
                 });
 
 
                 post("/mantenimiento/administracion/crear_dispensador", ctx ->{
+                    int status= 200;
                     JSONObject res = new JSONObject();
                      String id_dispensador = ctx.formParam("dispensador");
                      String longitud = ctx.formParam("longitud");
@@ -174,13 +228,21 @@ public class Main {
                      String direccion = ctx.formParam("direccion");
 
                     Dispensador dispensador = new Dispensador(id_dispensador, longitud, latitud,direccion);
-                    DispensadorServices.getInstancia().crear(dispensador);
-                    res.put("msg", "Dispensador Registrado correctamente!");
+
+
+                    if(DispensadorServices.getInstancia().crear(dispensador)){
+                        res.put("resultado", "Dispensador creado correctamente!");
+                    }else{
+                        status = 401;
+                        res.put("msg", "Fallo la insercion en la base de datos!");
+                    }
+                    ctx.status(status);
                     ctx.json(res.toMap());
                 });
 
                 post("/mantenimiento/administracion/crear_plan", ctx ->{
-                    JSONObject res = new JSONObject();
+                     int status = 200;
+                     JSONObject res = new JSONObject();
                      String nombre = ctx.formParam("nombre");
                      float costo = Float.parseFloat(ctx.formParam("costo"));
                      int meses_actividad = parseInt(ctx.formParam("meses_actividad"));
@@ -188,8 +250,15 @@ public class Main {
 
 
                     Plan plan = new Plan(nombre, costo, meses_actividad, cantidad_maxima_de_perros);
-                    PlanServices.getInstancia().crear(plan);
-                    res.put("msg", "Plan creado correctamente!");
+
+                    if(PlanServices.getInstancia().crear(plan)){
+                        res.put("resultado", "Plan creado correctamente!");
+                    }else{
+                        status = 401;
+                        res.put("msg", "Fallo la insercion en la base de datos!");
+                    }
+
+                    ctx.status(status);
                     ctx.json(res.toMap());
                 });
 
@@ -227,6 +296,7 @@ public class Main {
                     *
                     * */
                     post("/registrar", ctx ->{
+                        int status = 200;
                         JSONObject res = new JSONObject();
                         Base64.Encoder enc = Base64.getEncoder();
                         String nombre = ctx.formParam("nombre");
@@ -240,17 +310,21 @@ public class Main {
                         String coddigo_retiro = enc.encodeToString(usuario.getBytes());
 
                         if(!PersonaServices.getInstancia().userExists(usuario)){
-                            Persona persona_registrada = new Persona(nombre, parseInt(identificacion), fecha_nacimiento, direccion,                             usuario, password, coddigo_retiro  );
+                            Persona persona_registrada = new Persona(nombre, identificacion, fecha_nacimiento, direccion,                             usuario, password, coddigo_retiro  );
 
-                            PersonaServices.getInstancia().crear(persona_registrada);
+                            if(PersonaServices.getInstancia().crear(persona_registrada)){
+                                res.put("msg", "Usuario Registrado correctamente!");
+                            }else{
+                                status = 401;
+                                res.put("msg", "Fallo la insercion en la base de datos!");
+                            }
 
-                            res.put("msg", "Usuario Registrado correctamente!");
-                            ctx.json(res.toMap());
                         }else{
                             res.put("msg", "Error el usuario ya existe");
-                            ctx.json(res.toMap());
+                            status = 409;
                         }
-
+                            ctx.status(status);
+                            ctx.json(res.toMap());
 
                     });
 

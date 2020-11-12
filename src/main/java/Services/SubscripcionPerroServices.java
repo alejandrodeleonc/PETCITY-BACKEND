@@ -26,7 +26,7 @@ public class SubscripcionPerroServices extends DBManage<SubscripcionPerro> {
         EntityManager em = getEntityManager();
         List<SubscripcionPerro> res = new ArrayList<SubscripcionPerro>();
         try{
-            res = em.createNativeQuery("SELECT * FROM SUBCRIPCION_PERRO where SUBSCRIPCION_ID_SUBSCRIPCION = '" + id_suscripcion + "'", SubscripcionPerro.class).getResultList();
+            res = em.createNativeQuery("SELECT * FROM SUBCRIPCION_PERRO where SUBSCRIPCION_ID_SUBSCRIPCION = " + id_suscripcion, SubscripcionPerro.class).getResultList();
 
         } finally {
             em.close();
