@@ -3,6 +3,8 @@ package Encapsulaciones;
 
 
 import com.sun.istack.NotNull;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -41,6 +43,9 @@ public class Persona  implements Serializable {
     @OneToMany(fetch = FetchType.EAGER, mappedBy="persona")
     private List<Subscripcion> subcripciones;
 
+    @OneToMany(fetch = FetchType.EAGER, mappedBy="referencia")
+    @Fetch(value = FetchMode.SUBSELECT)
+    private List<Notificaciones> notificaciones;
 
     @ManyToMany( mappedBy = "personasroles")
     List<Rol> rolespersona = new ArrayList<Rol>();
@@ -56,6 +61,14 @@ public class Persona  implements Serializable {
         this.password = password;
         Codigo_Retiro = codigo_Retiro;
         this.subcripciones = new ArrayList<>();
+    }
+
+    public List<Notificaciones> getNotificaciones() {
+        return notificaciones;
+    }
+
+    public void setNotificaciones(List<Notificaciones> notificaciones) {
+        this.notificaciones = notificaciones;
     }
 
     public int getId_persona() {

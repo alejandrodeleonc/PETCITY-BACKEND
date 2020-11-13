@@ -147,6 +147,23 @@ public class Main {
                     ctx.json(res.toMap());
 
                 });
+                post("/mantenimiento/vacunas/:id", ctx ->{
+                    JSONObject res = new JSONObject();
+                    int status = 200;
+                    String id = ctx.pathParam("id");
+
+                    Perro perro = PerroServices.getInstancia().find(id);
+
+                    if(perro != null){
+
+                    }else{
+                        status = 409;
+                    }
+
+                    ctx.status(status);
+                });
+
+
 
                 post("/mantenimiento/visita", ctx -> {
                     JSONObject res = new JSONObject();
