@@ -19,11 +19,22 @@ public class Perro implements Serializable {
     @OneToMany(fetch = FetchType.EAGER, mappedBy="perro_vacuna")
     private List<Vacuna> vacunas;
 
+    private Boolean perdido;
+
+    public Boolean getPerdido() {
+        return perdido;
+    }
+
+    public void setPerdido(Boolean perdido) {
+        this.perdido = perdido;
+    }
+
     public Perro(String id_perro, String nombre, String fecha_registro, int limite_repeticion_comida) {
         this.id_perro = id_perro;
         this.nombre = nombre;
         this.fecha_registro = fecha_registro;
         this.limite_repeticion_comida = limite_repeticion_comida;
+        this.perdido = false;
     }
 
 

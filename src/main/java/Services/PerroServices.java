@@ -1,6 +1,7 @@
 package Services;
 
 import Encapsulaciones.Perro;
+import Encapsulaciones.Persona;
 
 public class PerroServices extends DBManage<Perro> {
     private static PerroServices instancia;
@@ -14,7 +15,6 @@ public class PerroServices extends DBManage<Perro> {
 
         return instancia;
     }
-
 
 
 

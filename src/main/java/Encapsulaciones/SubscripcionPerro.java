@@ -32,15 +32,13 @@ public class SubscripcionPerro implements Serializable {
         this.subscripcion = subscripcion;
     }
 
-    private boolean perdido;
 
     public SubscripcionPerro() {
     }
 
-    public SubscripcionPerro(Subscripcion subscripcion,Perro perro, boolean perdido) {
+    public SubscripcionPerro(Subscripcion subscripcion,Perro perro) {
         this.subscripcion = subscripcion;
         this.perro = perro;
-        this.perdido = perdido;
     }
 
 
@@ -52,11 +50,4 @@ public class SubscripcionPerro implements Serializable {
         this.perro = perro;
     }
 
-    public boolean isPerdido() {
-        return perdido;
-    }
-
-    public void setPerdido(boolean perdido) {
-        this.perdido = perdido;
-    }
 }

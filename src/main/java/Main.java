@@ -1,22 +1,29 @@
 import Encapsulaciones.*;
+import com.oracle.xmlns.webservices.jaxws_databinding.JavaWsdlMappingType;
 import io.javalin.Javalin;
 import Services.*;
 import io.javalin.http.ForbiddenResponse;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
-
+import java.security.Key;
 import java.lang.reflect.Field;
 import java.text.Format;
 import java.util.*;
 import java.util.Base64.Encoder;
 import java.util.Base64.Decoder;
 import javax.crypto.SecretKey;
+import javax.xml.bind.DatatypeConverter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Base64.Decoder;
+import javax.crypto.spec.SecretKeySpec;
 
 import com.google.gson.Gson;
 
@@ -25,7 +32,7 @@ import static java.lang.Integer.*;
 
 public class Main {
 
-    public final static String LLAVE_SECRETA = "asd12D1234dfr123@#4Fsdcasdd5g78a";
+    public final static String LLAVE_SECRETA = "cRfUjXn2r5u8x/A?D(G-KaPdSgVkYp3s6v9y$B&E)H@MbQeThWmZq4t7w!z%C*F-";
 
     public static void main(String[] args) {
 
@@ -64,7 +71,8 @@ public class Main {
                     String prefijo = "Bearer";
 
                     String headerAutentificacion = ctx.header(header);
-                    System.out.println(headerAutentificacion);
+
+//                    System.out.println(headerAutentificacion);
                     if(headerAutentificacion == null || !headerAutentificacion.startsWith(prefijo)){
                         System.out.println("No hay");
                         throw new ForbiddenResponse("No tiene permiso para acceder al recurso");
@@ -128,7 +136,7 @@ public class Main {
                         System.out.println("Perro =>"+p);
                         Perro perro_aux = PerroServices.getInstancia().find(p);
                         if(perro_aux != null){
-                        subper.add(new SubscripcionPerro( sub, perro_aux, false));
+                        subper.add(new SubscripcionPerro( sub, perro_aux));
                         }
                     }
                     if(subper.size() == id_perros.get("perro").size()){
@@ -188,7 +196,7 @@ public class Main {
 
 
 
-                get("mantenimiento/perros", ctx -> {
+                get("/mantenimiento/perros", ctx -> {
                     Map<String, Object> res = new HashMap<>();
 
                     List<Perro> perros = PerroServices.getInstancia().findAll();
@@ -200,7 +208,7 @@ public class Main {
                     ctx.json(res);
                 });
 
-                get("mantenimiento/usuarios/:id/perros", ctx -> {
+                get("/mantenimiento/usuarios/:id/perros", ctx -> {
                     int id = ctx.pathParam("id", Integer.class).get();
                     Map<String, Object> res = new HashMap<>();
                     Persona person = PersonaServices.getInstancia().find(id);
@@ -214,7 +222,7 @@ public class Main {
                     ctx.json(res);
                 });
 
-                post("mantenimiento/comio", ctx -> {
+                post("/mantenimiento/comio", ctx -> {
                     JSONObject res = new JSONObject();
                     String id_perro = ctx.formParam("perro");
                     Perro perro = PerroServices.getInstancia().find(id_perro);
@@ -227,7 +235,48 @@ public class Main {
 
 
 
+                post("/mantenimiento/perro/:id/perdido", ctx -> {
+                    JSONObject res = new JSONObject();
+                    int status = 200;
+                    String token = ctx.header("Authorization").split("Bearer",2)[1];
+                    String id = ctx.pathParam("id");
+                    Perro perro = PerroServices.getInstancia().find(id);
 
+//                    System.out.println("ID: " + claims.getId());
+//                    System.out.println("Subject: " + claims.getSubject());
+//                    System.out.println("Issuer: " + claims.getIssuer());
+//                    System.out.println("Usuario: " + );
+//                    System.out.println("Expiration: " + claims.getExpiration());
+                    if(perro !=null){
+                        Persona dueno = SubscripcionPerroServices.getInstancia().getPersonaByPerro(perro.getId_perro());
+                        System.out.println("El dueno => "+ dueno.getNombre() );
+                        if(dueno != null){
+                            Claims claims = Jwts.parser()
+                                    .setSigningKey(DatatypeConverter.parseBase64Binary(LLAVE_SECRETA))
+                                    .parseClaimsJws(token).getBody();
+                           String requestUser =  claims.get("usuario").toString();
+                            if(requestUser.equals(dueno.getUsuario())){
+                                perro.setPerdido(true);
+                                PerroServices.getInstancia().editar(perro);
+                                res.put("msg","funciona");
+                            }else{
+                                res.put("msg","No tiene permiso para modificar este perro");
+                            }
+                        }else{
+                            res.put("msg","Este perro es callejero");
+                        }
+                    }else{
+                        status = 409;
+                        res.put("msg","El perro que busca no existe");
+                    }
+
+
+
+                    ctx.status(status);
+                    ctx.json(res.toMap());
+
+
+                });
 
 
 
@@ -358,19 +407,17 @@ public class Main {
 
 private static LoginResponse generacionJsonWebToken(String usuario){
         LoginResponse loginResponse = new LoginResponse();
-        //generando la llave.
-        SecretKey secretKey = Keys.hmacShaKeyFor(LLAVE_SECRETA.getBytes());
-        //Generando la fecha valida
-        LocalDateTime localDateTime = LocalDateTime.now().plusMinutes(24*60);
-        System.out.println("La fecha actual: "+localDateTime.toString());
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(LLAVE_SECRETA);
+        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+
 
         // creando la trama.
         String jwt = Jwts.builder()
                 .setIssuer("PET-CITY")
                 .setSubject("VERSION 1")
-                .setExpiration(Date.from(localDateTime.toInstant(ZoneOffset.ofHours(-4))))
                 .claim("usuario", usuario)
-                .signWith(secretKey)
+                .signWith(signatureAlgorithm, signingKey)
                 .compact();
         loginResponse.setToken(jwt);
     return loginResponse;
