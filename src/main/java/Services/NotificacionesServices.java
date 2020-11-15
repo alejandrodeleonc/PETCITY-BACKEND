@@ -3,6 +3,11 @@ package Services;
 
 import Encapsulaciones.Notificaciones;
 import Encapsulaciones.Perro;
+import Encapsulaciones.Persona;
+
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NotificacionesServices extends DBManage<Notificaciones> {
     private static NotificacionesServices instancia;
@@ -15,5 +20,29 @@ public class NotificacionesServices extends DBManage<Notificaciones> {
         }
 
         return instancia;
+    }
+
+
+    public List<Notificaciones> getNotifciacionesNoVistas(Persona persona){
+        List<Notificaciones> notificaciones = new ArrayList<Notificaciones>();
+
+        EntityManager em = getEntityManager();
+        List<Notificaciones> res = new ArrayList<Notificaciones>();
+        try{
+            res = em.createNativeQuery("SELECT * FROM PERSONA where USUARIO = '" + persona.getUsuario()+"'", Persona.class).getResultList();
+
+            if(res != null){
+                notificaciones = res;
+            }
+        } finally {
+            em.close();
+        }
+
+        return notificaciones;
+    }
+    public List<Notificaciones> getNotifciacionesNoVistasPaginadas(Persona persona, int cantidad){
+        List<Notificaciones> notificaciones = new ArrayList<Notificaciones>();
+
+        return notificaciones;
     }
 }

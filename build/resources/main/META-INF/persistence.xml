@@ -16,9 +16,7 @@
         <class>Encapsulaciones.Rol</class>
         <class>Encapsulaciones.Permiso</class>
         <class>Encapsulaciones.Notificaciones</class>
-
-
-
+        <class>Encapsulaciones.Foto</class>
 
 
         <properties>

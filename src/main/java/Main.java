@@ -52,24 +52,24 @@ public class Main {
         });
         app.start(8000);
         DBStart.getInstancia().init();
-//        Persona persona = new Persona("Alejandro", "4021527", new Date(), "j amor",
-//                "admin", "admin", "sdfsasdf");
-//        Persona pi = new Persona("Raspberry Pi", "000000", new Date(), "La zursa",
-//                "pi", "raspberry", "ninguno");
-//        PersonaServices.getInstancia().editar(persona);
-//        PersonaServices.getInstancia().editar(pi);
-//
-//        Format forma = new SimpleDateFormat("dd/MM/yyyy");
-//        Perro per = new Perro("484849535648495350491310","Billy", forma.format(new Date()), 2) ;
-//        PerroServices.getInstancia().crear(per);
-//
-//        Plan pl = new Plan("Prueba", Float.parseFloat("870.89") , 3, 3);
-//        PlanServices.getInstancia().crear(pl);
-//
-//        Dispensador dispen = new Dispensador("0013A20040A4D103", "1234", "1234","Calle 7");
-//        DispensadorServices.getInstancia().crear(dispen);
-//        HistorialDeVisitas vis = new HistorialDeVisitas(per, dispen, new Date() , true);
-//        HistorialDeVisitasService.getInstancia().crear(vis);
+        Persona persona = new Persona("Alejandro", "4021527", new Date(), "j amor",
+                "admin", "admin", "sdfsasdf");
+        Persona pi = new Persona("Raspberry Pi", "000000", new Date(), "La zursa",
+                "pi", "raspberry", "ninguno");
+        PersonaServices.getInstancia().editar(persona);
+        PersonaServices.getInstancia().editar(pi);
+
+        Format forma = new SimpleDateFormat("dd/MM/yyyy");
+        Perro per = new Perro("484849535648495350491310","Billy", forma.format(new Date()), 2) ;
+        PerroServices.getInstancia().crear(per);
+
+        Plan pl = new Plan("Prueba", Float.parseFloat("870.89") , 3, 3);
+        PlanServices.getInstancia().crear(pl);
+
+        Dispensador dispen = new Dispensador("0013A20040A4D103", "1234", "1234","Calle 7");
+        DispensadorServices.getInstancia().crear(dispen);
+        HistorialDeVisitas vis = new HistorialDeVisitas(per, dispen, new Date() , true);
+        HistorialDeVisitasService.getInstancia().crear(vis);
 
         app.routes(() -> {
             path("/api/v1", () -> {
@@ -200,6 +200,8 @@ public class Main {
                     }
 
                 });
+
+
 
 
                 get("/mantenimiento/perros", ctx -> {
@@ -347,6 +349,13 @@ public class Main {
                     ctx.json(res.toMap());
                 });
 
+                get("/mantenimiento/notificaciones", ctx ->{
+                    Persona perso = getUserFromHeader(ctx.header("Authorization"));
+
+                    System.out.println("Persona desde noti=>"+ perso.getNombre());
+
+
+                });
 
                 before("/mantenimiento/administracion/*", ctx -> {
                     System.out.println("Aqui es donde se manejaran los permisos");
@@ -573,6 +582,21 @@ public class Main {
         return aux;
     }
 
+
+    private static Persona getUserFromHeader(String header){
+        Persona persona = null;
+        String token = header.split("Bearer", 2)[1];
+        Claims claims = Jwts.parser()
+                .setSigningKey(DatatypeConverter.parseBase64Binary(LLAVE_SECRETA))
+                .parseClaimsJws(token).getBody();
+        String requestUser = claims.get("usuario").toString();
+        persona = PersonaServices.getInstancia().findByUser(requestUser);
+        if(persona != null){
+            return persona;
+        }else{
+            return null;
+        }
+    }
 
     private static LoginResponse generacionJsonWebToken(String usuario) {
         LoginResponse loginResponse = new LoginResponse();

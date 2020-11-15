@@ -2,7 +2,9 @@ package Services;
 
 
 import Encapsulaciones.Persona;
+import Encapsulaciones.SubscripcionPerro;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,20 +34,21 @@ public class PersonaServices extends DBManage<Persona>{
 
     }
 
-    private Persona findByUser(String user){
-        List<Persona> personas = new ArrayList<Persona>();
+    public Persona findByUser(String user){
+        Persona persona = null;
+        EntityManager em = getEntityManager();
+        List<Persona> res = new ArrayList<Persona>();
+        try{
+            res = em.createNativeQuery("SELECT * FROM PERSONA where USUARIO = '" + user+"'", Persona.class).getResultList();
 
-        Persona aux = null;
-        personas = PersonaServices.getInstancia().findAll();
-
-        for (Persona per: personas) {
-            if(per.getUsuario().equals(user)){
-                aux = per;
-                break;
+            if(res != null){
+                persona = res.get(0);
             }
+        } finally {
+            em.close();
         }
 
-        return aux;
+        return persona;
     }
 
     public  boolean userExists(String user){
