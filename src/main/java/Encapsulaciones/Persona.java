@@ -49,6 +49,12 @@ public class Persona  implements Serializable {
 
     @ManyToMany( mappedBy = "personasroles")
     List<Rol> rolespersona = new ArrayList<Rol>();
+
+
+    @Lob
+    @OneToOne(fetch = FetchType.EAGER)
+    private Foto foto;
+
     public Persona() {
     }
 
@@ -59,8 +65,9 @@ public class Persona  implements Serializable {
         this.direccion = direccion;
         this.usuario = usuario;
         this.password = password;
-        Codigo_Retiro = codigo_Retiro;
+        this.Codigo_Retiro = codigo_Retiro;
         this.subcripciones = new ArrayList<>();
+
     }
 
     public List<Notificaciones> getNotificaciones() {
@@ -141,5 +148,21 @@ public class Persona  implements Serializable {
 
     public void setSubcripciones(List<Subscripcion> subcripciones) {
         this.subcripciones = subcripciones;
+    }
+
+    public List<Rol> getRolespersona() {
+        return rolespersona;
+    }
+
+    public void setRolespersona(List<Rol> rolespersona) {
+        this.rolespersona = rolespersona;
+    }
+
+    public Foto getFoto() {
+        return foto;
+    }
+
+    public void setFoto(Foto foto) {
+        this.foto = foto;
     }
 }

@@ -43,6 +43,9 @@ dependencies {
     compile "com.sun.xml.ws:jaxws-rt:2.3.1"
     compile "com.sun.xml.ws:rt:2.3.1"
     compile "com.konghq:unirest-java:3.8.06:standalone"
+    compile 'io.javalin:javalin:3.9.1'
+    compile "org.slf4j:slf4j-simple:1.7.28"
+    compile 'com.j2html:j2html:1.0.0'
 }
 
 

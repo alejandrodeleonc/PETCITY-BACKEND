@@ -5,6 +5,12 @@ package Services;
 
 
 import Encapsulaciones.Dispensador;
+import Encapsulaciones.Persona;
+import Encapsulaciones.SubscripcionPerro;
+
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DispensadorServices extends DBManage<Dispensador>{
     private static DispensadorServices instancia;
@@ -18,6 +24,24 @@ public class DispensadorServices extends DBManage<Dispensador>{
 
         return instancia;
     }
+
+    public Dispensador getDispensadorByDireccionIP(String ip){
+        Dispensador dispensador = null;
+        EntityManager em = getEntityManager();
+        List<Dispensador> res = new ArrayList<Dispensador>();
+        try{
+            res = em.createNativeQuery("SELECT * FROM DISPENSADOR where DISPENSADOR = '" + ip +"'", Dispensador.class).getResultList();
+
+            if(res != null){
+                dispensador = res.get(0);
+            }
+        } finally {
+            em.close();
+        }
+
+        return dispensador;
+    }
+
 
     /**
      * METHODS FOR THIS CLASS

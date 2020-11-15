@@ -34,6 +34,7 @@ public class Notificaciones implements Serializable {
         this.referencia = referencia;
         this.contenido = contenido;
         this.fecha_creacion = fecha_creacion;
+        this.estado = false;
     }
 
     public int getId_notificaciones() {

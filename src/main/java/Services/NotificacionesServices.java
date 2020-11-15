@@ -16,5 +16,4 @@ public class NotificacionesServices extends DBManage<Notificaciones> {
 
         return instancia;
     }
-
 }
