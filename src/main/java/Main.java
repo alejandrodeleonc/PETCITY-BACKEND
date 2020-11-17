@@ -50,7 +50,6 @@ public class Main {
         Javalin app = Javalin.create(config -> {
 //            config.addStaticFiles("/public"); //STATIC FILES -> /resources/public
             config.enableCorsForAllOrigins();
-
         });
         app.start(8000);
         DBStart.getInstancia().init();
@@ -95,6 +94,11 @@ public class Main {
             });
         app.routes(() -> {
 
+            after("/*", ctx ->{
+                ctx.header("Access-Control-Allow-Origin", "*");
+                ctx.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
+                ctx.header("Access-Control-Allow-Headers", "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Content-Range,Range,Authorization");
+            });
 
 
 
@@ -113,7 +117,7 @@ public class Main {
 
                     if (headerAutentificacion == null || !headerAutentificacion.startsWith(prefijo)) {
                         System.out.println("No hay");
-                        throw new ForbiddenResponse("No tiene permiso para acceder al recurso");
+//                        throw new ForbiddenResponse("No tiene permiso para acceder al recurso");
                     }
 
 //                    System.out.println(headerAutentificacion);
@@ -208,6 +212,8 @@ public class Main {
 
 
                     }
+
+
                     ctx.status(status);
                     ctx.json(res.toMap());
 
