@@ -3,6 +3,7 @@ package Services;
 
 import Encapsulaciones.*;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,20 +22,25 @@ public class SubcripcionServices extends DBManage<Subscripcion> {
 
 
     public List<Perro> getPerrosOfAnUser(Persona user) {
-        List<Perro> res =  new ArrayList<Perro>();
+        EntityManager em = getEntityManager();
+        List<SubscripcionPerro> res = new ArrayList<SubscripcionPerro>();
+        List<Perro> perros = new ArrayList<Perro>();
 
-        if (user.getSubcripciones().size() > 0) {
-            List<Subscripcion> subs =  user.getSubcripciones();
-            System.out.println("Las suscribciones => ");
-            System.out.println(subs);
-            for(Subscripcion sub : subs){
-                SubscripcionPerro aux = SubscripcionPerroServices.getInstancia().getIdSubcripcionPerroBySubcripcionID(sub.getId_subscripcion());
+        try{
+            for(Subscripcion sub :  user.getSubcripciones() ){
+            res = em.createNativeQuery("SELECT * FROM SUBCRIPCION_PERRO where SUBSCRIPCION_ID_SUBSCRIPCION = " + sub.getId_subscripcion(), SubscripcionPerro.class).getResultList();
 
-                res.add(aux.getPerro());
+            for(SubscripcionPerro subper : res ){
+                perros.add(subper.getPerro());
             }
 
+            }
 
+        } finally {
+            em.close();
         }
-        return res;
+        return perros;
     }
+
+
 }

@@ -2,6 +2,7 @@ import Encapsulaciones.*;
 import com.oracle.xmlns.webservices.jaxws_databinding.JavaWsdlMappingType;
 import io.javalin.Javalin;
 import Services.*;
+import io.javalin.core.util.Header;
 import io.javalin.http.ForbiddenResponse;
 import io.javalin.http.sse.SseClient;
 import io.jsonwebtoken.Claims;
@@ -49,30 +50,56 @@ public class Main {
         Javalin app = Javalin.create(config -> {
 //            config.addStaticFiles("/public"); //STATIC FILES -> /resources/public
             config.enableCorsForAllOrigins();
+
         });
         app.start(8000);
         DBStart.getInstancia().init();
-        Persona persona = new Persona("Alejandro", "4021527", new Date(), "j amor",
-                "admin", "admin", "sdfsasdf");
-        Persona pi = new Persona("Raspberry Pi", "000000", new Date(), "La zursa",
-                "pi", "raspberry", "ninguno");
-        PersonaServices.getInstancia().editar(persona);
-        PersonaServices.getInstancia().editar(pi);
+//        Persona persona = new Persona("Alejandro", "4021527", new Date(), "j amor",
+//                "admin", "admin", "sdfsasdf");
+//        Persona pi = new Persona("Raspberry Pi", "000000", new Date(), "La zursa",
+//                "pi", "raspberry", "ninguno");
+//        PersonaServices.getInstancia().editar(persona);
+//        PersonaServices.getInstancia().editar(pi);
+//
+//        Format forma = new SimpleDateFormat("dd/MM/yyyy");
+//        Perro per = new Perro("484849535648495350491310","Billy", forma.format(new Date()), 2) ;
+//        PerroServices.getInstancia().crear(per);
+//
+//        Plan pl = new Plan("Prueba", Float.parseFloat("870.89") , 3, 3);
+//        PlanServices.getInstancia().crear(pl);
+//
+//        Dispensador dispen = new Dispensador("0013A20040A4D103", "1234", "1234","Calle 7");
+//        DispensadorServices.getInstancia().crear(dispen);
+//        HistorialDeVisitas vis = new HistorialDeVisitas(per, dispen, new Date() , true);
+//        HistorialDeVisitasService.getInstancia().crear(vis);
 
-        Format forma = new SimpleDateFormat("dd/MM/yyyy");
-        Perro per = new Perro("484849535648495350491310","Billy", forma.format(new Date()), 2) ;
-        PerroServices.getInstancia().crear(per);
+        app.options("/*", ctx -> {
 
-        Plan pl = new Plan("Prueba", Float.parseFloat("870.89") , 3, 3);
-        PlanServices.getInstancia().crear(pl);
+            System.out.println("Entrando al metodo de options");
+            String accessControlRequestHeaders = ctx.header("Access-Control-Request-Headers");
+            if (accessControlRequestHeaders != null) {
+                ctx.header("Access-Control-Allow-Headers",accessControlRequestHeaders);
+            }
 
-        Dispensador dispen = new Dispensador("0013A20040A4D103", "1234", "1234","Calle 7");
-        DispensadorServices.getInstancia().crear(dispen);
-        HistorialDeVisitas vis = new HistorialDeVisitas(per, dispen, new Date() , true);
-        HistorialDeVisitasService.getInstancia().crear(vis);
+            String accessControlRequestMethod = ctx.header("Access-Control-Request-Method");
+            if (accessControlRequestMethod != null) {
+                ctx.header("Access-Control-Allow-Methods",accessControlRequestMethod);
+            }
 
+            ctx.status(200).result("OK");
+
+        });
+
+            app.before("/*", ctx ->{
+                ctx.header("Access-Control-Allow-Origin", "*");
+            });
         app.routes(() -> {
+
+
+
+
             path("/api/v1", () -> {
+
 
 
                 before("/mantenimiento/*", ctx -> {
@@ -80,12 +107,17 @@ public class Main {
                     String prefijo = "Bearer";
 
                     String headerAutentificacion = ctx.header(header);
+                    System.out.println("El header");
+                    System.out.println(ctx.headerMap());
+                    String accessControlRequestHeaders = ctx.header("Access-Control-Request-Headers");
 
-//                    System.out.println(headerAutentificacion);
                     if (headerAutentificacion == null || !headerAutentificacion.startsWith(prefijo)) {
                         System.out.println("No hay");
                         throw new ForbiddenResponse("No tiene permiso para acceder al recurso");
                     }
+
+//                    System.out.println(headerAutentificacion);
+
 
 
                 });
@@ -138,27 +170,44 @@ public class Main {
                     Map<String, List<String>> id_perros = ctx.formParamMap();
                     System.out.println("Arreglo =>");
                     System.out.println(id_perros.get("perro"));
+                    if(sub != null) {
 
-                    List<SubscripcionPerro> subper = new ArrayList<SubscripcionPerro>();
-                    for (String p : id_perros.get("perro")) {
-                        System.out.println("Perro =>" + p);
-                        Perro perro_aux = PerroServices.getInstancia().find(p);
-                        if (perro_aux != null) {
-                            subper.add(new SubscripcionPerro(sub, perro_aux));
-                        }
-                    }
-                    if (subper.size() == id_perros.get("perro").size()) {
-                        if (SubscripcionPerroServices.getInstancia().crear(subper)) {
-                            res.put("msg", "Susbcripcion correcta!");
-                        } else {
-                            res.put("msg", "Error asociando perro!");
-                            status = 401;
-                        }
-                    } else {
-                        res.put("msg", "Los parametros proporcionados son incorrectos!");
-                        status = 409;
-                    }
+                        if(SubscripcionPerroServices.getInstancia().contarSuscribciones(sub.getId_subscripcion()) < sub.getPlan().getCantidad_maxima_de_perros()){
+                            List<SubscripcionPerro> subper = new ArrayList<SubscripcionPerro>();
+                            for (String p : id_perros.get("perro")) {
+                                System.out.println("Perro =>" + p);
+                                Perro perro_aux = PerroServices.getInstancia().find(p);
+                                if (perro_aux != null) {
+                                    SubscripcionPerro aux = new SubscripcionPerro(sub, perro_aux);
+                                    if(!SubscripcionPerroServices.getInstancia().suscribcionExiste(aux)){
+                                        subper.add(aux);
+                                    }
+                                }
+                            }
 
+                            System.out.println("La cantidad de registros =>" + SubscripcionPerroServices.getInstancia().contarSuscribciones(sub.getId_subscripcion()));
+                            if (subper.size() == id_perros.get("perro").size()) {
+                                if (SubscripcionPerroServices.getInstancia().crear(subper)) {
+                                    res.put("msg", "Susbcripcion correcta!");
+                                } else {
+                                    res.put("msg", "Error asociando perro!");
+                                    status = 401;
+                                }
+                            } else {
+                                res.put("msg", "Los parametros proporcionados son incorrectos!");
+                                status = 409;
+                            }
+
+
+
+                        }else{
+                            res.put("msg", "Ha excedido el limite de perros permitidos con su plan actual!");
+                            status = 409;
+                        }
+
+
+
+                    }
                     ctx.status(status);
                     ctx.json(res.toMap());
 
@@ -216,10 +265,10 @@ public class Main {
                     ctx.json(res);
                 });
 
-                get("/mantenimiento/usuarios/:id/perros", ctx -> {
-                    int id = ctx.pathParam("id", Integer.class).get();
+                get("/mantenimiento/usuarios/:user/perros", ctx -> {
+                    String id = ctx.pathParam("user");
                     Map<String, Object> res = new HashMap<>();
-                    Persona person = PersonaServices.getInstancia().find(id);
+                    Persona person = PersonaServices.getInstancia().findByUser(id);
                     System.out.print("Persona => " + person.getNombre() + "\n");
                     List<Perro> perros = SubcripcionServices.getInstancia().getPerrosOfAnUser(person);
                     Gson gson = new Gson();
@@ -419,6 +468,7 @@ public class Main {
 
                         if (PersonaServices.getInstancia().verifyUser(pass, user) == null) {
                             //TODO: BAD LOGIN VIA REST API
+                            ctx.json(PersonaServices.getInstancia().findByUser(user));
 
                         } else {
                             LoginResponse lr = generacionJsonWebToken(user);
