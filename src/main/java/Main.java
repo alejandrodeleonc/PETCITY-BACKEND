@@ -89,15 +89,17 @@ public class Main {
 
         });
 
-            app.before("/*", ctx ->{
-                ctx.header("Access-Control-Allow-Origin", "*");
-            });
+//            app.before("/*", ctx ->{
+//                ctx.header("Access-Control-Allow-Origin", "*");
+//            });
         app.routes(() -> {
 
             after("/*", ctx ->{
                 ctx.header("Access-Control-Allow-Origin", "*");
-                ctx.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
-                ctx.header("Access-Control-Allow-Headers", "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Content-Range,Range,Authorization");
+                ctx.header("Access-Control-Allow-Methods", "*");
+                ctx.header("Access-Control-Allow-Headers", "*");
+//                ctx.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
+//                ctx.header("Access-Control-Allow-Headers", "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Content-Range,Range,Authorization,Cookie");
             });
 
 
@@ -551,14 +553,14 @@ public class Main {
         app.ws("/webSocketServidor", ws -> {
 
             ws.onConnect(ctx -> {
-
-                System.out.println("Conexión CON =>  " + ctx.header("Cookie").split("usuario=", 2)[1]);
+//                System.out.println("Conexión CON =>  " + ctx.header("Cookie").split("usuario=", 2)[1]);
+                System.out.println("Conexión CON =>  " + ctx.header("Sec-WebSocket-Protocol"));
                 System.out.println(ctx.headerMap());
 
                 System.out.println("Conexión Iniciada - " + ctx.getSessionId());
 
                 if(ctx.header("User-Agent") != null){
-                    UsuariosConectados usr = new UsuariosConectados(ctx.header("Cookie").split("usuario=", 2)[1], ctx.session);
+                    UsuariosConectados usr = new UsuariosConectados(ctx.header("Sec-WebSocket-Protocol"), ctx.session);
                     usuariosConectados.add(usr);
                 }else{
                     enviarMensajeUnicast( ctx.session, "Error falta el header");
