@@ -1,5 +1,8 @@
 package Encapsulaciones;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
 
 import java.io.Serializable;
@@ -16,7 +19,8 @@ public class Perro implements Serializable {
     private int limite_repeticion_comida;
 
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy="perro_vacuna")
+    @OneToMany(mappedBy="perro_vacuna")
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Vacuna> vacunas;
 
     private Boolean perdido;

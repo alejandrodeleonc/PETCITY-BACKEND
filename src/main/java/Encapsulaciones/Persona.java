@@ -5,6 +5,8 @@ package Encapsulaciones;
 import com.sun.istack.NotNull;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -40,14 +42,16 @@ public class Persona  implements Serializable {
     @NotNull
     private String Codigo_Retiro;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy="persona")
+    @OneToMany(fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
     private List<Subscripcion> subcripciones;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy="referencia")
+    @OneToMany(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
     private List<Notificaciones> notificaciones;
 
-    @ManyToMany( mappedBy = "personasroles")
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "personasroles")
+    @Fetch(value = FetchMode.SUBSELECT)
     List<Rol> rolespersona = new ArrayList<Rol>();
 
 
@@ -143,6 +147,8 @@ public class Persona  implements Serializable {
     }
 
     public List<Subscripcion> getSubcripciones() {
+
+
         return subcripciones;
     }
 
@@ -164,5 +170,9 @@ public class Persona  implements Serializable {
 
     public void setFoto(Foto foto) {
         this.foto = foto;
+    }
+
+    public void addSubscripcion(Subscripcion subscripcion){
+        this.subcripciones.add(subscripcion);
     }
 }

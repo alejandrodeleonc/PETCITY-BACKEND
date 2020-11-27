@@ -1,9 +1,10 @@
 package Encapsulaciones;
 
 import javax.persistence.*;
-
+import org.hibernate.annotations.Fetch;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -15,20 +16,23 @@ public class Subscripcion implements Serializable {
     private boolean pago;
     private float monto;
     @ManyToOne
-    @JoinColumn(name="id_plan", nullable=false)
+    @JoinColumn( name="id_plan")
     private Plan plan;
 
-    @ManyToOne
-    @JoinColumn(name="id_persona", nullable=false)
-    private Persona persona;
+//    @ManyToOne
+//    @JoinColumn(name="id_persona", nullable=false)
+//    private Persona persona;
+
+    private Date fechaVencimientoPago;
 
 
     public Subscripcion() {
     }
 
-    public Subscripcion(Plan plan, Persona persona) {
+    public Subscripcion(Plan plan, Date fechaVencimientoPago) {
         this.plan = plan;
-        this.persona = persona;
+//        this.persona = persona;
+        this.fechaVencimientoPago = fechaVencimientoPago;
     }
 
     public int getId_subscripcion() {
@@ -63,11 +67,19 @@ public class Subscripcion implements Serializable {
         this.plan = plan;
     }
 
-    public Persona getPersona() {
-        return persona;
+//    public Persona getPersona() {
+//        return persona;
+//    }
+//
+//    public void setPersona(Persona persona) {
+//        this.persona = persona;
+//    }
+
+    public Date getFechaVencimientoPago() {
+        return fechaVencimientoPago;
     }
 
-    public void setPersona(Persona persona) {
-        this.persona = persona;
+    public void setFechaVencimientoPago(Date fechaVencimientoPago) {
+        this.fechaVencimientoPago = fechaVencimientoPago;
     }
 }

@@ -2,10 +2,14 @@ package Encapsulaciones;
 
 
 import com.sun.istack.NotNull;
+import kong.unirest.json.JSONObject;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Entity
@@ -45,8 +49,11 @@ public class Notificaciones implements Serializable {
         this.id_notificaciones = id_notificaciones;
     }
 
-    public Persona getReferencia() {
-        return referencia;
+    public Map<String, Object> getReferencia() {
+        Map<String, Object> json = new HashMap();
+        json.put("id_persona", referencia.getId_persona());
+        json.put("nombre", referencia.getNombre());
+        return json;
     }
 
     public void setReferencia(Persona referencia) {
@@ -61,8 +68,9 @@ public class Notificaciones implements Serializable {
         this.contenido = contenido;
     }
 
-    public Date getFecha_creacion() {
-        return fecha_creacion;
+    public String getFecha_creacion() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
+        return fecha_creacion.toString();
     }
 
     public void setFecha_creacion(Date fecha_creacion) {

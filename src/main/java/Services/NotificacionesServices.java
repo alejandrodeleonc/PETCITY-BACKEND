@@ -29,7 +29,7 @@ public class NotificacionesServices extends DBManage<Notificaciones> {
         EntityManager em = getEntityManager();
         List<Notificaciones> res = new ArrayList<Notificaciones>();
         try{
-            res = em.createNativeQuery("SELECT * FROM PERSONA where USUARIO = '" + persona.getUsuario()+"'", Persona.class).getResultList();
+            res = em.createNativeQuery("SELECT ID_NOTIFICACIONES, CONTENIDO, ESTADO, FECHA_CREACION, ID_PERSONA FROM NOTIFICACIONES where ID_PERSONA = " + persona.getId_persona()+ "AND ESTADO = FALSE", Notificaciones.class).getResultList();
 
             if(res != null){
                 notificaciones = res;

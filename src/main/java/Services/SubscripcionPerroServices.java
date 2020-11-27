@@ -37,22 +37,22 @@ public class SubscripcionPerroServices extends DBManage<SubscripcionPerro> {
         return res.get(0);
     }
 
-    public Persona getPersonaByPerro(String id_perro){
-        Persona persona = null;
-        EntityManager em = getEntityManager();
-        List<SubscripcionPerro> res = new ArrayList<SubscripcionPerro>();
-        try{
-            res = em.createNativeQuery("SELECT * FROM SUBCRIPCION_PERRO where PERRO_ID_PERRO = '" + id_perro +"'", SubscripcionPerro.class).getResultList();
-
-            if(res != null){
-               persona = res.get(0).getSubscripcion().getPersona();
-            }
-        } finally {
-            em.close();
-        }
-
-        return persona;
-    }
+//    public Persona getPersonaByPerro(String id_perro){
+//        Persona persona = null;
+//        EntityManager em = getEntityManager();
+//        List<SubscripcionPerro> res = new ArrayList<SubscripcionPerro>();
+//        try{
+//            res = em.createNativeQuery("SELECT * FROM SUBCRIPCION_PERRO where PERRO_ID_PERRO = '" + id_perro +"'", SubscripcionPerro.class).getResultList();
+//
+//            if(res != null){
+//               persona = res.get(0).getSubscripcion().getPersona();
+//            }
+//        } finally {
+//            em.close();
+//        }
+//
+//        return persona;
+//    }
 
     public int contarSuscribciones(int id_suscripcion){
         Persona persona = null;

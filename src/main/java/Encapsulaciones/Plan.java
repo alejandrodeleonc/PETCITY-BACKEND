@@ -1,5 +1,8 @@
 package Encapsulaciones;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 
 import java.io.Serializable;
@@ -16,7 +19,8 @@ public class Plan implements Serializable {
     private float costo;
     private int meses_actividad;
     private int cantidad_maxima_de_perros;
-    @OneToMany(mappedBy="plan")
+    @OneToMany(fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
     private List<Subscripcion> subcripciones;
     public Plan() {
     }
