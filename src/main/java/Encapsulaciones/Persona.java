@@ -42,9 +42,9 @@ public class Persona  implements Serializable {
     @NotNull
     private String Codigo_Retiro;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
-    private List<Subscripcion> subcripciones;
+    private Subscripcion subcripciones;
 
     @OneToMany(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
@@ -70,7 +70,7 @@ public class Persona  implements Serializable {
         this.usuario = usuario;
         this.password = password;
         this.Codigo_Retiro = codigo_Retiro;
-        this.subcripciones = new ArrayList<>();
+        this.subcripciones = null;
 
     }
 
@@ -146,13 +146,11 @@ public class Persona  implements Serializable {
         Codigo_Retiro = codigo_Retiro;
     }
 
-    public List<Subscripcion> getSubcripciones() {
-
-
+    public Subscripcion getSubcripciones() {
         return subcripciones;
     }
 
-    public void setSubcripciones(List<Subscripcion> subcripciones) {
+    public void setSubcripciones(Subscripcion subcripciones) {
         this.subcripciones = subcripciones;
     }
 
@@ -172,7 +170,7 @@ public class Persona  implements Serializable {
         this.foto = foto;
     }
 
-    public void addSubscripcion(Subscripcion subscripcion){
-        this.subcripciones.add(subscripcion);
-    }
+//    public void addSubscripcion(Subscripcion subscripcion){
+//        this.subcripciones.add(subscripcion);
+//    }
 }

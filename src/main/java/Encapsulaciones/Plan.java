@@ -19,9 +19,9 @@ public class Plan implements Serializable {
     private float costo;
     private int meses_actividad;
     private int cantidad_maxima_de_perros;
-    @OneToMany(fetch = FetchType.EAGER)
-    @Fetch(value = FetchMode.SUBSELECT)
-    private List<Subscripcion> subcripciones;
+//    @OneToMany(fetch = FetchType.EAGER)
+//    @Fetch(value = FetchMode.SUBSELECT)
+//    private List<Subscripcion> subcripciones;
     public Plan() {
     }
 
@@ -30,7 +30,7 @@ public class Plan implements Serializable {
         this.costo = costo;
         this.meses_actividad = meses_actividad;
         this.cantidad_maxima_de_perros = cantidad_maxima_de_perros;
-        this.subcripciones = new ArrayList<Subscripcion>();
+
     }
 
     public String getNombre() {
@@ -47,14 +47,6 @@ public class Plan implements Serializable {
 
     public void setId_plan(int id_plan) {
         this.id_plan = id_plan;
-    }
-
-    public List<Subscripcion> getSubcripciones() {
-        return subcripciones;
-    }
-
-    public void setSubcripciones(List<Subscripcion> subcripciones) {
-        this.subcripciones = subcripciones;
     }
 
     public float getCosto() {

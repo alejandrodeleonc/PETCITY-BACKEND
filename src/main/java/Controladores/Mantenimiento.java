@@ -50,73 +50,40 @@ public class Mantenimiento {
                     ctx.json(res.toMap());
                 });
 
-                post("/subscribirme", ctx -> {
-                    int status = 200;
+//                post("/subscribirme", ctx -> {
+//                    int status = 200;
+//                    JSONObject res = new JSONObject();
+//                    Plan plan = PlanServices.getInstancia().find(Integer.valueOf(ctx.formParam("plan")));
+//                    Persona person = PersonaServices.getInstancia().find(Integer.valueOf(ctx.formParam("persona")));
+//
+//                    Calendar cal = Calendar.getInstance();
+//                    cal.add(Calendar.MONTH, plan.getMeses_actividad());
+////                    Subscripcion subscripcion = new Subscripcion(plan, person, cal.getTime());
+//                    Subscripcion subscripcion = new Subscripcion(plan, cal.getTime());
+//                    if (SubcripcionServices.getInstancia().crear(subscripcion)) {
+//                        person.addSubscripcion(subscripcion);
+//                        PersonaServices.getInstancia().editar(person);
+//                        res.put("resultado", "Susbcripcion correcta!");
+//                    } else {
+//                        res.put("msg", "Fallo la insercion en la base de datos!");
+//                        status = 401;
+//                    }
+//                    ctx.status(status);
+//                    ctx.json(res.toMap());
+//
+//                });
+
+                post("/subscribir/:id_persona/perros", ctx -> {
                     JSONObject res = new JSONObject();
-                    Plan plan = PlanServices.getInstancia().find(Integer.valueOf(ctx.formParam("plan")));
-                    Persona person = PersonaServices.getInstancia().find(Integer.valueOf(ctx.formParam("persona")));
-
-                    Calendar cal = Calendar.getInstance();
-                    cal.add(Calendar.MONTH, plan.getMeses_actividad());
-//                    Subscripcion subscripcion = new Subscripcion(plan, person, cal.getTime());
-                    Subscripcion subscripcion = new Subscripcion(plan, cal.getTime());
-                    if (SubcripcionServices.getInstancia().crear(subscripcion)) {
-                        person.addSubscripcion(subscripcion);
-                        PersonaServices.getInstancia().editar(person);
-                        res.put("resultado", "Susbcripcion correcta!");
-                    } else {
-                        res.put("msg", "Fallo la insercion en la base de datos!");
-                        status = 401;
-                    }
-                    ctx.status(status);
-                    ctx.json(res.toMap());
-
-                });
-
-                post("/subscribir/:id/perros", ctx -> {
-                    JSONObject res = new JSONObject();
                     int status = 200;
-                    int id = ctx.pathParam("id", Integer.class).get();
+                    int id = ctx.pathParam("id_persona", Integer.class).get();
                     Subscripcion sub = SubcripcionServices.getInstancia().find(id);
                     Map<String, List<String>> id_perros = ctx.formParamMap();
                     System.out.println("Arreglo =>");
                     System.out.println(id_perros.get("perro"));
-                    if (sub != null) {
-
-                        if (SubscripcionPerroServices.getInstancia().contarSuscribciones(sub.getId_subscripcion()) < sub.getPlan().getCantidad_maxima_de_perros()) {
-                            List<SubscripcionPerro> subper = new ArrayList<SubscripcionPerro>();
-                            for (String p : id_perros.get("perro")) {
-                                System.out.println("Perro =>" + p);
-                                Perro perro_aux = PerroServices.getInstancia().find(p);
-                                if (perro_aux != null) {
-                                    SubscripcionPerro aux = new SubscripcionPerro(sub, perro_aux);
-                                    if (!SubscripcionPerroServices.getInstancia().suscribcionExiste(aux)) {
-                                        subper.add(aux);
-                                    }
-                                }
-                            }
-
-                            System.out.println("La cantidad de registros =>" + SubscripcionPerroServices.getInstancia().contarSuscribciones(sub.getId_subscripcion()));
-                            if (subper.size() == id_perros.get("perro").size()) {
-                                if (SubscripcionPerroServices.getInstancia().crear(subper)) {
-                                    res.put("msg", "Susbcripcion correcta!");
-                                } else {
-                                    res.put("msg", "Error asociando perro!");
-                                    status = 401;
-                                }
-                            } else {
-                                res.put("msg", "Los parametros proporcionados son incorrectos!");
-                                status = 409;
-                            }
 
 
-                        } else {
-                            res.put("msg", "Ha excedido el limite de perros permitidos con su plan actual!");
-                            status = 409;
-                        }
 
-
-                    }
 
 
                     ctx.status(status);
@@ -204,19 +171,19 @@ public class Mantenimiento {
                     ctx.json(res);
                 });
 
-                get("/usuarios/:user/perros", ctx -> {
-                    String id = ctx.pathParam("user");
-                    Map<String, Object> res = new HashMap<>();
-                    Persona person = PersonaServices.getInstancia().findByUser(id);
-                    System.out.print("Persona => " + person.getNombre() + "\n");
-                    List<Perro> perros = SubcripcionServices.getInstancia().getPerrosOfAnUser(person);
-                    Gson gson = new Gson();
-                    String jsonString = gson.toJson(perros);
-                    System.out.println("El arreglo => " + jsonString);
-
-                    res.put("perros", perros);
-                    ctx.json(res);
-                });
+//                get("/usuarios/:user/perros", ctx -> {
+//                    String id = ctx.pathParam("user");
+//                    Map<String, Object> res = new HashMap<>();
+//                    Persona person = PersonaServices.getInstancia().findByUser(id);
+//                    System.out.print("Persona => " + person.getNombre() + "\n");
+//                    List<Perro> perros = SubcripcionServices.getInstancia().getPerrosOfAnUser(person);
+//                    Gson gson = new Gson();
+//                    String jsonString = gson.toJson(perros);
+//                    System.out.println("El arreglo => " + jsonString);
+//
+//                    res.put("perros", perros);
+//                    ctx.json(res);
+//                });
 
 //                post("/:id_perro/comio", ctx -> {
 //                    int status = 200;

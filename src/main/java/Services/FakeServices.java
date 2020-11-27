@@ -79,17 +79,17 @@ public class FakeServices {
     }
 
 
-    public Map<String, Object> verificarSiPago(Persona persona) {
-        System.out.println("Entra a la funcion importante");
-        System.out.println(persona.getSubcripciones());
-
-        Map<String, Object> json = new HashMap();
-        for(Subscripcion subs :  persona.getSubcripciones()){
-            System.out.println("estado => " + subs.getFechaVencimientoPago().before(new Date()));
-            if(subs.getFechaVencimientoPago().before(new Date()) && !subs.isPago()){
-                json.put(String.valueOf(subs.getId_subscripcion()), false);
-            }
-        }
-        return json;
-    }
+//    public Map<String, Object> verificarSiPago(Persona persona) {
+//        System.out.println("Entra a la funcion importante");
+//        System.out.println(persona.getSubcripciones());
+//
+//        Map<String, Object> json = new HashMap();
+//        for(Subscripcion subs :  persona.getSubcripciones()){
+//            System.out.println("estado => " + subs.getFechaVencimientoPago().before(new Date()));
+//            if(subs.getFechaVencimientoPago().before(new Date()) && !subs.isPago()){
+//                json.put(String.valueOf(subs.getId_subscripcion()), false);
+//            }
+//        }
+//        return json;
+//    }
 }

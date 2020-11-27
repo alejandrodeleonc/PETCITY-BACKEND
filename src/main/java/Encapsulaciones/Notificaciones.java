@@ -19,10 +19,6 @@ public class Notificaciones implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id_notificaciones;
 
-    @ManyToOne
-    @JoinColumn(name="id_persona", nullable=false)
-    private Persona referencia;
-
     @NotNull
     private String contenido;
     @NotNull
@@ -34,8 +30,8 @@ public class Notificaciones implements Serializable {
     public Notificaciones() {
     }
 
-    public Notificaciones(Persona referencia, String contenido, Date fecha_creacion) {
-        this.referencia = referencia;
+    public Notificaciones(String contenido, Date fecha_creacion) {
+
         this.contenido = contenido;
         this.fecha_creacion = fecha_creacion;
         this.estado = false;
@@ -49,16 +45,14 @@ public class Notificaciones implements Serializable {
         this.id_notificaciones = id_notificaciones;
     }
 
-    public Map<String, Object> getReferencia() {
-        Map<String, Object> json = new HashMap();
-        json.put("id_persona", referencia.getId_persona());
-        json.put("nombre", referencia.getNombre());
-        return json;
-    }
+//    public Map<String, Object> getReferencia() {
+//        Map<String, Object> json = new HashMap();
+//        json.put("id_persona", referencia.getId_persona());
+//        json.put("nombre", referencia.getNombre());
+//        return json;
+//    }
 
-    public void setReferencia(Persona referencia) {
-        this.referencia = referencia;
-    }
+
 
     public String getContenido() {
         return contenido;

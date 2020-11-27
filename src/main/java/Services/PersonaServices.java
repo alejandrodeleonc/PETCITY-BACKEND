@@ -2,7 +2,6 @@ package Services;
 
 
 import Encapsulaciones.Persona;
-import Encapsulaciones.SubscripcionPerro;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;

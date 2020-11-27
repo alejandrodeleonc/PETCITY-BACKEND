@@ -21,26 +21,26 @@ public class SubcripcionServices extends DBManage<Subscripcion> {
     }
 
 
-    public List<Perro> getPerrosOfAnUser(Persona user) {
-        EntityManager em = getEntityManager();
-        List<SubscripcionPerro> res = new ArrayList<SubscripcionPerro>();
-        List<Perro> perros = new ArrayList<Perro>();
-
-        try{
-            for(Subscripcion sub :  user.getSubcripciones() ){
-            res = em.createNativeQuery("SELECT * FROM SUBCRIPCION_PERRO where SUBSCRIPCION_ID_SUBSCRIPCION = " + sub.getId_subscripcion(), SubscripcionPerro.class).getResultList();
-
-            for(SubscripcionPerro subper : res ){
-                perros.add(subper.getPerro());
-            }
-
-            }
-
-        } finally {
-            em.close();
-        }
-        return perros;
-    }
+//    public List<Perro> getPerrosOfAnUser(Persona user) {
+//        EntityManager em = getEntityManager();
+//        List<SubscripcionPerro> res = new ArrayList<SubscripcionPerro>();
+//        List<Perro> perros = new ArrayList<Perro>();
+//
+//        try{
+//            for(Subscripcion sub :  user.getSubcripciones() ){
+//            res = em.createNativeQuery("SELECT * FROM SUBCRIPCION_PERRO where SUBSCRIPCION_ID_SUBSCRIPCION = " + sub.getId_subscripcion(), SubscripcionPerro.class).getResultList();
+//
+//            for(SubscripcionPerro subper : res ){
+//                perros.add(subper.getPerro());
+//            }
+//
+//            }
+//
+//        } finally {
+//            em.close();
+//        }
+//        return perros;
+//    }
 
 
 }

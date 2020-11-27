@@ -44,7 +44,7 @@ public class Autenticacion {
                         LoginResponse lr = FakeServices.getInstancia().generacionJsonWebToken(user);
                         Persona persona = PersonaServices.getInstancia().findByUser(user);
                         json.put("persona", persona);
-                        json.put("pagos_atrasados", FakeServices.getInstancia().verificarSiPago(persona));
+//                        json.put("pagos_atrasados", FakeServices.getInstancia().verificarSiPago(persona));
                         json.put("token", lr.getToken());
                         ctx.json(json);
                     }
