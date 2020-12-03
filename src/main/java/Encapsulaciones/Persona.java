@@ -43,7 +43,6 @@ public class Persona  implements Serializable {
     private String Codigo_Retiro;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @Fetch(value = FetchMode.SUBSELECT)
     private Subscripcion subcripciones;
 
     @OneToMany(fetch = FetchType.EAGER)

@@ -3,6 +3,9 @@ package Services;
 import Encapsulaciones.Perro;
 import Encapsulaciones.Persona;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PerroServices extends DBManage<Perro> {
     private static PerroServices instancia;
 
@@ -16,6 +19,19 @@ public class PerroServices extends DBManage<Perro> {
         return instancia;
     }
 
+
+    public List<Perro> buscarVariosPerrosPorId(List<String> id_perros){
+        List<Perro> perros= new ArrayList<Perro>();
+        Perro aux;
+        for(String id : id_perros){
+            aux = PerroServices.getInstancia().find(id);
+            if(aux != null){
+            perros.add(aux);
+            }
+        }
+
+        return perros;
+    }
 
 
 

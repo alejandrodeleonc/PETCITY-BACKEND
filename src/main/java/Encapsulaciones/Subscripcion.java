@@ -99,6 +99,15 @@ public class Subscripcion implements Serializable {
 //        this.persona = persona;
 //    }
 
+
+    public List<Perro> getPerros() {
+        return perros;
+    }
+
+    public void setPerros(List<Perro> perros) {
+        this.perros = perros;
+    }
+
     public Date getFechaVencimientoPago() {
         return fechaVencimientoPago;
     }
