@@ -23,6 +23,8 @@ public class Notificaciones implements Serializable {
     private String contenido;
     @NotNull
     private Date fecha_creacion;
+    @NotNull
+    private int tipo;
 
     private boolean estado;
 
@@ -30,11 +32,12 @@ public class Notificaciones implements Serializable {
     public Notificaciones() {
     }
 
-    public Notificaciones(String contenido, Date fecha_creacion) {
+    public Notificaciones(String contenido, Date fecha_creacion, int tipo) {
 
         this.contenido = contenido;
         this.fecha_creacion = fecha_creacion;
         this.estado = false;
+        this.tipo = tipo;
     }
 
     public int getId_notificaciones() {
@@ -44,14 +47,6 @@ public class Notificaciones implements Serializable {
     public void setId_notificaciones(int id_notificaciones) {
         this.id_notificaciones = id_notificaciones;
     }
-
-//    public Map<String, Object> getReferencia() {
-//        Map<String, Object> json = new HashMap();
-//        json.put("id_persona", referencia.getId_persona());
-//        json.put("nombre", referencia.getNombre());
-//        return json;
-//    }
-
 
 
     public String getContenido() {

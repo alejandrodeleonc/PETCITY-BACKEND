@@ -63,6 +63,10 @@ public class ApiControlador {
                     }
                 });
 
+                before("/administracion/*", ctx -> {
+
+                });
+
             });
         });
 
@@ -70,6 +74,7 @@ public class ApiControlador {
         new MantenimientoControlador(app).aplicarRutas();
         new WebSocketControlador(app).aplicarRutas();
         new AutenticacionControlador(app).aplicarRutas();
+        new AdministracionControlador(app).aplicarRutas();
 
 
     }

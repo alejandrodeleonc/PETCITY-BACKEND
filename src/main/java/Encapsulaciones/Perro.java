@@ -6,6 +6,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 import javax.persistence.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,9 +20,8 @@ public class Perro implements Serializable {
     private int limite_repeticion_comida;
 
 
-    @OneToMany(mappedBy="perro_vacuna")
-    @LazyCollection(LazyCollectionOption.FALSE)
-    private List<Vacuna> vacunas;
+//    @OneToMany
+//    private List<PerroVacuna> vacunas;
 
     private Boolean perdido;
 
@@ -39,16 +39,18 @@ public class Perro implements Serializable {
         this.fecha_registro = fecha_registro;
         this.limite_repeticion_comida = limite_repeticion_comida;
         this.perdido = false;
+//        this.vacunas = new ArrayList<PerroVacuna>();
+
     }
 
 
-    public List<Vacuna> getVacunas() {
-        return vacunas;
-    }
+//    public List<PerroVacuna> getVacunas() {
+//        return vacunas;
+//    }
 
-    public void setVacunas(List<Vacuna> vacunas) {
-        this.vacunas = vacunas;
-    }
+//    public void setVacunas(List<PerroVacuna> vacunas) {
+//        this.vacunas = vacunas;
+//    }
 
     public String getId_perro() {
         return id_perro;

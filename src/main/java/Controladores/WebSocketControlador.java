@@ -15,8 +15,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class WebSocketControlador {
     private Javalin app;
-    private  List<UsuariosConectados> usuariosConectados = new ArrayList<>();
-    private List<SseClient> listaSseUsuario = new ArrayList<>();
+    public static List<UsuariosConectados> usuariosConectados = new ArrayList<>();
+    public static List<SseClient> listaSseUsuario = new ArrayList<>();
 
     public WebSocketControlador(Javalin app) {
         this.app = app;
@@ -146,9 +146,9 @@ public class WebSocketControlador {
             e.printStackTrace();
         }
     }
-    private List<UsuariosConectados> buscarConexionesDeUsuarioConectadoByUser(Persona persona){
+    public static List<UsuariosConectados> buscarConexionesDeUsuarioConectadoByUser(Persona persona){
         List<UsuariosConectados> aux = new ArrayList<>();
-        for(UsuariosConectados u : usuariosConectados){
+        for(UsuariosConectados u :WebSocketControlador.usuariosConectados){
             if(persona.getUsuario().equals(u.getUsuario())){
                 aux.add(u);
             }

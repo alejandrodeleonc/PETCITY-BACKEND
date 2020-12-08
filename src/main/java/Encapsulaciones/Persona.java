@@ -49,9 +49,14 @@ public class Persona  implements Serializable {
     @Fetch(value = FetchMode.SUBSELECT)
     private List<Notificaciones> notificaciones;
 
+//    @OneToMany(fetch = FetchType.EAGER)
+//    private List<Factura> historial_de_facturacion;
+
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "personasroles")
     @Fetch(value = FetchMode.SUBSELECT)
     List<Rol> rolespersona = new ArrayList<Rol>();
+
+
 
 
     @Lob
@@ -70,6 +75,8 @@ public class Persona  implements Serializable {
         this.password = password;
         this.Codigo_Retiro = codigo_Retiro;
         this.subcripciones = null;
+        this.notificaciones =  new ArrayList<Notificaciones>();
+//        this.historial_de_facturacion =  new ArrayList<Factura>();
 
     }
 
@@ -165,6 +172,18 @@ public class Persona  implements Serializable {
         return foto;
     }
 
+    public void addNotificacion(Notificaciones not){
+        this.notificaciones.add(not);
+    }
+
+//    public List<Factura> getHistorial_de_facturacion() {
+//        return historial_de_facturacion;
+//    }
+//
+//    public void setHistorial_de_facturacion(List<Factura> historial_de_facturacion) {
+//        this.historial_de_facturacion = historial_de_facturacion;
+//    }
+
     public void setFoto(Foto foto) {
         this.foto = foto;
     }
@@ -172,4 +191,7 @@ public class Persona  implements Serializable {
 //    public void addSubscripcion(Subscripcion subscripcion){
 //        this.subcripciones.add(subscripcion);
 //    }
+
+
+
 }

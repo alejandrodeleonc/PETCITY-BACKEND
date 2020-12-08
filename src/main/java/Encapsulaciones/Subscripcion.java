@@ -17,7 +17,6 @@ public class Subscripcion implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id_subscripcion;
     private boolean pago;
-    private float monto;
     @OneToOne
     @JoinColumn(name = "id_plan")
     private Plan plan;
@@ -73,14 +72,6 @@ public class Subscripcion implements Serializable {
 
     public void setPago(boolean pago) {
         this.pago = pago;
-    }
-
-    public float getMonto() {
-        return monto;
-    }
-
-    public void setMonto(float monto) {
-        this.monto = monto;
     }
 
     public Plan getPlan() {

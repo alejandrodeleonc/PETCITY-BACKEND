@@ -10,15 +10,16 @@ import java.util.Date;
 @Table(name="VACUNA")
 public class Vacuna implements Serializable {
     @Id
+    @GeneratedValue
     private int id_vacuna;
     @NotNull
     private String nombreVacuna;
     @NotNull
     private Date fechaQueSePuso;
 
-    @ManyToOne
-    @JoinColumn(name="id_plan", nullable=false)
-    private Perro perro_vacuna;
+//    @ManyToOne
+//    @JoinColumn(name="id_plan", nullable=false)
+//    private Perro perro_vacuna;
     public Vacuna() {
     }
 

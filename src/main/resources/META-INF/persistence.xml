@@ -17,10 +17,12 @@
         <class>Encapsulaciones.Permiso</class>
         <class>Encapsulaciones.Notificaciones</class>
         <class>Encapsulaciones.Foto</class>
+        <class>Encapsulaciones.Factura</class>
+        <class>Encapsulaciones.PerroVacuna</class>
 
 
         <properties>
-            <property name="javax.persistence.jdbc.url" value="jdbc:h2:tcp://localhost/~/petcity" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:h2:tcp://localhost/~/petcity"/>
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
             <property name="javax.persistence.jdbc.user" value="sa" />
             <property name="javax.persistence.jdbc.password" value="" />

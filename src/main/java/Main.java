@@ -45,7 +45,7 @@ public class Main {
 //        Plan pl = new Plan("Prueba", Float.parseFloat("870.89") , 3, 3);
 //        PlanServices.getInstancia().crear(pl);
 //
-//        Dispensador dispen = new Dispensador("0013A20040A4D103", "1234", "1234","Calle 7");
+//        Dispensador dispen = new Dispensador("0013A20040A4D103", "19.2209351", "-70.5289368","Calle 7");
 //        DispensadorServices.getInstancia().crear(dispen);
 //        HistorialDeVisitas vis = new HistorialDeVisitas(pers, dispen, new Date() , true);
 //        HistorialDeVisitasService.getInstancia().crear(vis);

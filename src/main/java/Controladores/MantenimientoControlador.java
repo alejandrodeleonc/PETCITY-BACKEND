@@ -2,28 +2,39 @@ package Controladores;
 
 import Encapsulaciones.*;
 import Services.*;
-import com.google.gson.Gson;
+import com.google.gson.*;
+import com.twilio.http.TwilioRestClient;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.http.ForbiddenResponse;
 import io.javalin.http.Handler;
+import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
+import java.text.DateFormat;
 import java.text.Format;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+
+import static Controladores.WebSocketControlador.*;
 import static io.javalin.apibuilder.ApiBuilder.*;
 import static io.javalin.apibuilder.ApiBuilder.post;
-import static java.lang.Integer.parseInt;
+
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
 
 public class MantenimientoControlador {
     private Javalin app;
-
+    public static final String ACCOUNT_SID ="ACeaeeb50fe25fb5888ac39ca76cbd8315";
+    public static final String AUTH_TOKEN = "803d7c4abe286f3bccd8e342d5caf55a";
     public MantenimientoControlador(Javalin app) {
         this.app = app;
     }
-
     public void aplicarRutas() {
 
         app.routes(() -> {
@@ -156,36 +167,30 @@ public class MantenimientoControlador {
                     ctx.status(status);
                 });
 
-//                post("/:id/pagar", ctx -> {
-//                    JSONObject res = new JSONObject();
-//                    int status = 200;
-//                    String id_sub = ctx.pathParam("id");
-//                     Persona  per = getUserFromHeader(ctx.header("Authorization"));
-//                     if(per.getSubcripciones().size()>0){
-//                     Subscripcion sub = SubcripcionServices.getInstancia().find(id_sub);
-//                        if(sub != null){
-//                            if(sub.getId_persona() == per.getId_persona() || per.getUsuario().equalsIgnoreCase("admin")){
-//                                sub.setPago(true);
-//                                SubcripcionServices.getInstancia().editar(sub);
-//                                res.put("msg", "Su pago fue realizado con exito!");
-//                            }else{
-//                                status = 401;
-//                                res.put("msg", "Usted no puede realizar el pago");
-//                            }
-//                        }else{
-//                            status = 409;
-//                            res.put("msg", "La suscripcion no existe");
-//                        }
-//
-//                     }else{
-//                         status = 401;
-//                         res.put("msg", "Usted no tiene suscripciones");
-//                     }
-//
-//                     ctx.status(status);
-//                     ctx.json(res);
-//
-//                });
+                post("/pagar", ctx -> {
+                    JSONObject res = new JSONObject();
+                    int status = 200;
+                    Persona per = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
+
+                    if (per.getSubcripciones() != null) {
+                        Subscripcion sub = per.getSubcripciones();
+                        sub.setPago(true);
+                        Calendar cal = Calendar.getInstance();
+                        cal.add(Calendar.MONTH, 3);
+                        sub.setFechaVencimientoPago(cal.getTime());
+                        per.setSubcripciones(sub);
+                        SubcripcionServices.getInstancia().editar(sub);
+                        PersonaServices.getInstancia().editar(per);
+                        res.put("msg", "Su pago fue realizado con exito!");
+                    } else {
+                        status = 401;
+                        res.put("msg", "Usted no tiene suscripciones");
+                    }
+
+                    ctx.status(status);
+                    ctx.json(res);
+
+                });
 
                 post("/visita", ctx -> {
                     JSONObject res = new JSONObject();
@@ -209,16 +214,16 @@ public class MantenimientoControlador {
                 });
 
 
-                get("/persona/:id_persona/perros", ctx -> {
+                get("/perros", ctx -> {
                     JSONObject res = new JSONObject();
                     int status = 200;
-                    int id_persona = Integer.parseInt(ctx.formParam("id_persona"));
-                    Persona persona = PersonaServices.getInstancia().find(id_persona);
 
-                    if(persona != null ){
+                    Persona persona = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
+
+                    if (persona != null) {
                         ctx.json(persona.getSubcripciones().getPerros());
 
-                    }else{
+                    } else {
                         res.put("msg", "La persona no existe");
                         ctx.json(res.toMap());
                     }
@@ -226,191 +231,180 @@ public class MantenimientoControlador {
                     ctx.status(status);
                 });
 
-//                get("/usuarios/:user/perros", ctx -> {
-//                    String id = ctx.pathParam("user");
-//                    Map<String, Object> res = new HashMap<>();
-//                    Persona person = PersonaServices.getInstancia().findByUser(id);
-//                    System.out.print("Persona => " + person.getNombre() + "\n");
-//                    List<Perro> perros = SubcripcionServices.getInstancia().getPerrosOfAnUser(person);
-//                    Gson gson = new Gson();
-//                    String jsonString = gson.toJson(perros);
-//                    System.out.println("El arreglo => " + jsonString);
-//
-//                    res.put("perros", perros);
-//                    ctx.json(res);
-//                });
 
-//                post("/:id_perro/comio", ctx -> {
-//                    int status = 200;
-//                    JSONObject res = new JSONObject();
-//                    String id_perro = ctx.pathParam("id_perro");
-//                    String ip_dispensador = ctx.header("dispensador");
-//                    if (ip_dispensador != null) {
-//                        Dispensador dispensador = DispensadorServices.getInstancia().getDispensadorByDireccionIP(ip_dispensador);
-//                        Perro perro = PerroServices.getInstancia().find(id_perro);
-//                        if (perro != null) {
-//                            if (perro.getPerdido()) {
-//                                Persona dueno = SubscripcionPerroServices.getInstancia().getPersonaByPerro(perro.getId_perro());
-//                                Notificaciones not = new Notificaciones(dueno, perro.getNombre() + " estuvo en el dispensador  que esta en la " + dispensador.getDireccion() + ", Latitud: "+ dispensador.getLatitud() + " Longitud: "+ dispensador.getLongitud() , new Date());
-//                                NotificacionesServices.getInstancia().crear(not);
-//
-//                                List<UsuariosConectados> conexionesDelDueno = buscarConexionesDeUsuarioConectadoByUser(dueno);
-//                                if (conexionesDelDueno.size() > 0) {
-//                                    System.out.println("Enviando  mensaje al dueno");
-//                                    enviarMensajeAunGrupo(conexionesDelDueno, not.getContenido());
-//                                }
-//                            }
-//                            boolean puede_comer = HistorialDeVisitasService.getInstancia().canEat(perro);
-//                            res.put("puede_comer", puede_comer);
-////                        Perro perro, Dispensador dispensador, Date fecha, boolean is_comio
-//                            HistorialDeVisitas vista = new HistorialDeVisitas(perro, dispensador, new Date(), puede_comer);
-//                            HistorialDeVisitasService.getInstancia().crear(vista);
-//                        } else {
-//                            status = 409;
-//                            res.put("msg", "Error: Al buscar el dueño en la base de datos");
-//
-//                        }
-//
-//                    } else {
-//                        status = 401;
-//                        res.put("msg", "Error: No tiene origen");
-//
-//                    }
-//                    ctx.status(status);
-//                    ctx.json(res.toMap());
-//                });
-
-//                post("/perro/:id/perdido", ctx -> {
-//                    JSONObject res = new JSONObject();
-//                    int status = 200;
-//                    String header = ctx.header("Authorization");
-//                    String id = ctx.pathParam("id");
-//                    Perro perro = PerroServices.getInstancia().find(id);
-//
-////                    enviarMensajeAClientesConectados("perro perdido", "rojo");
-//                    if (perro != null) {
-//                        if (!perro.getPerdido()) {
-//                            Persona dueno = SubscripcionPerroServices.getInstancia().getPersonaByPerro(perro.getId_perro());
-//                            System.out.println("El dueno => " + dueno.getNombre());
-//                            if (dueno != null) {
-//
-//                                if (compararHeaderUser(header, dueno)) {
-//                                    perro.setPerdido(true);
-//                                    PerroServices.getInstancia().editar(perro);
-//                                    res.put("msg", "El perro ha sido reportado como perdido!");
-//                                } else {
-//                                    res.put("msg", "No tiene permiso para modificar este perro");
-//                                    status = 401;
-//                                }
-//                            } else {
-//                                res.put("msg", "Este perro es callejero");
-//                            }
-//                        } else {
-//                            res.put("msg", "Este perro ya esta rerpotado como perdido");
-//                            status = 409;
-//                        }
-//                    } else {
-//                        status = 409;
-//                        res.put("msg", "El perro que busca no existe");
-//                    }
-//
-//                    ctx.status(status);
-//                    ctx.json(res.toMap());
-//                });
-
-//                post("/perro/:id/encontrado", ctx -> {
-//                    JSONObject res = new JSONObject();
-//                    int status = 200;
-//                    String header = ctx.header("Authorization");
-//                    String id = ctx.pathParam("id");
-//                    Perro perro = PerroServices.getInstancia().find(id);
-//
-//                    if (perro != null) {
-//                        if (perro.getPerdido()) {
-//                            Persona dueno = SubscripcionPerroServices.getInstancia().getPersonaByPerro(perro.getId_perro());
-//                            System.out.println("El dueno => " + dueno.getNombre());
-//                            if (dueno != null) {
-//
-//                                if (compararHeaderUser(header, dueno)) {
-//                                    perro.setPerdido(false);
-//                                    PerroServices.getInstancia().editar(perro);
-//                                    res.put("msg", "El perro ha sido encontrado");
-//                                } else {
-//                                    res.put("msg", "No tiene permiso para modificar este perro");
-//                                    status = 401;
-//                                }
-//                            } else {
-//                                res.put("msg", "Este perro es callejero");
-//                            }
-//
-//                        } else {
-//                            res.put("msg", "Este perro no ha sido reportado como perdido");
-//                            status = 409;
-//                        }
-//                    } else {
-//                        status = 409;
-//                        res.put("msg", "El perro que busca no existe");
-//                    }
-//
-//                    ctx.status(status);
-//                    ctx.json(res.toMap());
-//                });
-
-//        get("/notificaciones_no_vistas", ctx -> {
-//            Persona perso = getUserFromHeader(ctx.header("Authorization"));
-//
-//            ctx.json(NotificacionesServices.getInstancia().getNotifciacionesNoVistas(perso));
-//            System.out.println("Persona desde noti=>" + perso.getNombre());
-//
-//        });
-
-                before("/administracion/*", ctx -> {
-                    System.out.println("Aqui es donde se manejaran los permisos");
-                });
-
-
-                post("/administracion/crear_dispensador", ctx -> {
+                post("/:id_perro/agregar_vacuna", ctx -> {
                     int status = 200;
                     JSONObject res = new JSONObject();
-                    String id_dispensador = ctx.formParam("dispensador");
-                    String longitud = ctx.formParam("longitud");
-                    String latitud = ctx.formParam("latitud");
-                    String direccion = ctx.formParam("direccion");
+                    Gson builder = new Gson();
+//                    Perro perro = PerroServices.getInstancia().find(ctx.pathParam("id_perro"));
+                    Persona usuarioDeLaPeticion = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
+                    JSONObject body = new JSONObject(ctx.body().toString());
 
-                    Dispensador dispensador = new Dispensador(id_dispensador, longitud, latitud, direccion);
+                    System.out.println("Vacunas para domingo =>");
+                    List<Vacuna> lista = new ArrayList<Vacuna>();
+                    JsonObject root;
+
+                    DateFormat df = new SimpleDateFormat("DD/MM/yyyy");
+                    for (Object obj : body.getJSONArray("vacunas")) {
+                        root = new JsonParser().parse(obj.toString()).getAsJsonObject();
+//                        String date = (String) root.get("fecha").value();
+//                        System.out.println("Fecha =>" + df.format(date));
+//                        System.out.println();
+                        Vacuna aux = new Vacuna(root.get("nombre").getAsString(), df.parse(root.get("fecha").getAsString()));
+                        lista.add(aux);
+                        VacunaServices.getInstancia().crear(aux);
+
+                    }
+//                    perro.setVacunas(lista);
+//                    PerroServices.getInstancia().editar(perro);
+//                    System.out.println(lista);
+//                    System.out.println(root.getAsJsonObject().get("ayer"));
 
 
-                    if (DispensadorServices.getInstancia().crear(dispensador)) {
-                        res.put("resultado", "Dispensador creado correctamente!");
+                });
+
+                post("/:id_perro/comio", ctx -> {
+                    int status = 200;
+                    JSONObject res = new JSONObject();
+                    String id_perro = ctx.pathParam("id_perro");
+                    String ip_dispensador = ctx.header("dispensador");
+                    if (ip_dispensador != null) {
+                        Dispensador dispensador = DispensadorServices.getInstancia().getDispensadorByDireccionIP(ip_dispensador);
+                        Perro perro = PerroServices.getInstancia().find(id_perro);
+
+                        if (perro != null) {
+                            Persona dueno = PerroServices.getInstancia().buscarDueno(perro);
+                            if (perro.getPerdido()) {
+                                Notificaciones not = new Notificaciones(perro.getNombre() + " estuvo en el dispensador  que esta en la " + dispensador.getDireccion() + ", Latitud: " + dispensador.getLatitud() + " Longitud: " + dispensador.getLongitud(), new Date(), 1);
+
+                                dueno.addNotificacion(not);
+                                NotificacionesServices.getInstancia().crear(not);
+                                PersonaServices.getInstancia().editar(dueno);
+                                Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+//                                https://www.google.com/maps?q=19.22111701965332,-70.52653503417969&z=17&hl=es
+                                Message message = Message.creator(
+                                        new com.twilio.type.PhoneNumber("whatsapp:+18296491998"),
+                                        new com.twilio.type.PhoneNumber("whatsapp:+14155238886"),
+                                        "https://www.google.com/maps?q="+ dispensador.getLatitud()+ ","+dispensador.getLongitud() +"&z=17&hl=es\n" + not.getContenido())
+                                        .create();
+
+                                System.out.println(message.getSid());
+
+
+                                List<UsuariosConectados> conexionesDelDueno = WebSocketControlador.buscarConexionesDeUsuarioConectadoByUser(dueno);
+                                if (conexionesDelDueno.size() > 0) {
+                                    System.out.println("Enviando  mensaje al dueno");
+                                    enviarMensajeAunGrupo(conexionesDelDueno, not.getContenido());
+                                }
+                            }
+                            boolean puede_comer = HistorialDeVisitasService.getInstancia().canEat(perro);
+                            res.put("puede_comer", puede_comer);
+//                        Perro perro, Dispensador dispensador, Date fecha, boolean is_comio
+                            HistorialDeVisitas vista = new HistorialDeVisitas(perro, dispensador, new Date(), puede_comer);
+                            HistorialDeVisitasService.getInstancia().crear(vista);
+                        } else {
+                            status = 409;
+                            res.put("msg", "Error: Al buscar el dueño en la base de datos");
+
+                        }
+
                     } else {
                         status = 401;
-                        res.put("msg", "Fallo la insercion en la base de datos!");
+                        res.put("msg", "Error: No tiene origen");
+
                     }
                     ctx.status(status);
                     ctx.json(res.toMap());
+
                 });
 
-                post("/administracion/crear_plan", ctx -> {
-                    int status = 200;
+                post("/perro/:id/perdido", ctx -> {
                     JSONObject res = new JSONObject();
-                    String nombre = ctx.formParam("nombre");
-                    float costo = Float.parseFloat(ctx.formParam("costo"));
-                    int meses_actividad = parseInt(ctx.formParam("meses_actividad"));
-                    int cantidad_maxima_de_perros = parseInt(ctx.formParam("cantidad_maxima_de_perros"));
+                    int status = 200;
+                    String header = ctx.header("Authorization");
+                    String id = ctx.pathParam("id");
+                    Perro perro = PerroServices.getInstancia().find(id);
 
+//                    enviarMensajeAClientesConectados("perro perdido", "rojo");
+                    if (perro != null) {
+                        if (!perro.getPerdido()) {
+                            Persona dueno = PerroServices.getInstancia().buscarDueno(perro);
+                            System.out.println("El dueno => " + dueno.getNombre());
+                            if (dueno != null) {
 
-                    Plan plan = new Plan(nombre, costo, meses_actividad, cantidad_maxima_de_perros);
-
-                    if (PlanServices.getInstancia().crear(plan)) {
-                        res.put("resultado", "Plan creado correctamente!");
+                                if (FakeServices.getInstancia().compararHeaderUser(header, dueno)) {
+                                    perro.setPerdido(true);
+                                    PerroServices.getInstancia().editar(perro);
+                                    res.put("msg", "El perro ha sido reportado como perdido!");
+                                } else {
+                                    res.put("msg", "No tiene permiso para modificar este perro");
+                                    status = 401;
+                                }
+                            } else {
+                                res.put("msg", "Este perro es callejero");
+                            }
+                        } else {
+                            res.put("msg", "Este perro ya esta rerpotado como perdido");
+                            status = 409;
+                        }
                     } else {
-                        status = 401;
-                        res.put("msg", "Fallo la insercion en la base de datos!");
+                        status = 409;
+                        res.put("msg", "El perro que busca no existe");
                     }
 
                     ctx.status(status);
                     ctx.json(res.toMap());
                 });
+
+                post("/perro/:id/encontrado", ctx -> {
+                    JSONObject res = new JSONObject();
+                    int status = 200;
+                    String header = ctx.header("Authorization");
+                    String id = ctx.pathParam("id");
+                    Perro perro = PerroServices.getInstancia().find(id);
+
+                    if (perro != null) {
+                        if (perro.getPerdido()) {
+                            Persona dueno = PerroServices.getInstancia().buscarDueno(perro);
+                            System.out.println("El dueno => " + dueno.getNombre());
+                            if (dueno != null) {
+                                if (FakeServices.getInstancia().compararHeaderUser(header, dueno)) {
+                                    perro.setPerdido(false);
+                                    PerroServices.getInstancia().editar(perro);
+                                    res.put("msg", "El perro ha sido encontrado");
+                                } else {
+                                    res.put("msg", "No tiene permiso para modificar este perro");
+                                    status = 401;
+                                }
+                            } else {
+                                res.put("msg", "Este perro es callejero");
+                            }
+
+                        } else {
+                            res.put("msg", "Este perro no ha sido reportado como perdido");
+                            status = 409;
+                        }
+                    } else {
+                        status = 409;
+                        res.put("msg", "El perro que busca no existe");
+                    }
+
+                    ctx.status(status);
+                    ctx.json(res.toMap());
+                });
+
+                get("/notificaciones_no_vistas", ctx -> {
+                    Persona perso = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
+                    if (perso != null) {
+                        ctx.json(NotificacionesServices.getInstancia().getNotifciacionesNoVistas(perso));
+                    } else {
+                        ctx.status(401);
+                        ctx.json(new JSONObject().put("msg", "No es un usuario valido"));
+                    }
+
+                });
+
+
             });
         });
     }
