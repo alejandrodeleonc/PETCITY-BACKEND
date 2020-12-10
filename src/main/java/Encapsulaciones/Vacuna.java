@@ -14,8 +14,7 @@ public class Vacuna implements Serializable {
     private int id_vacuna;
     @NotNull
     private String nombreVacuna;
-    @NotNull
-    private Date fechaQueSePuso;
+
 
 //    @ManyToOne
 //    @JoinColumn(name="id_plan", nullable=false)
@@ -23,9 +22,8 @@ public class Vacuna implements Serializable {
     public Vacuna() {
     }
 
-    public Vacuna(String nombreVacuna, Date fechaQueSePuso) {
+    public Vacuna(String nombreVacuna) {
         this.nombreVacuna = nombreVacuna;
-        this.fechaQueSePuso = fechaQueSePuso;
     }
 
     public int getId_vacuna() {
@@ -44,11 +42,4 @@ public class Vacuna implements Serializable {
         this.nombreVacuna = nombreVacuna;
     }
 
-    public Date getFechaQueSePuso() {
-        return fechaQueSePuso;
     }
-
-    public void setFechaQueSePuso(Date fechaQueSePuso) {
-        this.fechaQueSePuso = fechaQueSePuso;
-    }
-}

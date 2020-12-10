@@ -14,8 +14,8 @@ public class PerroVacuna implements Serializable {
 
     private Date fecha;
 
-    @ManyToOne
-    private Perro perro;
+//    @ManyToOne
+//    private Perro perro;
 
     @ManyToOne
     private Vacuna vacuna;
@@ -23,7 +23,11 @@ public class PerroVacuna implements Serializable {
     public PerroVacuna() {
     }
 
-    public PerroVacuna(Perro perro, Date fecha, Vacuna vacuna) {
+//    public PerroVacuna(Perro perro, Date fecha, Vacuna vacuna) {
+//        this.fecha = fecha;
+//        this.vacuna = vacuna;
+//    }
+    public PerroVacuna( Date fecha, Vacuna vacuna) {
         this.fecha = fecha;
         this.vacuna = vacuna;
     }

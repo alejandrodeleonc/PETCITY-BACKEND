@@ -70,6 +70,14 @@ public class Notificaciones implements Serializable {
         return estado;
     }
 
+    public int getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(int tipo) {
+        this.tipo = tipo;
+    }
+
     public void setEstado(boolean estado) {
         this.estado = estado;
     }

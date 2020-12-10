@@ -33,25 +33,37 @@ public class AdministracionControlador {
         app.routes(() -> {
             path("/api/v1/administracion", () -> {
 
-                post("/agregar_vacuna", ctx -> {
+                post("/crear_vacuna", ctx -> {
                     int status = 200;
                     JSONObject res = new JSONObject();
-                    Gson builder = new Gson();
-                    Persona usuarioDeLaPeticion = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
+//                    Gson builder = new Gson();
+//                    Persona usuarioDeLaPeticion = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
                     JSONObject body = new JSONObject(ctx.body().toString());
 
-                    System.out.println("Vacunas para domingo =>");
-                    List<Vacuna> lista = new ArrayList<Vacuna>();
-                    JsonObject root;
+                    if (body !=null) {
+                        System.out.println("Vacunas para domingo =>");
+                        System.out.println(body.getJSONArray("vacunas"));
 
-                    DateFormat df = new SimpleDateFormat("DD/MM/yyyy");
-                    for (Object obj : body.getJSONArray("vacunas")) {
-                        root = new JsonParser().parse(obj.toString()).getAsJsonObject();
-                        Vacuna aux = new Vacuna(root.get("nombre").getAsString(), df.parse(root.get("fecha").getAsString()));
-                        lista.add(aux);
-                        VacunaServices.getInstancia().crear(aux);
+                        List<Vacuna> lista = new ArrayList<Vacuna>();
+                        JsonObject root;
 
+                        DateFormat df = new SimpleDateFormat("DD/MM/yyyy");
+                        for (Object obj : body.getJSONArray("vacunas")) {
+                            root = new JsonParser().parse(obj.toString()).getAsJsonObject();
+                            Vacuna aux = new Vacuna(root.get("nombre").getAsString());
+                            lista.add(aux);
+                            VacunaServices.getInstancia().crear(aux);
+
+                        }
+
+                        res.put("msg", "Vacuna creada correctamente");
+
+                    } else {
+                        status=409;
+                        res.put("msg", "Error no ha propocionado data");
                     }
+                    ctx.status(status);
+                    ctx.json(res.toMap());
 
 
 
@@ -98,7 +110,6 @@ public class AdministracionControlador {
                     ctx.status(status);
                     ctx.json(res.toMap());
                 });
-
 
 
             });

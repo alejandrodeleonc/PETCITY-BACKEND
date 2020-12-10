@@ -28,7 +28,7 @@ public class PerroServices extends DBManage<Perro> {
         List<Perro> perros = new ArrayList<Perro>();
         Perro aux;
         for (String id : id_perros) {
-            aux = PerroServices.getInstancia().find(id);
+            aux = PerroServices.getInstancia().find(Integer.valueOf(id));
             if (aux != null) {
                 perros.add(aux);
             }
@@ -44,9 +44,9 @@ public class PerroServices extends DBManage<Perro> {
         try {
             res = em.createNativeQuery("SELECT * FROM PERSONA p\n" +
                     "INNER JOIN SUBSCRIPCION s ON s.ID_SUBSCRIPCION = p.SUBCRIPCIONES_ID_SUBSCRIPCION \n" +
-                    "INNER JOIN SUBSCRIPCION_PERRO sp ON sp.PERROS_ID_PERRO = '" + perro.getId_perro() + "'", Persona.class).getResultList();
+                    "INNER JOIN SUBSCRIPCION_PERRO sp ON sp.PERROS_ID_PERRO = " +perro.getId_perro() , Persona.class).getResultList();
 
-            return res.get(0);
+            return res.get(0) == null ? null :  res.get(0)  ;
         } finally {
             em.close();
         }

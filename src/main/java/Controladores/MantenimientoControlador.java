@@ -30,25 +30,42 @@ import com.twilio.type.PhoneNumber;
 
 public class MantenimientoControlador {
     private Javalin app;
-    public static final String ACCOUNT_SID ="ACeaeeb50fe25fb5888ac39ca76cbd8315";
+    public static final String ACCOUNT_SID = "ACeaeeb50fe25fb5888ac39ca76cbd8315";
     public static final String AUTH_TOKEN = "803d7c4abe286f3bccd8e342d5caf55a";
+
     public MantenimientoControlador(Javalin app) {
         this.app = app;
     }
+
     public void aplicarRutas() {
 
         app.routes(() -> {
             path("/api/v1/mantenimiento", () -> {
 
+                get("/informacion_persona", ctx -> {
+                    Persona per = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
+
+                    Map<String, Object> json = new HashMap();
+
+                    json.put("persona", per);
+
+                    ctx.status(200);
+                    ctx.json(json);
+
+                });
+
                 post("/registrar_perro", ctx -> {
                     int status = 200;
                     JSONObject res = new JSONObject();
+
+
+
                     String id_perro = ctx.formParam("RFID_CODE");
                     String nombre = ctx.formParam("nombre");
                     Date fecha_registro = new Date();
                     int limite_repeticion_comida = 2;
-                    Format formatter = new SimpleDateFormat("dd/MM/yyyy");
-                    Perro perro = new Perro(id_perro, nombre, formatter.format(fecha_registro), limite_repeticion_comida);
+                    Perro perro = new Perro(id_perro, nombre, fecha_registro, limite_repeticion_comida);
+
 
                     if (PerroServices.getInstancia().crear(perro)) {
                         res.put("msg", "Perro Registrado correctamente!");
@@ -100,16 +117,15 @@ public class MantenimientoControlador {
 
                 });
 
-                post("/subscribir/:id_persona/perros", ctx -> {
+                post("/subscribir/perros", ctx -> {
                     JSONObject res = new JSONObject();
                     int status = 200;
-                    int id = ctx.pathParam("id_persona", Integer.class).get();
+                    Persona persona = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
                     List<String> id_perros = ctx.formParams("perros");
                     List<Perro> perros = id_perros == null ? null : PerroServices.getInstancia().buscarVariosPerrosPorId(id_perros);
-                    Persona person = PersonaServices.getInstancia().find(id);
-                    Subscripcion sub = person.getSubcripciones();
+                    Subscripcion sub = persona.getSubcripciones();
 
-                    if (person != null) {
+                    if (persona != null) {
                         if (perros != null) {
                             if (perros.size() == id_perros.size()) {
                                 int restantes = sub.getPlan().getCantidad_maxima_de_perros() - sub.getPerros().size();
@@ -232,36 +248,36 @@ public class MantenimientoControlador {
                 });
 
 
-                post("/:id_perro/agregar_vacuna", ctx -> {
-                    int status = 200;
-                    JSONObject res = new JSONObject();
-                    Gson builder = new Gson();
-//                    Perro perro = PerroServices.getInstancia().find(ctx.pathParam("id_perro"));
-                    Persona usuarioDeLaPeticion = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
-                    JSONObject body = new JSONObject(ctx.body().toString());
-
-                    System.out.println("Vacunas para domingo =>");
-                    List<Vacuna> lista = new ArrayList<Vacuna>();
-                    JsonObject root;
-
-                    DateFormat df = new SimpleDateFormat("DD/MM/yyyy");
-                    for (Object obj : body.getJSONArray("vacunas")) {
-                        root = new JsonParser().parse(obj.toString()).getAsJsonObject();
-//                        String date = (String) root.get("fecha").value();
-//                        System.out.println("Fecha =>" + df.format(date));
-//                        System.out.println();
-                        Vacuna aux = new Vacuna(root.get("nombre").getAsString(), df.parse(root.get("fecha").getAsString()));
-                        lista.add(aux);
-                        VacunaServices.getInstancia().crear(aux);
-
-                    }
-//                    perro.setVacunas(lista);
-//                    PerroServices.getInstancia().editar(perro);
-//                    System.out.println(lista);
-//                    System.out.println(root.getAsJsonObject().get("ayer"));
-
-
-                });
+//                post("/:id_perro/agregar_vacuna", ctx -> {
+//                    int status = 200;
+//                    JSONObject res = new JSONObject();
+//                    Gson builder = new Gson();
+////                    Perro perro = PerroServices.getInstancia().find(ctx.pathParam("id_perro"));
+//                    Persona usuarioDeLaPeticion = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
+//                    JSONObject body = new JSONObject(ctx.body().toString());
+//
+//                    System.out.println("Vacunas para domingo =>");
+//                    List<Vacuna> lista = new ArrayList<Vacuna>();
+//                    JsonObject root;
+//
+//                    DateFormat df = new SimpleDateFormat("DD/MM/yyyy");
+//                    for (Object obj : body.getJSONArray("vacunas")) {
+//                        root = new JsonParser().parse(obj.toString()).getAsJsonObject();
+////                        String date = (String) root.get("fecha").value();
+////                        System.out.println("Fecha =>" + df.format(date));
+////                        System.out.println();
+//                        Vacuna aux = new Vacuna(root.get("nombre").getAsString(), df.parse(root.get("fecha").getAsString()));
+//                        lista.add(aux);
+//                        VacunaServices.getInstancia().crear(aux);
+//
+//                    }
+////                    perro.setVacunas(lista);
+////                    PerroServices.getInstancia().editar(perro);
+////                    System.out.println(lista);
+////                    System.out.println(root.getAsJsonObject().get("ayer"));
+//
+//
+//                });
 
                 post("/:id_perro/comio", ctx -> {
                     int status = 200;
@@ -285,7 +301,7 @@ public class MantenimientoControlador {
                                 Message message = Message.creator(
                                         new com.twilio.type.PhoneNumber("whatsapp:+18296491998"),
                                         new com.twilio.type.PhoneNumber("whatsapp:+14155238886"),
-                                        "https://www.google.com/maps?q="+ dispensador.getLatitud()+ ","+dispensador.getLongitud() +"&z=17&hl=es\n" + not.getContenido())
+                                        "https://www.google.com/maps?q=" + dispensador.getLatitud() + "," + dispensador.getLongitud() + "&z=17&hl=es\n" + not.getContenido())
                                         .create();
 
                                 System.out.println(message.getSid());
@@ -322,12 +338,18 @@ public class MantenimientoControlador {
                     JSONObject res = new JSONObject();
                     int status = 200;
                     String header = ctx.header("Authorization");
-                    String id = ctx.pathParam("id");
+                    int id = Integer.valueOf(ctx.pathParam("id"));
+
+                    try{
+
+
                     Perro perro = PerroServices.getInstancia().find(id);
 
 //                    enviarMensajeAClientesConectados("perro perdido", "rojo");
+
                     if (perro != null) {
                         if (!perro.getPerdido()) {
+
                             Persona dueno = PerroServices.getInstancia().buscarDueno(perro);
                             System.out.println("El dueno => " + dueno.getNombre());
                             if (dueno != null) {
@@ -351,7 +373,11 @@ public class MantenimientoControlador {
                         status = 409;
                         res.put("msg", "El perro que busca no existe");
                     }
+                    }catch(Exception e){
+                        status = 409;
+                        res.put("msg", "Datos invalidos");
 
+                    }
                     ctx.status(status);
                     ctx.json(res.toMap());
                 });
@@ -360,7 +386,7 @@ public class MantenimientoControlador {
                     JSONObject res = new JSONObject();
                     int status = 200;
                     String header = ctx.header("Authorization");
-                    String id = ctx.pathParam("id");
+                    int id = Integer.valueOf(ctx.pathParam("id"));
                     Perro perro = PerroServices.getInstancia().find(id);
 
                     if (perro != null) {
@@ -403,6 +429,77 @@ public class MantenimientoControlador {
                     }
 
                 });
+                post("/notificaciones/:id_notificacion/visto", ctx -> {
+                    JSONObject res = new JSONObject();
+                    int status = 200;
+                    int id_notifacion = Integer.valueOf(ctx.pathParam("id_notificacion"));
+                    Notificaciones notificacion = NotificacionesServices.getInstancia().find(id_notifacion);
+
+
+                    if (notificacion != null) {
+
+                        if (!notificacion.isEstado()) {
+                            notificacion.setEstado(true);
+                            NotificacionesServices.getInstancia().editar(notificacion);
+                            res.put("msg", "Se ha visto la notificacion");
+                        }else{
+                            status = 200;
+                            res.put("msg", "Ya se ha visto anteriormente");
+
+                        }
+                    } else {
+                        res.put("msg", "La notifiacion no existe");
+                    }
+                    ctx.status(status);
+                    ctx.json(res.toMap());
+
+                });
+
+
+
+
+                post("/perros/:id_perro/agregar_vacuna", ctx->{
+                    JSONObject res = new JSONObject();
+                    int status = 200;
+                    int id_perro = Integer.valueOf(ctx.pathParam("id_perro"));
+                    JSONObject body = new JSONObject(ctx.body().toString());
+                    Perro perro = PerroServices.getInstancia().find(id_perro);
+
+                    if(perro != null){
+                                System.out.println("Vacunas para domingo =>");
+                                System.out.println(body);
+                            if (body !=null) {
+
+                                JsonObject root;
+
+                                DateFormat df = new SimpleDateFormat("DD/MM/yyyy");
+                                for (Object obj : body.getJSONArray("vacunas")) {
+                                    System.out.println(obj);
+                                    root = new JsonParser().parse(obj.toString()).getAsJsonObject();
+                                    Vacuna aux = VacunaServices.getInstancia().find(root.get("id_vacuna").getAsInt());
+                                    if(aux != null){
+                                        PerroVacuna vacuna = new PerroVacuna(df.parse(root.get("fecha").getAsString()), aux);
+                                        perro.addVacuna(vacuna);
+                                    }
+                                }
+                                PerroServices.getInstancia().editar(perro);
+                                }
+                    }else{
+                        res.put("msg", "El perro no existe");
+                        status = 409;
+                    }
+
+                    ctx.status(status);
+                    ctx.json(res.toMap());
+
+                });
+
+
+                get("/vacunas", ctx ->{
+                    ctx.json(VacunaServices.getInstancia().findAll());
+                });
+
+
 
 
             });
