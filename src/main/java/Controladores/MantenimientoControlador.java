@@ -286,7 +286,7 @@ public class MantenimientoControlador {
                     String ip_dispensador = ctx.header("dispensador");
                     if (ip_dispensador != null) {
                         Dispensador dispensador = DispensadorServices.getInstancia().getDispensadorByDireccionIP(ip_dispensador);
-                        Perro perro = PerroServices.getInstancia().find(id_perro);
+                        Perro perro = PerroServices.getInstancia().buscarPerroByRFID(id_perro);
 
                         if (perro != null) {
                             Persona dueno = PerroServices.getInstancia().buscarDueno(perro);
@@ -296,15 +296,15 @@ public class MantenimientoControlador {
                                 dueno.addNotificacion(not);
                                 NotificacionesServices.getInstancia().crear(not);
                                 PersonaServices.getInstancia().editar(dueno);
-                                Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
-//                                https://www.google.com/maps?q=19.22111701965332,-70.52653503417969&z=17&hl=es
-                                Message message = Message.creator(
-                                        new com.twilio.type.PhoneNumber("whatsapp:+18296491998"),
-                                        new com.twilio.type.PhoneNumber("whatsapp:+14155238886"),
-                                        "https://www.google.com/maps?q=" + dispensador.getLatitud() + "," + dispensador.getLongitud() + "&z=17&hl=es\n" + not.getContenido())
-                                        .create();
+//                                Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+////                                https://www.google.com/maps?q=19.22111701965332,-70.52653503417969&z=17&hl=es
+//                                Message message = Message.creator(
+//                                        new com.twilio.type.PhoneNumber("whatsapp:+18296491998"),
+//                                        new com.twilio.type.PhoneNumber("whatsapp:+14155238886"),
+//                                        "https://www.google.com/maps?q=" + dispensador.getLatitud() + "," + dispensador.getLongitud() + "&z=17&hl=es\n" + not.getContenido())
+//                                        .create();
 
-                                System.out.println(message.getSid());
+//                                System.out.println(message.getSid());
 
 
                                 List<UsuariosConectados> conexionesDelDueno = WebSocketControlador.buscarConexionesDeUsuarioConectadoByUser(dueno);
