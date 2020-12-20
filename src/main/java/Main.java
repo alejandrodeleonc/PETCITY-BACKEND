@@ -29,19 +29,19 @@ public class Main {
             config.registerPlugin(new RouteOverviewPlugin("/rutas")); //aplicando plugins de las rutas
             config.enableCorsForAllOrigins();
         });
-        app.start(8000);
-        DBStart.getInstancia().init();
+//        app.start(8000);
+//        DBStart.getInstancia().init();
 //        Persona persoo = new Persona("Alejandro", "4021527", new Date(), "j amor",
 //                "admin", "admin", "sdfsasdf");
 //        Persona pi = new Persona("Raspberry Pi", "000000", new Date(), "La zursa",
 //                "pi", "raspberry", "ninguno");
 //        PersonaServices.getInstancia().editar(persoo);
 //        PersonaServices.getInstancia().editar(pi);
-//
-////        Format forma = new SimpleDateFormat("dd/MM/yyyy");
+
+//        Format forma = new SimpleDateFormat("dd/MM/yyyy");
 //        Perro pers = new Perro("484849535648495350491310","Billy", new Date(), 2) ;
-////        data:image/jpeg;base64,
-////        pers.setFoto(new Foto("foto de : "+ pers.getNombre(),"base64" ,
+//        data:image/jpeg;base64,
+//        pers.setFoto(new Foto("foto de : "+ pers.getNombre(),"base64" ,
 //        PerroServices.getInstancia().crear(pers);
 //
 //        Plan pl = new Plan("Prueba", Float.parseFloat("870.89") , 3, 3);

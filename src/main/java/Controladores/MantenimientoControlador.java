@@ -58,12 +58,17 @@ public class MantenimientoControlador {
                     int status = 200;
                     JSONObject res = new JSONObject();
 
-
-
+//                    Gson g = new Gson();
+//                    Perro perroData = g.fromJson(ctx.body(), Perro.class);
+//                    System.out.println("Perro inf =>");
+//                    System.out.println(perroData.getNombre());
                     String id_perro = ctx.formParam("RFID_CODE");
                     String nombre = ctx.formParam("nombre");
                     Date fecha_registro = new Date();
                     int limite_repeticion_comida = 2;
+
+                    System.out.println("El RFID_CODE =>" + id_perro);
+                    System.out.println("El Nombre =>" + nombre);
                     Perro perro = new Perro(id_perro, nombre, fecha_registro, limite_repeticion_comida);
 
 
@@ -458,34 +463,75 @@ public class MantenimientoControlador {
 
 
 
-                post("/perros/:id_perro/agregar_vacuna", ctx->{
+//                post("/perros/:id_perro/agregar_vacuna", ctx->{
+//                    JSONObject res = new JSONObject();
+//                    int status = 200;
+//                    int id_perro = Integer.valueOf(ctx.pathParam("id_perro"));
+//                    JSONObject body = new JSONObject(ctx.body().toString());
+//                    Perro perro = PerroServices.getInstancia().find(id_perro);
+//
+//                    if(perro != null){
+//                                System.out.println("Vacunas para domingo =>");
+//                                System.out.println(body);
+//                            if (body !=null) {
+//
+//                                JsonObject root;
+//
+//                                DateFormat df = new SimpleDateFormat("DD/MM/yyyy");
+//                                for (Object obj : body.getJSONArray("vacunas")) {
+//                                    System.out.println(obj);
+//                                    root = new JsonParser().parse(obj.toString()).getAsJsonObject();
+//                                    Vacuna aux = VacunaServices.getInstancia().find(root.get("id_vacuna").getAsInt());
+//                                    if(aux != null){
+//                                        PerroVacuna vacuna = new PerroVacuna(df.parse(root.get("fecha").getAsString()), aux);
+//                                        perro.addVacuna(vacuna);
+//                                    }
+//                                }
+//                                PerroServices.getInstancia().editar(perro);
+//                                }
+//                    }else{
+//                        res.put("msg", "El perro no existe");
+//                        status = 409;
+//                    }
+//
+//                    ctx.status(status);
+//                    ctx.json(res.toMap());
+//
+//                });
+                post("/perros/:id_perro/agregar_vacuna/:id_vacuna", ctx->{
                     JSONObject res = new JSONObject();
                     int status = 200;
                     int id_perro = Integer.valueOf(ctx.pathParam("id_perro"));
-                    JSONObject body = new JSONObject(ctx.body().toString());
+                    int id_vacuna = Integer.valueOf(ctx.pathParam("id_vacuna"));
+                    Vacuna vacuna = VacunaServices.getInstancia().find(id_vacuna);
                     Perro perro = PerroServices.getInstancia().find(id_perro);
 
-                    if(perro != null){
-                                System.out.println("Vacunas para domingo =>");
-                                System.out.println(body);
-                            if (body !=null) {
-
-                                JsonObject root;
-
-                                DateFormat df = new SimpleDateFormat("DD/MM/yyyy");
-                                for (Object obj : body.getJSONArray("vacunas")) {
-                                    System.out.println(obj);
-                                    root = new JsonParser().parse(obj.toString()).getAsJsonObject();
-                                    Vacuna aux = VacunaServices.getInstancia().find(root.get("id_vacuna").getAsInt());
-                                    if(aux != null){
-                                        PerroVacuna vacuna = new PerroVacuna(df.parse(root.get("fecha").getAsString()), aux);
-                                        perro.addVacuna(vacuna);
-                                    }
-                                }
-                                PerroServices.getInstancia().editar(perro);
-                                }
+                    if(perro != null && vacuna != null){
+                        perro.addVacuna(new PerroVacuna( new Date(), vacuna));
+                        PerroServices.getInstancia().editar(perro);
+                        res.put("msg", "Se agrego vacuna correctamente");
                     }else{
-                        res.put("msg", "El perro no existe");
+                        res.put("msg", "Parametros proporcionados incorrectos");
+                        status = 409;
+                    }
+
+                    ctx.status(status);
+                    ctx.json(res.toMap());
+
+                });
+                post("/perros/:id_perro/quitar_vacuna/:id_vacunacion", ctx->{
+                    JSONObject res = new JSONObject();
+                    int status = 200;
+                    int id_perro = Integer.valueOf(ctx.pathParam("id_perro"));
+                    int id_vacuna = Integer.valueOf(ctx.pathParam("id_vacuna"));
+                    Vacuna vacuna = VacunaServices.getInstancia().find(id_vacuna);
+                    Perro perro = PerroServices.getInstancia().find(id_perro);
+
+                    if(perro != null && vacuna != null){
+                        PerroVacunaServices.getInstancia().eliminar(id_vacuna);
+                        res.put("msg", "Se borros vacuna correctamente");
+                    }else{
+                        res.put("msg", "Parametros proporcionados incorrectos");
                         status = 409;
                     }
 
