@@ -39,10 +39,10 @@ public class Main {
         PersonaServices.getInstancia().editar(pi);
 
 //        Format forma = new SimpleDateFormat("dd/MM/yyyy");
-//        Perro pers = new Perro("484849535648495350491310","Billy", new Date(), 2) ;
+        Perro pers = new Perro("484849535648495350491310","Billy", new Date(), 2) ;
 //        data:image/jpeg;base64,
 //        pers.setFoto(new Foto("foto de : "+ pers.getNombre(),"base64" ,
-//        PerroServices.getInstancia().crear(pers);
+        PerroServices.getInstancia().crear(pers);
 //
         Plan pl = new Plan("Prueba", Float.parseFloat("870.89") , 3, 3);
         PlanServices.getInstancia().crear(pl);
