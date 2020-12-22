@@ -64,6 +64,26 @@ public class MantenimientoControlador {
                     ctx.json(json);
                 });
 
+
+                get("/perros/:id_perro/historial_visitas", ctx ->{
+                    int status = 200;
+                    Map<String, Object> json = new HashMap();
+
+
+                    Perro perr = PerroServices.getInstancia().find(Integer.valueOf(ctx.pathParam("id_perro")));
+
+                   if( perr !=null){
+                       List<HistorialDeVisitas> historial = HistorialDeVisitasService.getInstancia().getHistorialByPerroId(perr);
+                    json.put("historial", historial);
+                   }else{
+                       status = 409;
+                       json.put("msg", "El perro no existe");
+                   }
+
+                   ctx.json(json);
+                   ctx.status(status);
+                });
+
                 post("/registrar_perro", ctx -> {
                     int status = 200;
                     JSONObject res = new JSONObject();
@@ -205,13 +225,8 @@ public class MantenimientoControlador {
 
                     if (per.getSubcripciones() != null) {
                         Subscripcion sub = per.getSubcripciones();
-                        sub.setPago(true);
-                        Calendar cal = Calendar.getInstance();
-                        cal.add(Calendar.MONTH, 3);
-                        sub.setFechaVencimientoPago(cal.getTime());
-                        per.setSubcripciones(sub);
-                        SubcripcionServices.getInstancia().editar(sub);
-                        PersonaServices.getInstancia().editar(per);
+
+                        res.put("suscipcion", sub);
                         res.put("msg", "Su pago fue realizado con exito!");
                     } else {
                         status = 401;

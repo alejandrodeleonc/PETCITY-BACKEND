@@ -26,11 +26,11 @@ public class HistorialDeVisitasService extends DBManage<HistorialDeVisitas>{
         return instancia;
     }
 
-    public List<HistorialDeVisitas> getHistorialByPerroId(String id_perro)  throws PersistenceException {
+    public List<HistorialDeVisitas> getHistorialByPerroId(Perro perro)  throws PersistenceException {
         EntityManager em = getEntityManager();
         List<HistorialDeVisitas> historial = new ArrayList<HistorialDeVisitas>();
         try{
-            historial = em.createNativeQuery("SELECT * FROM HISTORIAL_DE_VISITAS where ID_PERRO = '" + id_perro + "'", HistorialDeVisitas.class).getResultList();
+            historial = em.createNativeQuery("SELECT * FROM HISTORIAL_DE_VISITAS where ID_PERRO = " + perro.getId_perro() , HistorialDeVisitas.class).getResultList();
 
         } finally {
             em.close();

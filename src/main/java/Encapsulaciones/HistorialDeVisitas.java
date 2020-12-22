@@ -3,9 +3,11 @@ package Encapsulaciones;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
-@Table(name="HISTORIAL_DE_VISITAS")
+@Table(name = "HISTORIAL_DE_VISITAS")
 //@javax.persistence.Entity(name = "HISTORIAL_DE_VISITAS")
 public class HistorialDeVisitas implements Serializable {
     @Id
@@ -13,12 +15,12 @@ public class HistorialDeVisitas implements Serializable {
     private int id_historialdevisitas;
 
     @ManyToOne
-    @JoinColumn(name="id_perro", nullable=false)
+    @JoinColumn(name = "id_perro", nullable = false)
     private Perro perro;
 
 
     @ManyToOne
-    @JoinColumn(name="id_dispensador", nullable=false)
+    @JoinColumn(name = "id_dispensador", nullable = false)
     private Dispensador dispensador;
     private Date fecha;
     private boolean is_comio;
@@ -41,8 +43,8 @@ public class HistorialDeVisitas implements Serializable {
         this.id_historialdevisitas = id_historialdevisitas;
     }
 
-    public Perro getPerro() {
-        return perro;
+    public int getPerro() {
+        return this.perro.getId_perro();
     }
 
     public void setPerro(Perro perro) {

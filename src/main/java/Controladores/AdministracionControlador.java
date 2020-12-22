@@ -17,7 +17,9 @@ import kong.unirest.json.JSONObject;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
 import static java.lang.Integer.parseInt;
@@ -109,6 +111,19 @@ public class AdministracionControlador {
 
                     ctx.status(status);
                     ctx.json(res.toMap());
+                });
+
+                get("/dispensadores",ctx->{
+
+                    List<Dispensador> dispensadores = DispensadorServices.getInstancia().findAll();
+
+
+                    Map<String, Object> json = new HashMap();
+
+                    json.put("persona", dispensadores);
+
+                    ctx.status(200);
+                    ctx.json(json);
                 });
 
 
