@@ -29,8 +29,8 @@ public class Main {
             config.registerPlugin(new RouteOverviewPlugin("/rutas")); //aplicando plugins de las rutas
             config.enableCorsForAllOrigins();
         });
-//        app.start(8000);
-//        DBStart.getInstancia().init();
+        app.start(8000);
+        DBStart.getInstancia().init();
 //        Persona persoo = new Persona("Alejandro", "4021527", new Date(), "j amor",
 //                "admin", "admin", "sdfsasdf");
 //        Persona pi = new Persona("Raspberry Pi", "000000", new Date(), "La zursa",

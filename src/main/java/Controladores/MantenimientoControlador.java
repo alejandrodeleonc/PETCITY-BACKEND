@@ -54,6 +54,16 @@ public class MantenimientoControlador {
 
                 });
 
+                get("/planes", ctx -> {
+                    List<Plan> planes = PlanServices.getInstancia().findAll();
+                    Map<String, Object> json = new HashMap();
+
+                    json.put("planes", planes);
+
+                    ctx.status(200);
+                    ctx.json(json);
+                });
+
                 post("/registrar_perro", ctx -> {
                     int status = 200;
                     JSONObject res = new JSONObject();
