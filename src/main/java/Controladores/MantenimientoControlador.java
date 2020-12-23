@@ -234,7 +234,7 @@ public class MantenimientoControlador {
 
                     if (per.getSubcripciones() != null) {
                         Subscripcion sub = per.getSubcripciones();
-                        res.put("msg", FacturacionServices.getInstancia().getUltimaFacturaByPersona(per).getId_factura());
+//                        res.put("msg", FacturacionServices.getInstancia().getUltimaFacturaByPersona(per).getId_factura());
                         Factura factura = new Factura(per,new Date(),per.getSubcripciones(), per.getSubcripciones().getPlan().getCosto());
                         Calendar cal = Calendar.getInstance();
                         cal.add(Calendar.MONTH, sub.getPlan().getMeses_actividad() );

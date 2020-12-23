@@ -170,17 +170,20 @@ public class FakeServices {
 //        Date hoy = new Date();
         boolean estado = false;
         Subscripcion sub = persona.getSubcripciones();
-        if (sub != null) {
-            if (ultimaFactura.getFecha().after(sub.getFechaVencimientoPago())) {
-                sub.setPago(false);
-                SubcripcionServices.getInstancia().editar(sub);
-            } else {
-                sub.setPago(true);
-                SubcripcionServices.getInstancia().editar(sub);
-                estado = true;
+        if(ultimaFactura!=null){
+            if (sub != null) {
+                if (ultimaFactura.getFecha().after(sub.getFechaVencimientoPago())) {
+                    sub.setPago(false);
+                    SubcripcionServices.getInstancia().editar(sub);
+                } else {
+                    sub.setPago(true);
+                    SubcripcionServices.getInstancia().editar(sub);
+                    estado = true;
 
+                }
             }
         }
+
         return estado;
     }
 
