@@ -20,6 +20,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.7'
     //Javalin dependency
     compile 'io.javalin:javalin:3.9.0'
+    compile group: 'javax.mail', name: 'mail', version: '1.5.0-b01'
     //Thymeleaf dependency
     compile 'org.thymeleaf:thymeleaf:3.0.5.RELEASE'
     //Procesamiento JSON para Javalin.

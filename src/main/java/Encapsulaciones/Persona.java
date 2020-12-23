@@ -33,11 +33,14 @@ public class Persona  implements Serializable {
     @NotNull
     private String direccion;
 
-    @NotNull
+
+    @Column(nullable=false,unique=true)
     private String usuario;
 
     @NotNull
     private String password;
+    @NotNull
+    private String correo;
 
     @NotNull
     private String Codigo_Retiro;
@@ -66,9 +69,10 @@ public class Persona  implements Serializable {
     public Persona() {
     }
 
-    public Persona(String nombre, String identificacion, Date fecha_nacimiento, String direccion, String usuario, String password, String codigo_Retiro) {
+    public Persona(String nombre, String identificacion, String correo, Date fecha_nacimiento, String direccion, String usuario, String password, String codigo_Retiro) {
         this.nombre = nombre;
         this.identificacion = identificacion;
+        this.correo = correo;
         this.fecha_nacimiento = fecha_nacimiento;
         this.direccion = direccion;
         this.usuario = usuario;
@@ -78,6 +82,14 @@ public class Persona  implements Serializable {
         this.notificaciones =  new ArrayList<Notificaciones>();
 //        this.historial_de_facturacion =  new ArrayList<Factura>();
 
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
     public List<Notificaciones> getNotificaciones() {

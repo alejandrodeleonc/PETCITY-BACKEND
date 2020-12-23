@@ -31,7 +31,7 @@ import com.twilio.type.PhoneNumber;
 public class MantenimientoControlador {
     private Javalin app;
     public static final String ACCOUNT_SID = "ACeaeeb50fe25fb5888ac39ca76cbd8315";
-    public static final String AUTH_TOKEN = "803d7c4abe286f3bccd8e342d5caf55a";
+    public static final String AUTH_TOKEN = "0ebf7a8ccad907727f9339ec8a43affe";
 
     public MantenimientoControlador(Javalin app) {
         this.app = app;
@@ -48,6 +48,15 @@ public class MantenimientoControlador {
                     Map<String, Object> json = new HashMap();
 
                     json.put("persona", per);
+                    FakeServices.getInstancia().verificarSielPagoEstaAlDia(per);
+
+                    if(!FakeServices.getInstancia().verificarSielPagoEstaAlDia(per)){
+                        FakeServices.getInstancia().enviarCorreoByPersona(per, "Notificacion de atraso de pago", "" +
+                                "Un cordial saludo "+ per.getNombre() +", este correo es un recordatorio amigable de su su plan con pet city esta" +
+                                "atrasado en el pago, favor pagar lo antes posible ");
+                    }
+
+
 
                     ctx.status(200);
                     ctx.json(json);
@@ -225,16 +234,24 @@ public class MantenimientoControlador {
 
                     if (per.getSubcripciones() != null) {
                         Subscripcion sub = per.getSubcripciones();
+                        res.put("msg", FacturacionServices.getInstancia().getUltimaFacturaByPersona(per).getId_factura());
+                        Factura factura = new Factura(per,new Date(),per.getSubcripciones(), per.getSubcripciones().getPlan().getCosto());
+                        Calendar cal = Calendar.getInstance();
+                        cal.add(Calendar.MONTH, sub.getPlan().getMeses_actividad() );
+                        sub.setFechaVencimientoPago(cal.getTime());
+                        sub.setPago(true);
+                        SubcripcionServices.getInstancia().editar(sub);
 
-                        res.put("suscipcion", sub);
-                        res.put("msg", "Su pago fue realizado con exito!");
+                        FacturacionServices.getInstancia().crear(factura);
+
+                        res.put("msg", "Su pago ha sido efectuado con Exito");
                     } else {
                         status = 401;
                         res.put("msg", "Usted no tiene suscripciones");
                     }
 
                     ctx.status(status);
-                    ctx.json(res);
+                    ctx.json(res.toMap());
 
                 });
 
@@ -326,6 +343,11 @@ public class MantenimientoControlador {
                                 dueno.addNotificacion(not);
                                 NotificacionesServices.getInstancia().crear(not);
                                 PersonaServices.getInstancia().editar(dueno);
+                                FakeServices.getInstancia().enviarCorreoByPersona(dueno, "Alerta de visita de " + perro.getNombre()+"!" , "" +
+                                        "https://www.google.com/maps?q=" + dispensador.getLatitud() + "," + dispensador.getLongitud() + "&z=17&hl=es\n" + not.getContenido());
+//                                FakeServices.getInstancia().sendToTelegram("https://www.google.com/maps?q=" + dispensador.getLatitud() + "," + dispensador.getLongitud() + "&z=17&hl=es\n" + not.getContenido());
+                                FakeServices.getInstancia().sendToTelegram("holA");
+
 //                                Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
 ////                                https://www.google.com/maps?q=19.22111701965332,-70.52653503417969&z=17&hl=es
 //                                Message message = Message.creator(

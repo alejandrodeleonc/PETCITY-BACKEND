@@ -44,7 +44,7 @@ public class AutenticacionControlador {
                         LoginResponse lr = FakeServices.getInstancia().generacionJsonWebToken(user);
                         Persona persona = PersonaServices.getInstancia().findByUser(user);
                         json.put("persona", persona);
-//                        json.put("pagos_atrasados", FakeServices.getInstancia().verificarSiPago(persona));
+//                        json.put("pagos_atrasados", FakeServices.getInstancia().u);
                         json.put("token", lr.getToken());
                         ctx.json(json);
                     }
@@ -62,6 +62,7 @@ public class AutenticacionControlador {
                     JSONObject res = new JSONObject();
                     Base64.Encoder enc = Base64.getEncoder();
                     String nombre = ctx.formParam("nombre");
+                    String correo = ctx.formParam("correo");
                     String direccion = ctx.formParam("direccion");
                     String identificacion = ctx.formParam("identificacion");
                     String fecha = ctx.formParam("fecha_nacimiento");
@@ -72,7 +73,7 @@ public class AutenticacionControlador {
                     String coddigo_retiro = enc.encodeToString(usuario.getBytes());
 
                     if (!PersonaServices.getInstancia().userExists(usuario)) {
-                        Persona persona_registrada = new Persona(nombre, identificacion, fecha_nacimiento, direccion, usuario, password, coddigo_retiro);
+                        Persona persona_registrada = new Persona(nombre, identificacion, correo, fecha_nacimiento, direccion, usuario, password, coddigo_retiro);
 
                         if (PersonaServices.getInstancia().crear(persona_registrada)) {
                             res.put("msg", "Usuario Registrado correctamente!");
