@@ -35,5 +35,18 @@ private FacturacionServices(){super(Factura.class);}
         return res;
 
     }
+    public List<Factura> getHistorialDeFacturacion(Persona persona){
+        Dispensador dispensador = null;
+        EntityManager em = getEntityManager();
+        List<Factura> res = new ArrayList<Factura>();
+        try{
+            res = em.createNativeQuery("SELECT * FROM HISTORIAL_DE_FACTURACION hdf WHERE hdf.PERSONA_ID_PERSONA = "+ persona.getId_persona()+" ORDER BY hdf.FECHA DESC", Factura.class).getResultList();
+
+        } finally {
+            em.close();
+        }
+
+        return res;
+    }
 
  }

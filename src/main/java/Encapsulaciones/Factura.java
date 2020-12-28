@@ -5,6 +5,8 @@ import com.sun.istack.NotNull;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @Table(name="HISTORIAL_DE_FACTURACION")
@@ -36,8 +38,8 @@ public class Factura implements Serializable {
         this.monto = monto;
     }
 
-    public Persona getPersona() {
-        return persona;
+    public int getPersona() {
+        return persona.getId_persona();
     }
 
     public void setPersona(Persona persona) {
@@ -61,8 +63,14 @@ public class Factura implements Serializable {
         this.fecha = fecha;
     }
 
-    public Subscripcion getSubscripcion() {
-        return subscripcion;
+    public Map<String, Object> getSubscripcion() {
+        Map<String, Object> json = new HashMap();
+        json.put("suscripcion_id", subscripcion.getId_subscripcion());
+        json.put("perros", subscripcion.getPerros().size());
+        json.put("id_plan", subscripcion.getPlan().getId_plan());
+        json.put("meses_del_plan", subscripcion.getPlan().getMeses_actividad());
+
+        return json;
     }
 
     public void setSubscripcion(Subscripcion subscripcion) {

@@ -42,13 +42,19 @@ public class Main {
         Perro pers = new Perro("484849535648495350491310","Billy", new Date(), 2) ;
         PerroServices.getInstancia().crear(pers);
 
-        Plan pl = new Plan("Prueba", Float.parseFloat("870.89") , 3, 3);
-        PlanServices.getInstancia().crear(pl);
+//        Plan pl = new Plan("Prueba", Float.parseFloat("870.89") , 3, 3);
+        PlanServices.getInstancia().crear(new Plan("Básico", Float.parseFloat("870.00") , 2, 3));
+        PlanServices.getInstancia().crear(new Plan("Básico", Float.parseFloat("950.00") , 4, 5));
+        PlanServices.getInstancia().crear(new Plan("VIP", Float.parseFloat("1200.00") , 6, 7));
 
         Dispensador dispen = new Dispensador("0013A20040A4D103", "-70.5289368", "9.2209351","Calle 7");
         DispensadorServices.getInstancia().crear(dispen);
         HistorialDeVisitas vis = new HistorialDeVisitas(pers, dispen, new Date() , true);
         HistorialDeVisitasService.getInstancia().crear(vis);
+
+        VacunaServices.getInstancia().crear( new Vacuna("Vacuna 1"));
+        VacunaServices.getInstancia().crear( new Vacuna("Vacuna 2"));
+        VacunaServices.getInstancia().crear( new Vacuna("Vacuna 3"));
 
         new ApiControlador(app).aplicarRutas();
         /*

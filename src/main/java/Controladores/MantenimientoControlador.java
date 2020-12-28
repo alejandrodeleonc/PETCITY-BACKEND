@@ -63,6 +63,19 @@ public class MantenimientoControlador {
 
                 });
 
+
+                get("/historial_facturacion", ctx -> {
+                    Persona per = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
+                    List<Factura> facturas = FacturacionServices.getInstancia().getHistorialDeFacturacion(per);
+                    Map<String, Object> json = new HashMap();
+
+                    json.put("historial_de_facturacion", facturas);
+
+                    ctx.status(200);
+                    ctx.json(json);
+                });
+
+
                 get("/planes", ctx -> {
                     List<Plan> planes = PlanServices.getInstancia().findAll();
                     Map<String, Object> json = new HashMap();
@@ -134,7 +147,7 @@ public class MantenimientoControlador {
                         if (plan != null) {
                             if (perros.size() == id_perros.size()) {
                                 if (perros.size() < plan.getCantidad_maxima_de_perros()) {
-                                    Subscripcion sub = new Subscripcion(plan, new Date(), perros);
+                                    Subscripcion sub = new Subscripcion(plan, new Date(), new Date(), perros);
                                     SubcripcionServices.getInstancia().crear(sub);
                                     persona.setSubcripciones(sub);
                                     PersonaServices.getInstancia().editar(persona);

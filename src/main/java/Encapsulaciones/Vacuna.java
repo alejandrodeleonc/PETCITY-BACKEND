@@ -22,6 +22,7 @@ public class Vacuna implements Serializable {
     public Vacuna() {
     }
 
+
     public Vacuna(String nombreVacuna) {
         this.nombreVacuna = nombreVacuna;
     }

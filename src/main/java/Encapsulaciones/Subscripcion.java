@@ -31,6 +31,7 @@ public class Subscripcion implements Serializable {
 //    private Persona persona;
 
     private Date fechaVencimientoPago;
+    private Date fechaDeAdquisicion;
 
 
     public Subscripcion() {
@@ -41,10 +42,11 @@ public class Subscripcion implements Serializable {
 //        this.perros = new ArrayList<Perro>();
 //        this.fechaVencimientoPago = fechaVencimientoPago;
 //    }
-    public Subscripcion(Plan plan, Date fechaVencimientoPago, List<Perro> perros) {
+    public Subscripcion(Plan plan, Date fechaVencimientoPago, Date fechaDeAdquisicion, List<Perro> perros) {
         this.plan = plan;
         this.perros = perros == null ? new ArrayList<Perro>() : perros;
         this.fechaVencimientoPago = fechaVencimientoPago;
+        this.fechaDeAdquisicion = fechaDeAdquisicion;
     }
 
     public int getId_subscripcion() {
@@ -105,5 +107,13 @@ public class Subscripcion implements Serializable {
 
     public void setFechaVencimientoPago(Date fechaVencimientoPago) {
         this.fechaVencimientoPago = fechaVencimientoPago;
+    }
+
+    public Date getFechaDeAdquisicion() {
+        return fechaDeAdquisicion;
+    }
+
+    public void setFechaDeAdquisicion(Date fechaDeAdquisicion) {
+        this.fechaDeAdquisicion = fechaDeAdquisicion;
     }
 }
