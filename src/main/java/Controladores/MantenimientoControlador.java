@@ -48,12 +48,14 @@ public class MantenimientoControlador {
                     Map<String, Object> json = new HashMap();
 
                     json.put("persona", per);
-                    FakeServices.getInstancia().verificarSielPagoEstaAlDia(per);
+                    if(per.getSubcripciones() != null){
+                        FakeServices.getInstancia().verificarSielPagoEstaAlDia(per);
 
-                    if(!FakeServices.getInstancia().verificarSielPagoEstaAlDia(per)){
-                        FakeServices.getInstancia().enviarCorreoByPersona(per, "Notificacion de atraso de pago", "" +
-                                "Un cordial saludo "+ per.getNombre() +", este correo es un recordatorio amigable de su su plan con pet city esta" +
-                                "atrasado en el pago, favor pagar lo antes posible ");
+                        if (!FakeServices.getInstancia().verificarSielPagoEstaAlDia(per)) {
+                            FakeServices.getInstancia().enviarCorreoByPersona(per, "Notificacion de atraso de pago", "" +
+                                    "Un cordial saludo " + per.getNombre() + ", este correo es un recordatorio amigable de su su plan con pet city esta" +
+                                    "atrasado en el pago, favor pagar lo antes posible ");
+                        }
                     }
 
 
