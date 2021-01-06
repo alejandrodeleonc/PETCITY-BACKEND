@@ -137,6 +137,7 @@ public class WebSocketControlador {
         }
     }
     public static void enviarMensajeAunGrupo(List<UsuariosConectados> sesionesConectadas, String mensaje) {
+        System.out.println("Entra a enviar");
         try {
             for(UsuariosConectados sesionConectada : sesionesConectadas ){
                 System.out.println("Sesion de =>" + sesionConectada.getUsuario() + "id =>" + sesionConectada.getSesion().toString());
@@ -147,6 +148,7 @@ public class WebSocketControlador {
         }
     }
     public static List<UsuariosConectados> buscarConexionesDeUsuarioConectadoByUser(Persona persona){
+
         List<UsuariosConectados> aux = new ArrayList<>();
         for(UsuariosConectados u :WebSocketControlador.usuariosConectados){
             if(persona.getUsuario().equals(u.getUsuario())){

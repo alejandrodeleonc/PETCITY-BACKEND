@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 import javax.crypto.spec.SecretKeySpec;
+import javax.persistence.EntityManager;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
 import java.util.*;
@@ -16,6 +17,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.*;
 
 public class FakeServices {
@@ -185,6 +189,19 @@ public class FakeServices {
         }
 
         return estado;
+    }
+
+
+    public Map<String, Object> graficas(){
+        Map<String, Object> graficos = new HashMap();
+
+        graficos.put("ganancias", FacturacionServices.getInstancia().getGanancias());
+        graficos.put("perros_beneficiados", PerroServices.getInstancia().cantidadDePerrosSinDueno());
+        graficos.put("total_visitas", HistorialDeVisitasService.getInstancia().getCantidadDeVisitas());
+        graficos.put("ganancias_mensuales", FacturacionServices.getInstancia().getGananciasMensuales());
+
+
+        return graficos;
     }
 
 }

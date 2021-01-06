@@ -78,5 +78,19 @@ public class HistorialDeVisitasService extends DBManage<HistorialDeVisitas>{
 
         return aux;
     }
+
+    public int getCantidadDeVisitas(){
+        int aux = 0;
+        EntityManager em = getEntityManager();
+        try{
+        List<HistorialDeVisitas> historial =  HistorialDeVisitasService.getInstancia().findAll();
+        aux = historial.size();
+
+        } finally {
+            em.close();
+        }
+        return aux;
+    }
+
 }
 

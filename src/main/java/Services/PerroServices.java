@@ -1,5 +1,6 @@
 package Services;
 
+import Encapsulaciones.Factura;
 import Encapsulaciones.Notificaciones;
 import Encapsulaciones.Perro;
 import Encapsulaciones.Persona;
@@ -67,6 +68,23 @@ public class PerroServices extends DBManage<Perro> {
         } finally {
             em.close();
         }
+    }
+
+    public int cantidadDePerrosSinDueno(){
+        EntityManager em = getEntityManager();
+        int res = 0;
+        try{
+            List<Perro> perro = em.createNativeQuery("SELECT * FROM PERRO p INNER JOIN SUBSCRIPCION_PERRO sp  ON SP.PERROS_ID_PERRO = p.ID_PERRO " +
+                            "INNER JOIN SUBSCRIPCION s ON s.ID_SUBSCRIPCION  = pe.SUBCRIPCIONES_ID_SUBSCRIPCION " +
+                    "INNER JOIN PERSONA pe ON pe.USUARIO = 'admin'" , Perro.class).getResultList();
+
+            res = perro.size();
+            System.out.println("Perros => " + perro.size());
+
+        } finally {
+            em.close();
+        }
+        return res;
     }
 
     /**

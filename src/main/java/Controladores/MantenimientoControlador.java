@@ -47,16 +47,21 @@ public class MantenimientoControlador {
 
                     Map<String, Object> json = new HashMap();
 
-                    json.put("persona", per);
                     if(per.getSubcripciones() != null){
                         FakeServices.getInstancia().verificarSielPagoEstaAlDia(per);
 
                         if (!FakeServices.getInstancia().verificarSielPagoEstaAlDia(per)) {
+                            Notificaciones not = new Notificaciones("Su pago se encuentra en atraso", new Date(), 2);
+                            NotificacionesServices.getInstancia().crear(not);
+
+                            per.addNotificacion(not);
+                            PersonaServices.getInstancia().editar(per);
                             FakeServices.getInstancia().enviarCorreoByPersona(per, "Notificacion de atraso de pago", "" +
                                     "Un cordial saludo " + per.getNombre() + ", este correo es un recordatorio amigable de su su plan con pet city esta" +
                                     "atrasado en el pago, favor pagar lo antes posible ");
                         }
                     }
+                    json.put("persona", per);
 
 
 
@@ -72,6 +77,14 @@ public class MantenimientoControlador {
                     Map<String, Object> json = new HashMap();
 
                     json.put("historial_de_facturacion", facturas);
+
+                    ctx.status(200);
+                    ctx.json(json);
+                });
+                get("/graficos", ctx -> {
+                    Map<String, Object> json = new HashMap();
+
+                    json.put("graficos", FakeServices.getInstancia().graficas());
 
                     ctx.status(200);
                     ctx.json(json);
@@ -375,6 +388,7 @@ public class MantenimientoControlador {
 
 
                                 List<UsuariosConectados> conexionesDelDueno = WebSocketControlador.buscarConexionesDeUsuarioConectadoByUser(dueno);
+                                System.out.println("Conexiones =>" + conexionesDelDueno.size());
                                 if (conexionesDelDueno.size() > 0) {
                                     System.out.println("Enviando  mensaje al dueno");
                                     enviarMensajeAunGrupo(conexionesDelDueno, not.getContenido());

@@ -40,7 +40,7 @@ public class PersonaServices extends DBManage<Persona>{
         try{
             res = em.createNativeQuery("SELECT * FROM PERSONA where USUARIO = '" + user+"'", Persona.class).getResultList();
 
-            if(res != null){
+            if(res.size() > 0){
                 persona = res.get(0);
             }
         } finally {
