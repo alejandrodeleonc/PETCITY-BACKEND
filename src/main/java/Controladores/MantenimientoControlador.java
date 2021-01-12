@@ -47,6 +47,21 @@ public class MantenimientoControlador {
 
                     Map<String, Object> json = new HashMap();
 
+
+                    json.put("persona", per);
+
+
+
+                    ctx.status(200);
+                    ctx.json(json);
+
+                });
+
+                get("/informacion_pago", ctx -> {
+                    Persona per = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
+                    List<Factura> facturas = FacturacionServices.getInstancia().getHistorialDeFacturacion(per);
+                    int status = 200;
+                    Map<String, Object> json = new HashMap();
                     if(per.getSubcripciones() != null){
                         FakeServices.getInstancia().verificarSielPagoEstaAlDia(per);
 
@@ -60,16 +75,16 @@ public class MantenimientoControlador {
                                     "Un cordial saludo " + per.getNombre() + ", este correo es un recordatorio amigable de su su plan con pet city esta" +
                                     "atrasado en el pago, favor pagar lo antes posible ");
                         }
+                    json.put("pago_al_dia",FakeServices.getInstancia().verificarSielPagoEstaAlDia(per));
+                    json.put("monto", per.getSubcripciones().getPlan().getCosto());
+                    json.put("pagar_antes", per.getSubcripciones().getFechaVencimientoPago());
+                    }else{
+                        json.put("msg", "No tiene suscripcion");
+                        status = 409;
                     }
-                    json.put("persona", per);
-
-
-
-                    ctx.status(200);
+                    ctx.status(status);
                     ctx.json(json);
-
                 });
-
 
                 get("/historial_facturacion", ctx -> {
                     Persona per = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
@@ -81,6 +96,7 @@ public class MantenimientoControlador {
                     ctx.status(200);
                     ctx.json(json);
                 });
+
                 get("/graficos", ctx -> {
                     Map<String, Object> json = new HashMap();
 
