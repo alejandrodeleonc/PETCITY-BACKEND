@@ -1,0 +1,68 @@
+Services/PerroVacunaServices.java
+ Services.PerroVacunaServices
+Encapsulaciones/Factura.java
+ Encapsulaciones.Factura
+Services/PerroServices.java
+ Services.PerroServices
+Controladores/WebSocketControlador.java
+ Controladores.WebSocketControlador
+Encapsulaciones/Notificaciones.java
+ Encapsulaciones.Notificaciones
+Encapsulaciones/LoginResponse.java
+ Encapsulaciones.LoginResponse
+Controladores/AdministracionControlador.java
+ Controladores.AdministracionControlador
+Services/DispensadorServices.java
+ Services.DispensadorServices
+Encapsulaciones/HistorialDeVisitas.java
+ Encapsulaciones.HistorialDeVisitas
+Services/DBManage.java
+ Services.DBManage
+Encapsulaciones/Rol.java
+ Encapsulaciones.Rol
+Services/FakeServices.java
+ Services.FakeServices
+Encapsulaciones/PerroVacuna.java
+ Encapsulaciones.PerroVacuna
+Main.java
+ Main
+Services/FacturacionServices.java
+ Services.FacturacionServices
+Encapsulaciones/Permiso.java
+ Encapsulaciones.Permiso
+Encapsulaciones/Vacuna.java
+ Encapsulaciones.Vacuna
+Encapsulaciones/Perro.java
+ Encapsulaciones.Perro
+Controladores/AutenticacionControlador.java
+ Controladores.AutenticacionControlador
+Services/PlanServices.java
+ Services.PlanServices
+Services/NotificacionesServices.java
+ Services.NotificacionesServices
+Services/DBStart.java
+ Services.DBStart
+Encapsulaciones/Persona.java
+ Encapsulaciones.Persona
+Encapsulaciones/Plan.java
+ Encapsulaciones.Plan
+Services/VacunaServices.java
+ Services.VacunaServices
+Controladores/ApiControlador.java
+ Controladores.ApiControlador
+Services/PersonaServices.java
+ Services.PersonaServices
+Encapsulaciones/Dispensador.java
+ Encapsulaciones.Dispensador
+Services/SubcripcionServices.java
+ Services.SubcripcionServices
+Services/HistorialDeVisitasService.java
+ Services.HistorialDeVisitasService
+Encapsulaciones/Subscripcion.java
+ Encapsulaciones.Subscripcion
+Encapsulaciones/UsuariosConectados.java
+ Encapsulaciones.UsuariosConectados
+Encapsulaciones/Foto.java
+ Encapsulaciones.Foto
+Controladores/MantenimientoControlador.java
+ Controladores.MantenimientoControlador
