@@ -17,6 +17,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 
@@ -51,7 +52,6 @@ public class MantenimientoControlador {
                     json.put("persona", per);
 
 
-
                     ctx.status(200);
                     ctx.json(json);
 
@@ -62,7 +62,7 @@ public class MantenimientoControlador {
                     List<Factura> facturas = FacturacionServices.getInstancia().getHistorialDeFacturacion(per);
                     int status = 200;
                     Map<String, Object> json = new HashMap();
-                    if(per.getSubcripciones() != null){
+                    if (per.getSubcripciones() != null) {
                         FakeServices.getInstancia().verificarSielPagoEstaAlDia(per);
 
                         if (!FakeServices.getInstancia().verificarSielPagoEstaAlDia(per)) {
@@ -75,10 +75,10 @@ public class MantenimientoControlador {
                                     "Un cordial saludo " + per.getNombre() + ", este correo es un recordatorio amigable de su su plan con pet city esta" +
                                     "atrasado en el pago, favor pagar lo antes posible ");
                         }
-                    json.put("pago_al_dia",FakeServices.getInstancia().verificarSielPagoEstaAlDia(per));
-                    json.put("monto", per.getSubcripciones().getPlan().getCosto());
-                    json.put("pagar_antes", per.getSubcripciones().getFechaVencimientoPago());
-                    }else{
+                        json.put("pago_al_dia", FakeServices.getInstancia().verificarSielPagoEstaAlDia(per));
+                        json.put("monto", per.getSubcripciones().getPlan().getCosto());
+                        json.put("pagar_antes", per.getSubcripciones().getFechaVencimientoPago());
+                    } else {
                         json.put("msg", "No tiene suscripcion");
                         status = 409;
                     }
@@ -118,23 +118,23 @@ public class MantenimientoControlador {
                 });
 
 
-                get("/perros/:id_perro/historial_visitas", ctx ->{
+                get("/perros/:id_perro/historial_visitas", ctx -> {
                     int status = 200;
                     Map<String, Object> json = new HashMap();
 
 
                     Perro perr = PerroServices.getInstancia().find(Integer.valueOf(ctx.pathParam("id_perro")));
 
-                   if( perr !=null){
-                       List<HistorialDeVisitas> historial = HistorialDeVisitasService.getInstancia().getHistorialByPerroId(perr);
-                    json.put("historial", historial);
-                   }else{
-                       status = 409;
-                       json.put("msg", "El perro no existe");
-                   }
+                    if (perr != null) {
+                        List<HistorialDeVisitas> historial = HistorialDeVisitasService.getInstancia().getHistorialByPerroId(perr);
+                        json.put("historial", historial);
+                    } else {
+                        status = 409;
+                        json.put("msg", "El perro no existe");
+                    }
 
-                   ctx.json(json);
-                   ctx.status(status);
+                    ctx.json(json);
+                    ctx.status(status);
                 });
 
                 post("/registrar_perro", ctx -> {
@@ -170,27 +170,55 @@ public class MantenimientoControlador {
                     int status = 200;
                     JSONObject res = new JSONObject();
                     Plan plan = PlanServices.getInstancia().find(Integer.valueOf(ctx.formParam("id_plan")));
-                    Persona persona = PersonaServices.getInstancia().find(Integer.valueOf(ctx.formParam("id_persona")));
-                    List<String> id_perros = ctx.formParams("perros");
-                    List<Perro> perros = id_perros == null ? null : PerroServices.getInstancia().buscarVariosPerrosPorId(id_perros);
+                    Persona persona = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
+
 
                     if (persona != null) {
                         if (plan != null) {
-                            if (perros.size() == id_perros.size()) {
-                                if (perros.size() < plan.getCantidad_maxima_de_perros()) {
-                                    Subscripcion sub = new Subscripcion(plan, new Date(), new Date(), perros);
-                                    SubcripcionServices.getInstancia().crear(sub);
-                                    persona.setSubcripciones(sub);
-                                    PersonaServices.getInstancia().editar(persona);
-                                    res.put("msg", "Se ha suscrito correctamente!");
-                                } else {
-                                    res.put("msg", "Necesita escoger un plan mas alto!");
-                                    status = 401;
-                                }
+                            if (persona.getSubcripciones() == null) {
+
+                                Subscripcion sub = new Subscripcion(plan, new Date(), new Date(), new ArrayList<Perro>());
+                                SubcripcionServices.getInstancia().crear(sub);
+                                persona.setSubcripciones(sub);
+                                PersonaServices.getInstancia().editar(persona);
+                                res.put("msg", "Se ha suscrito correctamente!");
+
                             } else {
-                                res.put("msg", "Parametros proporcionados incorrectos!");
-                                status = 401;
+
+                                Subscripcion s = persona.getSubcripciones();
+
+                                if(plan.getId_plan() != s.getPlan().getId_plan()){
+                                    if(FacturacionServices.getInstancia().puedeCambiarDePlan(plan, persona)){
+                                    s.setPlan(plan);
+                                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                                    System.out.println("Fecha actual =>" +format.format(new Date()) );
+                                    System.out.println("Fecha de pago =>" +format.format(s.getFechaVencimientoPago()) );
+                                    long monthsBetween = ChronoUnit.MONTHS.between(
+                                            LocalDate.parse(format.format(new Date())).withDayOfMonth(1),
+                                            LocalDate.parse(format.format(s.getFechaVencimientoPago())).withDayOfMonth(1));
+                                    System.out.println(monthsBetween); //3
+
+                                    Calendar cal = Calendar.getInstance();
+                                    cal.add(Calendar.MONTH, plan.getMeses_actividad() + monthsBetween < 0 ?  0 : (int) monthsBetween);
+                                    s.setFechaVencimientoPago(cal.getTime());
+                                    SubcripcionServices.getInstancia().editar(s);
+                                    res.put("msg", "Ha cambiado de plan!");
+
+                                    }else{
+                                        status = 409;
+                                        res.put("msg", "No puede cambiar de plan, primero necesita pagar el plan nuevo!");
+
+                                    }
+
+
+                                }else{
+                                    status = 409;
+                                    res.put("msg", "Ya esta suscrito a este plan!");
+                                }
+
                             }
+
+
                         } else {
                             res.put("msg", "El plan seleccionado no es correcto!");
                             status = 409;
@@ -275,13 +303,14 @@ public class MantenimientoControlador {
                     JSONObject res = new JSONObject();
                     int status = 200;
                     Persona per = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
-
+                    Plan plan = ctx.formParam("id_plan") != null ?
+                            PlanServices.getInstancia().find(Integer.valueOf(ctx.formParam("id_plan"))) : null;
                     if (per.getSubcripciones() != null) {
                         Subscripcion sub = per.getSubcripciones();
 //                        res.put("msg", FacturacionServices.getInstancia().getUltimaFacturaByPersona(per).getId_factura());
-                        Factura factura = new Factura(per,new Date(),per.getSubcripciones(), per.getSubcripciones().getPlan().getCosto());
+                        Factura factura = new Factura(per, new Date(), per.getSubcripciones(), plan  == null ?per.getSubcripciones().getPlan().getCosto() : plan.getCosto());
                         Calendar cal = Calendar.getInstance();
-                        cal.add(Calendar.MONTH, sub.getPlan().getMeses_actividad() );
+                        cal.add(Calendar.MONTH, sub.getPlan().getMeses_actividad());
                         sub.setFechaVencimientoPago(cal.getTime());
                         sub.setPago(true);
                         SubcripcionServices.getInstancia().editar(sub);
@@ -387,7 +416,7 @@ public class MantenimientoControlador {
                                 dueno.addNotificacion(not);
                                 NotificacionesServices.getInstancia().crear(not);
                                 PersonaServices.getInstancia().editar(dueno);
-                                FakeServices.getInstancia().enviarCorreoByPersona(dueno, "Alerta de visita de " + perro.getNombre()+"!" , "" +
+                                FakeServices.getInstancia().enviarCorreoByPersona(dueno, "Alerta de visita de " + perro.getNombre() + "!", "" +
                                         "https://www.google.com/maps?q=" + dispensador.getLatitud() + "," + dispensador.getLongitud() + "&z=17&hl=es\n" + not.getContenido());
 //                                FakeServices.getInstancia().sendToTelegram("https://www.google.com/maps?q=" + dispensador.getLatitud() + "," + dispensador.getLongitud() + "&z=17&hl=es\n" + not.getContenido());
                                 FakeServices.getInstancia().sendToTelegram("holA");
@@ -437,40 +466,40 @@ public class MantenimientoControlador {
                     String header = ctx.header("Authorization");
                     int id = Integer.valueOf(ctx.pathParam("id"));
 
-                    try{
+                    try {
 
 
-                    Perro perro = PerroServices.getInstancia().find(id);
+                        Perro perro = PerroServices.getInstancia().find(id);
 
 //                    enviarMensajeAClientesConectados("perro perdido", "rojo");
 
-                    if (perro != null) {
-                        if (!perro.getPerdido()) {
+                        if (perro != null) {
+                            if (!perro.getPerdido()) {
 
-                            Persona dueno = PerroServices.getInstancia().buscarDueno(perro);
-                            System.out.println("El dueno => " + dueno.getNombre());
-                            if (dueno != null) {
+                                Persona dueno = PerroServices.getInstancia().buscarDueno(perro);
+                                System.out.println("El dueno => " + dueno.getNombre());
+                                if (dueno != null) {
 
-                                if (FakeServices.getInstancia().compararHeaderUser(header, dueno)) {
-                                    perro.setPerdido(true);
-                                    PerroServices.getInstancia().editar(perro);
-                                    res.put("msg", "El perro ha sido reportado como perdido!");
+                                    if (FakeServices.getInstancia().compararHeaderUser(header, dueno)) {
+                                        perro.setPerdido(true);
+                                        PerroServices.getInstancia().editar(perro);
+                                        res.put("msg", "El perro ha sido reportado como perdido!");
+                                    } else {
+                                        res.put("msg", "No tiene permiso para modificar este perro");
+                                        status = 401;
+                                    }
                                 } else {
-                                    res.put("msg", "No tiene permiso para modificar este perro");
-                                    status = 401;
+                                    res.put("msg", "Este perro es callejero");
                                 }
                             } else {
-                                res.put("msg", "Este perro es callejero");
+                                res.put("msg", "Este perro ya esta rerpotado como perdido");
+                                status = 409;
                             }
                         } else {
-                            res.put("msg", "Este perro ya esta rerpotado como perdido");
                             status = 409;
+                            res.put("msg", "El perro que busca no existe");
                         }
-                    } else {
-                        status = 409;
-                        res.put("msg", "El perro que busca no existe");
-                    }
-                    }catch(Exception e){
+                    } catch (Exception e) {
                         status = 409;
                         res.put("msg", "Datos invalidos");
 
@@ -539,7 +568,7 @@ public class MantenimientoControlador {
                             notificacion.setEstado(true);
                             NotificacionesServices.getInstancia().editar(notificacion);
                             res.put("msg", "Se ha visto la notificacion");
-                        }else{
+                        } else {
                             status = 200;
                             res.put("msg", "Ya se ha visto anteriormente");
 
@@ -551,8 +580,6 @@ public class MantenimientoControlador {
                     ctx.json(res.toMap());
 
                 });
-
-
 
 
 //                post("/perros/:id_perro/agregar_vacuna", ctx->{
@@ -590,7 +617,7 @@ public class MantenimientoControlador {
 //                    ctx.json(res.toMap());
 //
 //                });
-                post("/perros/:id_perro/agregar_vacuna/:id_vacuna", ctx->{
+                post("/perros/:id_perro/agregar_vacuna/:id_vacuna", ctx -> {
                     JSONObject res = new JSONObject();
                     int status = 200;
                     int id_perro = Integer.valueOf(ctx.pathParam("id_perro"));
@@ -598,11 +625,11 @@ public class MantenimientoControlador {
                     Vacuna vacuna = VacunaServices.getInstancia().find(id_vacuna);
                     Perro perro = PerroServices.getInstancia().find(id_perro);
 
-                    if(perro != null && vacuna != null){
-                        perro.addVacuna(new PerroVacuna( new Date(), vacuna));
+                    if (perro != null && vacuna != null) {
+                        perro.addVacuna(new PerroVacuna(new Date(), vacuna));
                         PerroServices.getInstancia().editar(perro);
                         res.put("msg", "Se agrego vacuna correctamente");
-                    }else{
+                    } else {
                         res.put("msg", "Parametros proporcionados incorrectos");
                         status = 409;
                     }
@@ -611,7 +638,7 @@ public class MantenimientoControlador {
                     ctx.json(res.toMap());
 
                 });
-                post("/perros/:id_perro/quitar_vacuna/:id_vacunacion", ctx->{
+                post("/perros/:id_perro/quitar_vacuna/:id_vacunacion", ctx -> {
                     JSONObject res = new JSONObject();
                     int status = 200;
                     int id_perro = Integer.valueOf(ctx.pathParam("id_perro"));
@@ -619,10 +646,10 @@ public class MantenimientoControlador {
                     Vacuna vacuna = VacunaServices.getInstancia().find(id_vacuna);
                     Perro perro = PerroServices.getInstancia().find(id_perro);
 
-                    if(perro != null && vacuna != null){
+                    if (perro != null && vacuna != null) {
                         PerroVacunaServices.getInstancia().eliminar(id_vacuna);
                         res.put("msg", "Se borros vacuna correctamente");
-                    }else{
+                    } else {
                         res.put("msg", "Parametros proporcionados incorrectos");
                         status = 409;
                     }
@@ -633,11 +660,9 @@ public class MantenimientoControlador {
                 });
 
 
-                get("/vacunas", ctx ->{
+                get("/vacunas", ctx -> {
                     ctx.json(VacunaServices.getInstancia().findAll());
                 });
-
-
 
 
             });
