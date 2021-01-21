@@ -68,6 +68,13 @@ public class Subscripcion implements Serializable {
         return aux;
     }
 
+    public void addPerros(List<Perro> perros){
+        for(Perro perro : perros){
+            this.perros.add(perro);
+        }
+
+    }
+
     public boolean isPago() {
         return pago;
     }

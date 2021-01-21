@@ -28,14 +28,19 @@ public class Factura implements Serializable {
     @NotNull
     private float monto;
 
+    @OneToOne
+    @NotNull
+    private PaypalInfo paypal;
+
     public Factura() {
     }
 
-    public Factura(Persona persona,Date fecha, Subscripcion subscripcion, float monto) {
+    public Factura(Persona persona,Date fecha, Subscripcion subscripcion,  PaypalInfo paypal) {
         this.persona = persona;
         this.fecha = fecha;
         this.subscripcion = subscripcion;
-        this.monto = monto;
+        this.monto = paypal.getValue();
+        this.paypal = paypal;
     }
 
     public int getPersona() {

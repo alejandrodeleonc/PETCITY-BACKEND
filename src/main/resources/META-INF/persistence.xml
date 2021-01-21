@@ -19,6 +19,7 @@
         <class>Encapsulaciones.Foto</class>
         <class>Encapsulaciones.Factura</class>
         <class>Encapsulaciones.PerroVacuna</class>
+        <class>Encapsulaciones.PaypalInfo</class>
 
 
         <properties>
@@ -28,7 +29,7 @@
             <property name="javax.persistence.jdbc.password" value="" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
             <property name="hibernate.show_sql" value="true"/>
-            <property name="javax.persistence.schema-generation.database.action" value="update"/>
+            <property name="javax.persistence.schema-generation.database.action" value="create-drop"/>
         </properties>
     </persistence-unit>
 </persistence>

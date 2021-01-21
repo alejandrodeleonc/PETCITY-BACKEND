@@ -1,6 +1,7 @@
 package Services;
 
 
+import Encapsulaciones.Factura;
 import Encapsulaciones.Notificaciones;
 import Encapsulaciones.Perro;
 import Encapsulaciones.Persona;
@@ -46,5 +47,28 @@ public class NotificacionesServices extends DBManage<Notificaciones> {
         List<Notificaciones> notificaciones = new ArrayList<Notificaciones>();
 
         return notificaciones;
+    }
+
+    public boolean comprobarSiTieneNotificacionesDePagoHoy(Persona persona){
+
+        EntityManager em = getEntityManager();
+        String sql =         "SELECT * FROM NOTIFICACIONES n " +
+                "JOIN PERSONA_NOTIFICACIONES pn ON (n.ID_NOTIFICACIONES = pn.NOTIFICACIONES_ID_NOTIFICACIONES) " +
+                "AND (pn.PERSONA_ID_PERSONA ="+ persona.getId_persona() +") " +
+                "WHERE (n.TIPO = 2) AND (CAST(n.FECHA_CREACION AS DATE) = CAST(GETDATE() AS DATE))";
+        boolean status = false;
+        List<Notificaciones> res = new ArrayList<Notificaciones>();
+
+
+        try {
+            res = em.createNativeQuery(sql, Notificaciones.class).getResultList();
+
+            System.out.println("El tamano de las notificaciones => " + res.size());
+            status = res.size() > 0 ? true : false;
+        } finally {
+            em.close();
+        }
+
+        return status;
     }
 }
