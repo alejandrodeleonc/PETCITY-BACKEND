@@ -71,4 +71,26 @@ public class NotificacionesServices extends DBManage<Notificaciones> {
 
         return status;
     }
+
+    public boolean comprobarSiEsDueno(Persona persona, Notificaciones noticacion){
+        boolean status = false;
+        EntityManager em = getEntityManager();
+        String sql =         "SELECT * FROM PERSONA p \n" +
+                "JOIN PERSONA_NOTIFICACIONES pn ON (p.ID_PERSONA = pn.PERSONA_ID_PERSONA)\n" +
+                "AND (pn.NOTIFICACIONES_ID_NOTIFICACIONES = "+ noticacion.getId_notificaciones()+")";
+        Persona res = null;
+        try{
+            res = (Persona) em.createNativeQuery(sql, Persona.class).getSingleResult();
+
+
+            status = res  == null ? false :  res.getId_persona() == persona.getId_persona() ? true : false;
+
+
+
+        }finally{
+            em.close();
+        }
+
+        return status;
+    }
 }

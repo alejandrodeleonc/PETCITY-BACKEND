@@ -28,6 +28,7 @@ public class Notificaciones implements Serializable {
 
     private boolean estado;
 
+    private boolean activa;
 
     public Notificaciones() {
     }
@@ -38,6 +39,7 @@ public class Notificaciones implements Serializable {
         this.fecha_creacion = fecha_creacion;
         this.estado = false;
         this.tipo = tipo;
+        this.activa = true;
     }
 
     public int getId_notificaciones() {
@@ -76,6 +78,14 @@ public class Notificaciones implements Serializable {
 
     public void setTipo(int tipo) {
         this.tipo = tipo;
+    }
+
+    public boolean isActiva() {
+        return activa;
+    }
+
+    public void setActiva(boolean activa) {
+        this.activa = activa;
     }
 
     public void setEstado(boolean estado) {

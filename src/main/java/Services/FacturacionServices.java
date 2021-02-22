@@ -76,7 +76,7 @@ public class FacturacionServices extends DBManage<Factura> {
     public Map<Integer, Object> getGananciasMensuales() {
         EntityManager em = getEntityManager();
         Map<Integer, Object> res = new HashMap();
-        String sql = "SELECT MONTH(FECHA), SUM(MONTO) FROM HISTORIAL_DE_FACTURACION hdf WHERE YEAR(FECHA) = 2020 GROUP BY MONTH (FECHA)";
+        String sql = "SELECT MONTH(FECHA), SUM(MONTO) FROM HISTORIAL_DE_FACTURACION hdf WHERE YEAR(FECHA) = 2021 GROUP BY MONTH (FECHA)";
         Query query = em.createNativeQuery(sql);
         try {
 

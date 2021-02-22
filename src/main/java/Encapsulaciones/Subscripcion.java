@@ -33,6 +33,8 @@ public class Subscripcion implements Serializable {
     private Date fechaVencimientoPago;
     private Date fechaDeAdquisicion;
 
+    private boolean status;
+
 
     public Subscripcion() {
     }
@@ -47,6 +49,7 @@ public class Subscripcion implements Serializable {
         this.perros = perros == null ? new ArrayList<Perro>() : perros;
         this.fechaVencimientoPago = fechaVencimientoPago;
         this.fechaDeAdquisicion = fechaDeAdquisicion;
+        this.status = true;
     }
 
     public int getId_subscripcion() {
@@ -60,10 +63,14 @@ public class Subscripcion implements Serializable {
     public boolean addPerro(Perro perro) {
         boolean aux = false;
 
-        if (perros.size() < plan.getCantidad_maxima_de_perros()) {
+//        if (perros.size() < plan.getCantidad_maxima_de_perros()) {
+//            aux = true;
+//            perros.add(perro);
+//        }
+
             aux = true;
             perros.add(perro);
-        }
+
 
         return aux;
     }
@@ -100,6 +107,14 @@ public class Subscripcion implements Serializable {
 //    }
 
 
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
     public List<Perro> getPerros() {
         return perros;
     }
@@ -122,5 +137,24 @@ public class Subscripcion implements Serializable {
 
     public void setFechaDeAdquisicion(Date fechaDeAdquisicion) {
         this.fechaDeAdquisicion = fechaDeAdquisicion;
+    }
+
+    public boolean  borrarPerro(Perro perro){
+        boolean aux = false;
+        int i = 0;
+        for(Perro dog : this.perros){
+            if(dog.getId_perro() == perro.getId_perro()){
+                this.perros.remove(i);
+                aux = true;
+                break;
+            }
+            i++;
+        }
+        return aux;
+    }
+
+    public int cuposDePerrosRestantes(){
+        int aux =  this.getPlan().getCantidad_maxima_de_perros() - this.perros.size() < 0 ? 0:this.getPlan().getCantidad_maxima_de_perros() - this.perros.size();
+        return aux;
     }
 }

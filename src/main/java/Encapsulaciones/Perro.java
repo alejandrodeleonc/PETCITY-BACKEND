@@ -25,6 +25,10 @@ public class Perro implements Serializable {
     private Date fecha_registro;
     private int limite_repeticion_comida;
 
+
+    private boolean adoptado;
+    private Date fecha_adopcion;
+
     @OneToOne
     private Foto foto;
 
@@ -99,6 +103,26 @@ public class Perro implements Serializable {
 
     public int getLimite_repeticion_comida() {
         return limite_repeticion_comida;
+    }
+
+    public void setId_perro(int id_perro) {
+        this.id_perro = id_perro;
+    }
+
+    public boolean isAdoptado() {
+        return adoptado;
+    }
+
+    public void setAdoptado(boolean adoptado) {
+        this.adoptado = adoptado;
+    }
+
+    public Date getFecha_adopcion() {
+        return fecha_adopcion;
+    }
+
+    public void setFecha_adopcion(Date fecha_adopcion) {
+        this.fecha_adopcion = fecha_adopcion;
     }
 
     public void addVacuna(PerroVacuna vacuna ){
