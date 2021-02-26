@@ -28,6 +28,14 @@ public class Dispensador implements Serializable {
         this.direccion = direccion;
     }
 
+    public String getDispensador() {
+        return dispensador;
+    }
+
+    public void setDispensador(String dispensador) {
+        this.dispensador = dispensador;
+    }
+
     public String getId_dispensador() {
         return dispensador;
     }
