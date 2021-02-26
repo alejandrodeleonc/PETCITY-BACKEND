@@ -1,12 +1,16 @@
 package Encapsulaciones;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name="ROL")
-public class Rol {
+public class Rol  implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id_rol;
@@ -14,33 +18,35 @@ public class Rol {
     private String nombre;
     private boolean activo;
 
-    @ManyToMany(cascade = { CascadeType.ALL })
+    @ManyToMany( fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
+    @Fetch(value = FetchMode.SUBSELECT)
     @JoinTable(
-            name = "ROL_PERMISO",
-            joinColumns = { @JoinColumn(name = "id_permiso") },
+            name = "ROL_ACCION",
+            joinColumns = { @JoinColumn(name = "id_accion") },
             inverseJoinColumns = { @JoinColumn(name = "id_rol") }
 
     )
-    List<Permiso> permisos = new ArrayList<Permiso>();
+    private List<Accion> acciones;
 
-    @ManyToMany(cascade = { CascadeType.ALL })
-    @JoinTable(
-            name = "PERSONA_ROL",
-            joinColumns = { @JoinColumn(name = "id_persona") },
-            inverseJoinColumns = { @JoinColumn(name = "id_rol") }
-    )
-    private List<Persona> personasroles = new ArrayList<Persona>();
+    public Rol() {
+    }
+
     public Rol(String nombre, boolean activo) {
         this.nombre = nombre;
         this.activo = activo;
+        this.acciones = new ArrayList<Accion>();
     }
 
-    public List<Permiso> getPermisos() {
-        return permisos;
+    public List<Accion> getAcciones() {
+        return acciones;
     }
 
-    public void setPermisos(List<Permiso> permisos) {
-        this.permisos = permisos;
+    public void setAcciones(List<Accion> acciones) {
+        this.acciones = acciones;
+    }
+
+    public void addAccion(Accion accion){
+        this.acciones.add(accion);
     }
 
     public int getId_rol() {

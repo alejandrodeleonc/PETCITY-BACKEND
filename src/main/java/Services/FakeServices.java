@@ -21,10 +21,27 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.*;
+import io.javalin.core.security.Role;
 
 public class FakeServices {
     private final static String LLAVE_SECRETA = "cRfUjXn2r5u8x/A?D(G-KaPdSgVkYp3s6v9y$B&E)H@MbQeThWmZq4t7w!z%C*F-";
     private static FakeServices instancia;
+
+    public static class RolApp implements Role {
+        public String act;
+        public String per;
+        public Accion accion;
+        public RolApp(String per, String p){
+            this.per = per;
+            this.act = p;
+//            this.getAccion();
+        }
+
+        public void getAccion(){
+            String accion_ = PermisosyAcciones.getInstancia().getAccion(this.per, this.act);
+            this.accion = accion_ != null ? AccionServices.getInstancia().findBy("NOMBRE", "'"+accion_+"'") : null;
+        }
+    }
 
     public static FakeServices getInstancia() {
         if (instancia == null) {

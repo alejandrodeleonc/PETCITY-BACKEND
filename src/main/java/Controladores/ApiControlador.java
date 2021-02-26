@@ -1,8 +1,18 @@
 package Controladores;
 
+import Encapsulaciones.Accion;
+import Encapsulaciones.PermisosyAcciones;
+import Encapsulaciones.Persona;
+import Encapsulaciones.Rol;
+import Services.FakeServices;
+import Services.RolServices;
 import io.javalin.Javalin;
 
+import java.util.Collections;
+
 import static io.javalin.apibuilder.ApiBuilder.*;
+
+
 
 public class ApiControlador {
     private Javalin app;
@@ -36,6 +46,44 @@ public class ApiControlador {
 //            });
 
 
+
+        app.config.accessManager((handler, ctx, permittedAccion) -> {
+            final Persona usuario = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
+
+            System.out.println("permittedAccion -> ");
+            FakeServices.RolApp rr = (FakeServices.RolApp) permittedAccion.toArray()[0];
+            rr.getAccion();
+            System.out.println(rr.accion);
+            Boolean is_accept = rr.accion != null && usuario != null;
+
+            System.out.println("PASO 1:");
+            if (is_accept){
+                is_accept = false;
+                for(Rol rol : usuario.getPersonasroles()){
+                    System.out.println("PASO 2:");
+                    for(Accion accion : rol.getAcciones() ){
+                        System.out.println("PASO 3:");
+                        if (accion.getId_accion() == rr.accion.getId_accion()) {
+                            System.out.println("PASO 4:");
+                            System.out.println(String.format("El Usuario: %s - con el Rol: %s tiene permiso", usuario.getUsuario(), rol.getNombre()));
+                            is_accept = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (is_accept){
+                handler.handle(ctx);
+            }else{
+                System.out.println("No tiene permiso para acceder..");
+                ctx.status(401).result("No tiene permiso para acceder...");
+                return;
+            }
+            System.out.println("PASO 5:");
+        });
+
+
         app.routes(() -> {
 
             after("/*", ctx -> {
@@ -48,6 +96,12 @@ public class ApiControlador {
 
 
             path("/api/v1", () -> {
+            before("/*", ctx->{
+                System.out.println("Ruta -> ");
+//                System.out.println(ctx.);
+
+
+            });
                 before("/mantenimiento/*", ctx -> {
                     String header = "Authorization";
                     String prefijo = "Bearer";

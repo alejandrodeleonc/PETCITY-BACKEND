@@ -20,6 +20,7 @@
         <class>Encapsulaciones.Factura</class>
         <class>Encapsulaciones.PerroVacuna</class>
         <class>Encapsulaciones.PaypalInfo</class>
+        <class>Encapsulaciones.Accion</class>
 
 
         <properties>

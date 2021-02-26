@@ -24,10 +24,13 @@ import java.util.*;
 import static Controladores.WebSocketControlador.*;
 import static io.javalin.apibuilder.ApiBuilder.*;
 import static io.javalin.apibuilder.ApiBuilder.post;
+import static io.javalin.core.security.SecurityUtil.roles;
 
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
+//import org.h2.engine.Role;
+import io.javalin.core.security.Role;
 
 public class MantenimientoControlador {
     private Javalin app;
@@ -162,7 +165,7 @@ public class MantenimientoControlador {
 
                     ctx.json(json);
                     ctx.status(status);
-                });
+                }, Collections.singleton(new FakeServices.RolApp("usuario", "crear")));
 
                 post("/registrar_perro", ctx -> {
                     int status = 200;

@@ -16,6 +16,7 @@ import static j2html.TagCreator.a;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
 
@@ -36,6 +37,7 @@ public class Main {
 //                "admin", "admin", "sdfsasdf");
 //        Persona pi = new Persona("Raspberry Pi", "000000", "", new Date(), "La zursa",
 //                "pi", "raspberry", "ninguno");
+//
 //
 //
 //        PersonaServices.getInstancia().crear(persoo);
@@ -66,7 +68,26 @@ public class Main {
 //        SubcripcionServices.getInstancia().crear(sub);
 //        persoo.setSubcripciones(sub);
 //        PersonaServices.getInstancia().editar(persoo);
+//
+//        Permiso permiso = new Permiso("persona", true);
+//        PermisoServices.getInstancia().crear(permiso);
+//
+//        Accion accion = new Accion("crear", permiso);
+//        AccionServices.getInstancia().crear(accion);
+//
+//
+//        Rol rol = new Rol("rol1", true);
+//        RolServices.getInstancia().crear(rol);
+//
+//        rol.addAccion(accion);
+////        RolServices.getInstancia().editar(rol);
+//
+//
+//        persoo.addRol(rol);
+//        PersonaServices.getInstancia().editar(persoo);
 
+
+        PermisosyAcciones.getInstancia().createTable();
         new ApiControlador(app).aplicarRutas();
         /*
         new MantenimientoControlador(app).aplicarRutas();

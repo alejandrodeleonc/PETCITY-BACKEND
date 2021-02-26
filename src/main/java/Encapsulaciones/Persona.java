@@ -17,7 +17,7 @@ import java.util.Set;
 
 @Entity
 @Table(name="PERSONA")
-public class Persona  implements Serializable {
+public class Persona implements Serializable   {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id_persona;
@@ -55,10 +55,18 @@ public class Persona  implements Serializable {
 //    @OneToMany(fetch = FetchType.EAGER)
 //    private List<Factura> historial_de_facturacion;
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "personasroles")
-    @Fetch(value = FetchMode.SUBSELECT)
-    List<Rol> rolespersona = new ArrayList<Rol>();
+//    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "personasroles")
+//    @Fetch(value = FetchMode.SUBSELECT)
+//    List<Rol> rolespersona = new ArrayList<Rol>();
 
+    @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
+    @Fetch(value = FetchMode.SUBSELECT)
+    @JoinTable(
+            name = "PERSONA_ROL",
+            joinColumns= { @JoinColumn(name = "id_rol") },
+            inverseJoinColumns= { @JoinColumn(name = "id_persona") }
+    )
+    private List<Rol> personasroles = new ArrayList<Rol>();
 
 
 
@@ -82,6 +90,18 @@ public class Persona  implements Serializable {
         this.notificaciones =  new ArrayList<Notificaciones>();
 //        this.historial_de_facturacion =  new ArrayList<Factura>();
 
+    }
+
+    public List<Rol> getPersonasroles() {
+        return personasroles;
+    }
+
+    public void setPersonasroles(List<Rol> personasroles) {
+        this.personasroles = personasroles;
+    }
+
+    public void addRol(Rol rol){
+        this.personasroles.add(rol);
     }
 
     public String getCorreo() {
@@ -172,13 +192,13 @@ public class Persona  implements Serializable {
         this.subcripciones = subcripciones;
     }
 
-    public List<Rol> getRolespersona() {
-        return rolespersona;
-    }
-
-    public void setRolespersona(List<Rol> rolespersona) {
-        this.rolespersona = rolespersona;
-    }
+//    public List<Rol> getRolespersona() {
+//        return rolespersona;
+//    }
+//
+//    public void setRolespersona(List<Rol> rolespersona) {
+//        this.rolespersona = rolespersona;
+//    }
 
     public Foto getFoto() {
         return foto;

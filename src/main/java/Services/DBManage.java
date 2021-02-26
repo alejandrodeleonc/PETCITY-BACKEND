@@ -4,6 +4,7 @@ import Encapsulaciones.Persona;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaQuery;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -141,6 +142,19 @@ public class DBManage<T> {
         EntityManager em = getEntityManager();
         try{
             return em.find(claseEntidad, id);
+        } finally {
+            em.close();
+        }
+    }
+
+    public T findBy(Object column, Object value) throws PersistenceException {
+        EntityManager em = getEntityManager();
+        try{
+            Table table = (Table) claseEntidad.getAnnotations()[1];
+            T res = (T) em.createNativeQuery("SELECT * FROM "+ table.name() +" where "+column+"= "+value, claseEntidad).getSingleResult();
+            return res;
+        }catch(Exception e){
+          return null;
         } finally {
             em.close();
         }

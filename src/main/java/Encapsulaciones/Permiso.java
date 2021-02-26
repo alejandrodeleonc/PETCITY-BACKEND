@@ -1,13 +1,17 @@
 package Encapsulaciones;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import javax.swing.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name="PERMISO")
-public class Permiso {
+public class Permiso  implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id_permiso;
@@ -15,13 +19,17 @@ public class Permiso {
     private String nombre;
     private boolean activo;
 
-    @ManyToMany(mappedBy = "permisos")
-    private List<Rol> roles = new ArrayList<Rol>();
+
+
+    public Permiso() {
+    }
 
     public Permiso(String nombre, boolean activo) {
         this.nombre = nombre;
         this.activo = activo;
     }
+
+
 
     public int getId_permiso() {
         return id_permiso;
@@ -31,13 +39,7 @@ public class Permiso {
         this.id_permiso = id_permiso;
     }
 
-    public List<Rol> getRoles() {
-        return roles;
-    }
 
-    public void setRoles(List<Rol> roles) {
-        this.roles = roles;
-    }
 
     public String getNombre() {
         return nombre;
