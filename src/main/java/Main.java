@@ -32,40 +32,40 @@ public class Main {
         });
         app.start(8000);
         DBStart.getInstancia().init();
-        Persona persoo = new Persona("Alejandro", "4021527","alejandrodelonc15@gmail.com", new Date(), "j amor",
-                "admin", "admin", "sdfsasdf");
-        Persona pi = new Persona("Raspberry Pi", "000000", "", new Date(), "La zursa",
-                "pi", "raspberry", "ninguno");
-
-
-        PersonaServices.getInstancia().crear(persoo);
-        PersonaServices.getInstancia().editar(pi);
-
-
-        Format forma = new SimpleDateFormat("dd/MM/yyyy");
-        Perro pers = new Perro("484849535648495350491310","Billy", new Date(), 2) ;
-        PerroServices.getInstancia().crear(pers);
-
-        Plan pl = new Plan("VIP", Float.parseFloat("1200.00") , 6, 7);
-        PlanServices.getInstancia().crear(new Plan("Básico", Float.parseFloat("870.00") , 2, 3));
-        PlanServices.getInstancia().crear(new Plan("Básico", Float.parseFloat("950.00") , 4, 5));
-        PlanServices.getInstancia().crear(pl);
-
-        Dispensador dispen = new Dispensador("0013A20040A4D103", "-70.5289368", "9.2209351","Calle 7");
-        DispensadorServices.getInstancia().crear(dispen);
-        HistorialDeVisitas vis = new HistorialDeVisitas(pers, dispen, new Date() , true);
-        HistorialDeVisitasService.getInstancia().crear(vis);
-
-        VacunaServices.getInstancia().crear( new Vacuna("Vacuna 1"));
-        VacunaServices.getInstancia().crear( new Vacuna("Vacuna 2"));
-        VacunaServices.getInstancia().crear( new Vacuna("Vacuna 3"));
-
-
-        Subscripcion sub = new Subscripcion(pl, new Date(), new Date(), new ArrayList<Perro>());
-        sub.addPerro(pers);
-        SubcripcionServices.getInstancia().crear(sub);
-        persoo.setSubcripciones(sub);
-        PersonaServices.getInstancia().editar(persoo);
+//        Persona persoo = new Persona("Alejandro", "4021527","alejandrodelonc15@gmail.com", new Date(), "j amor",
+//                "admin", "admin", "sdfsasdf");
+//        Persona pi = new Persona("Raspberry Pi", "000000", "", new Date(), "La zursa",
+//                "pi", "raspberry", "ninguno");
+//
+//
+//        PersonaServices.getInstancia().crear(persoo);
+//        PersonaServices.getInstancia().editar(pi);
+//
+//
+//        Format forma = new SimpleDateFormat("dd/MM/yyyy");
+//        Perro pers = new Perro("484849535648495350491310","Billy", new Date(), 2) ;
+//        PerroServices.getInstancia().crear(pers);
+//
+//        Plan pl = new Plan("VIP", Float.parseFloat("1200.00") , 6, 7);
+//        PlanServices.getInstancia().crear(new Plan("Básico", Float.parseFloat("870.00") , 2, 3));
+//        PlanServices.getInstancia().crear(new Plan("Básico", Float.parseFloat("950.00") , 4, 5));
+//        PlanServices.getInstancia().crear(pl);
+//
+//        Dispensador dispen = new Dispensador("0013A20040A4D103", "-70.5289368", "9.2209351","Calle 7");
+//        DispensadorServices.getInstancia().crear(dispen);
+//        HistorialDeVisitas vis = new HistorialDeVisitas(pers, dispen, new Date() , true);
+//        HistorialDeVisitasService.getInstancia().crear(vis);
+//
+//        VacunaServices.getInstancia().crear( new Vacuna("Vacuna 1"));
+//        VacunaServices.getInstancia().crear( new Vacuna("Vacuna 2"));
+//        VacunaServices.getInstancia().crear( new Vacuna("Vacuna 3"));
+//
+//
+//        Subscripcion sub = new Subscripcion(pl, new Date(), new Date(), new ArrayList<Perro>());
+//        sub.addPerro(pers);
+//        SubcripcionServices.getInstancia().crear(sub);
+//        persoo.setSubcripciones(sub);
+//        PersonaServices.getInstancia().editar(persoo);
 
         new ApiControlador(app).aplicarRutas();
         /*
