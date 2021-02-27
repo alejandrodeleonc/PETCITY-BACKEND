@@ -4,6 +4,7 @@ import Encapsulaciones.LoginResponse;
 import Encapsulaciones.Persona;
 import Services.FakeServices;
 import Services.PersonaServices;
+import Services.RolServices;
 import io.javalin.Javalin;
 import kong.unirest.json.JSONObject;
 
@@ -76,7 +77,9 @@ public class AutenticacionControlador {
                         Persona persona_registrada = new Persona(nombre, identificacion, correo, fecha_nacimiento, direccion, usuario, password, coddigo_retiro);
 
                         if (PersonaServices.getInstancia().crear(persona_registrada)) {
-                            res.put("msg", "Usuario Registrado correctamente!");
+                            persona_registrada.addRol(RolServices.getInstancia().find(2));
+                            PersonaServices.getInstancia().editar(persona_registrada);
+                                res.put("msg", "Usuario Registrado correctamente!");
                         } else {
                             status = 401;
                             res.put("msg", "Fallo la insercion en la base de datos!");

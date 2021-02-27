@@ -43,6 +43,10 @@ public class MantenimientoControlador {
 
     public void aplicarRutas() {
 
+
+
+
+
         app.routes(() -> {
             path("/api/v1/mantenimiento", () -> {
 
@@ -78,7 +82,7 @@ public class MantenimientoControlador {
                     ctx.status(200);
                     ctx.json(json);
 
-                });
+                }, Collections.singleton(new FakeServices.RolApp("persona", "ver")));
 
                 get("/informacion_pago", ctx -> {
                     Persona per = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
@@ -107,7 +111,7 @@ public class MantenimientoControlador {
                     }
                     ctx.status(status);
                     ctx.json(json);
-                });
+                }, Collections.singleton(new FakeServices.RolApp("factura", "ver")));
 
                 get("/historial_facturacion", ctx -> {
                     Persona per = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
@@ -118,7 +122,7 @@ public class MantenimientoControlador {
 
                     ctx.status(200);
                     ctx.json(json);
-                });
+                },Collections.singleton(new FakeServices.RolApp("factura", "ver")));
 
                 get("/graficos", ctx -> {
                     Map<String, Object> json = new HashMap();
@@ -133,7 +137,7 @@ public class MantenimientoControlador {
 
                     ctx.json(PerroServices.getInstancia().getPerrosParaDonacion());
                     ctx.status(200);
-                });
+                }, Collections.singleton(new FakeServices.RolApp("persona", "ver")));
 
 
 
@@ -145,7 +149,7 @@ public class MantenimientoControlador {
 
                     ctx.status(200);
                     ctx.json(json);
-                });
+                }, Collections.singleton(new FakeServices.RolApp("planes", "ver")));
 
 
                 get("/perros/:id_perro/historial_visitas", ctx -> {
@@ -165,7 +169,7 @@ public class MantenimientoControlador {
 
                     ctx.json(json);
                     ctx.status(status);
-                }, Collections.singleton(new FakeServices.RolApp("usuario", "crear")));
+                }, Collections.singleton(new FakeServices.RolApp("historial_de_visitas", "ver")));
 
                 post("/registrar_perro", ctx -> {
                     int status = 200;
@@ -225,7 +229,7 @@ public class MantenimientoControlador {
 
                     ctx.status(status);
                     ctx.json(res.toMap());
-                });
+                }, Collections.singleton(new FakeServices.RolApp("perro", "crear")));
 
 
                 post("/subscribirme", ctx -> {
@@ -294,7 +298,7 @@ public class MantenimientoControlador {
                     ctx.json(res.toMap());
                     ctx.status(status);
 
-                });
+                }, Collections.singleton(new FakeServices.RolApp("suscripcion", "crear")));
 
                 post("/subscribir/perros", ctx -> {
                     JSONObject res = new JSONObject();
@@ -352,7 +356,7 @@ public class MantenimientoControlador {
                     ctx.status(status);
                     ctx.json(res.toMap());
 
-                });
+                }, Collections.singleton(new FakeServices.RolApp("suscripcion", "editar")));
                 post("/vacunas/:id", ctx -> {
                     JSONObject res = new JSONObject();
                     int status = 200;
@@ -367,7 +371,7 @@ public class MantenimientoControlador {
                     }
 
                     ctx.status(status);
-                });
+                }, Collections.singleton(new FakeServices.RolApp("vacuna", "editar")));
 
                 post("/pagar", ctx -> {
                     JSONObject res = new JSONObject();
@@ -409,7 +413,7 @@ public class MantenimientoControlador {
                     ctx.status(status);
                     ctx.json(res.toMap());
 
-                });
+                },Collections.singleton(new FakeServices.RolApp("suscripcion", "editar")) );
 
                 post("/visita", ctx -> {
                     JSONObject res = new JSONObject();
@@ -430,7 +434,7 @@ public class MantenimientoControlador {
                         throw new ForbiddenResponse("Falto el dispensador de origen");
                     }
 
-                });
+                }, Collections.singleton(new FakeServices.RolApp("dispensador", "editar")));
 
 
                 get("/perros", ctx -> {
@@ -488,7 +492,7 @@ public class MantenimientoControlador {
                     }
                     ctx.status(status);
                     ctx.json(res.toMap());
-                });
+                }, Collections.singleton(new FakeServices.RolApp("perro", "editar")));
 
 //                post("/:id_perro/agregar_vacuna", ctx -> {
 //                    int status = 200;
@@ -580,7 +584,7 @@ public class MantenimientoControlador {
                     ctx.status(status);
                     ctx.json(res.toMap());
 
-                });
+                }, Collections.singleton(new FakeServices.RolApp("perro", "editar")));
 
                 post("/perro/:id/perdido", ctx -> {
                     JSONObject res = new JSONObject();
@@ -628,7 +632,7 @@ public class MantenimientoControlador {
                     }
                     ctx.status(status);
                     ctx.json(res.toMap());
-                });
+                }, Collections.singleton(new FakeServices.RolApp("perro", "editar")));
 
                 post("/perro/:id/encontrado", ctx -> {
                     JSONObject res = new JSONObject();
@@ -676,7 +680,7 @@ public class MantenimientoControlador {
                         ctx.json(new JSONObject().put("msg", "No es un usuario valido"));
                     }
 
-                });
+                }, Collections.singleton(new FakeServices.RolApp("perro", "editar")));
                 post("/notificaciones/:id_notificacion/visto", ctx -> {
                     JSONObject res = new JSONObject();
                     int status = 200;
@@ -701,7 +705,7 @@ public class MantenimientoControlador {
                     ctx.status(status);
                     ctx.json(res.toMap());
 
-                });
+                }, Collections.singleton(new FakeServices.RolApp("notificacion", "editar")));
 
 
 //                post("/perros/:id_perro/agregar_vacuna", ctx->{
@@ -759,7 +763,7 @@ public class MantenimientoControlador {
                     ctx.status(status);
                     ctx.json(res.toMap());
 
-                });
+                }, Collections.singleton(new FakeServices.RolApp("perro", "editar")));
                 post("/perros/:id_perro/quitar_vacuna/:id_vacunacion", ctx -> {
                     JSONObject res = new JSONObject();
                     int status = 200;
@@ -779,12 +783,12 @@ public class MantenimientoControlador {
                     ctx.status(status);
                     ctx.json(res.toMap());
 
-                });
+                }, Collections.singleton(new FakeServices.RolApp("perro", "editar")));
 
 
                 get("/vacunas", ctx -> {
                     ctx.json(VacunaServices.getInstancia().findAll());
-                });
+                }, Collections.singleton(new FakeServices.RolApp("vacunas", "ver")));
 
                 post("/limpiar_notificaciones", ctx -> {
                     Persona per = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
@@ -802,7 +806,7 @@ public class MantenimientoControlador {
                     ctx.json(res);
                     ctx.status(status);
 
-                });
+                },Collections.singleton(new FakeServices.RolApp("notificaciones", "editar")));
                 post("/limpiar_notificaciones/:id_notificacion", ctx -> {
                     Persona per = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
                     JSONObject res = new JSONObject();
@@ -819,7 +823,7 @@ public class MantenimientoControlador {
                     ctx.json(res);
                     ctx.status(status);
 
-                });
+                },Collections.singleton(new FakeServices.RolApp("notificaciones", "editar")));
 
             });
 

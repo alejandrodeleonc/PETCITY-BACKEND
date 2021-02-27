@@ -7,6 +7,7 @@ import Encapsulaciones.Rol;
 import Services.FakeServices;
 import Services.RolServices;
 import io.javalin.Javalin;
+import kong.unirest.json.JSONObject;
 
 import java.util.Collections;
 
@@ -47,42 +48,54 @@ public class ApiControlador {
 
 
 
+
         app.config.accessManager((handler, ctx, permittedAccion) -> {
-            final Persona usuario = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
+            if(ctx.path().contains("auth")){
+                handler.handle(ctx);
+            }else {
+                final Persona usuario = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
 
-            System.out.println("permittedAccion -> ");
-            FakeServices.RolApp rr = (FakeServices.RolApp) permittedAccion.toArray()[0];
-            rr.getAccion();
-            System.out.println(rr.accion);
-            Boolean is_accept = rr.accion != null && usuario != null;
+                System.out.println("permittedAccion -> ");
+                FakeServices.RolApp rr = permittedAccion.toArray().length > 0 ? (FakeServices.RolApp) permittedAccion.toArray()[0] : null;
+                Boolean is_accept;
+                if (rr != null) {
+                    rr.getAccion();
+                    System.out.println(rr.accion);
+                    is_accept = rr.accion != null && usuario != null;
+                } else {
+                    is_accept = false;
+                }
 
-            System.out.println("PASO 1:");
-            if (is_accept){
-                is_accept = false;
-                for(Rol rol : usuario.getPersonasroles()){
-                    System.out.println("PASO 2:");
-                    for(Accion accion : rol.getAcciones() ){
-                        System.out.println("PASO 3:");
-                        if (accion.getId_accion() == rr.accion.getId_accion()) {
-                            System.out.println("PASO 4:");
-                            System.out.println(String.format("El Usuario: %s - con el Rol: %s tiene permiso", usuario.getUsuario(), rol.getNombre()));
-                            is_accept = true;
-                            break;
+                System.out.println(ctx.path().contains("auth"));
+                if (is_accept) {
+                    is_accept = false;
+                    for (Rol rol : usuario.getPersonasroles()) {
+                        System.out.println("PASO 2:");
+                        for (Accion accion : rol.getAcciones()) {
+                            System.out.println("PASO 3:");
+                            if (accion.getId_accion() == rr.accion.getId_accion()) {
+                                System.out.println("PASO 4:");
+                                System.out.println(String.format("El Usuario: %s - con el Rol: %s tiene permiso", usuario.getUsuario(), rol.getNombre()));
+                                is_accept = true;
+                                break;
+                            }
                         }
                     }
                 }
-            }
 
-            if (is_accept){
-                handler.handle(ctx);
-            }else{
-                System.out.println("No tiene permiso para acceder..");
-                ctx.status(401).result("No tiene permiso para acceder...");
-                return;
+                if (is_accept) {
+                    handler.handle(ctx);
+                } else {
+                    JSONObject res = new JSONObject();
+                    res.put("msg", "No tienes permiso para acceder...");
+                    System.out.println("No tiene permiso para acceder..");
+                    ctx.json(res.toMap());
+                    ctx.status(401).result("No tiene permiso para acceder...");
+                    return;
+                }
+                System.out.println("PASO 5:");
             }
-            System.out.println("PASO 5:");
         });
-
 
         app.routes(() -> {
 

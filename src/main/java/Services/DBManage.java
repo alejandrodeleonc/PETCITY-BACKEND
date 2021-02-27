@@ -103,13 +103,16 @@ public class DBManage<T> {
      * @param entidad
      */
     public T editar(T entidad) throws PersistenceException{
+
         EntityManager em = getEntityManager();
         em.getTransaction().begin();
         try {
             em.merge(entidad);
             em.getTransaction().commit();
+
         }finally {
             em.close();
+
         }
         return entidad;
     }
@@ -169,7 +172,8 @@ public class DBManage<T> {
         try{
             CriteriaQuery<T> criteriaQuery = em.getCriteriaBuilder().createQuery(claseEntidad);
             criteriaQuery.select(criteriaQuery.from(claseEntidad));
-            return em.createQuery(criteriaQuery).getResultList();
+
+            return em.createQuery(criteriaQuery).getResultList().size() > 0 ? em.createQuery(criteriaQuery).getResultList() : null ;
         } finally {
             em.close();
         }

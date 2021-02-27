@@ -63,10 +63,10 @@ public class Persona implements Serializable   {
     @Fetch(value = FetchMode.SUBSELECT)
     @JoinTable(
             name = "PERSONA_ROL",
-            joinColumns= { @JoinColumn(name = "id_rol") },
-            inverseJoinColumns= { @JoinColumn(name = "id_persona") }
+            joinColumns= { @JoinColumn(name = "id_persona ") },
+            inverseJoinColumns= { @JoinColumn(name = "id_rol") }
     )
-    private List<Rol> personasroles = new ArrayList<Rol>();
+    private List<Rol> personasroles;
 
 
 
@@ -88,6 +88,7 @@ public class Persona implements Serializable   {
         this.Codigo_Retiro = codigo_Retiro;
         this.subcripciones = null;
         this.notificaciones =  new ArrayList<Notificaciones>();
+        this.personasroles =  new ArrayList<Rol>();
 //        this.historial_de_facturacion =  new ArrayList<Factura>();
 
     }
@@ -95,6 +96,10 @@ public class Persona implements Serializable   {
     public List<Rol> getPersonasroles() {
         return personasroles;
     }
+
+//    public void addRol(Rol rol){
+//        this.personasroles.add(rol);
+//    }
 
     public void setPersonasroles(List<Rol> personasroles) {
         this.personasroles = personasroles;
@@ -223,6 +228,8 @@ public class Persona implements Serializable   {
 //    public void addSubscripcion(Subscripcion subscripcion){
 //        this.subcripciones.add(subscripcion);
 //    }
+
+
 
 
 

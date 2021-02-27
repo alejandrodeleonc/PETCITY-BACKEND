@@ -22,8 +22,8 @@ public class Rol  implements Serializable {
     @Fetch(value = FetchMode.SUBSELECT)
     @JoinTable(
             name = "ROL_ACCION",
-            joinColumns = { @JoinColumn(name = "id_accion") },
-            inverseJoinColumns = { @JoinColumn(name = "id_rol") }
+            joinColumns = { @JoinColumn(name = "id_rol") },
+            inverseJoinColumns = { @JoinColumn(name = "id_accion") }
 
     )
     private List<Accion> acciones;
@@ -35,6 +35,11 @@ public class Rol  implements Serializable {
         this.nombre = nombre;
         this.activo = activo;
         this.acciones = new ArrayList<Accion>();
+    }
+    public Rol(String nombre, boolean activo, List<Accion> acciones) {
+        this.nombre = nombre;
+        this.activo = activo;
+        this.acciones = acciones;
     }
 
     public List<Accion> getAcciones() {

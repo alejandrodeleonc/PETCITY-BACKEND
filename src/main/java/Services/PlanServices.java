@@ -19,23 +19,23 @@ public class PlanServices extends DBManage<Plan> {
     }
 
 
-    public Plan getMaxPlan(){
+    public Plan getMaxPlan() {
 //        SELECT * FROM plan p ORDER BY  (p.CANTIDAD_MAXIMA_DE_PERROS) DESC LIMIT 1
 
         EntityManager em = getEntityManager();
         Plan res = null;
         try {
 
-            res = (Plan)em.createNativeQuery("SELECT * FROM plan p ORDER BY  (p.CANTIDAD_MAXIMA_DE_PERROS) DESC LIMIT 1", Plan.class).getSingleResult();
+            res = (Plan) em.createNativeQuery("SELECT * FROM plan p ORDER BY  (p.CANTIDAD_MAXIMA_DE_PERROS) DESC LIMIT 1", Plan.class).getSingleResult();
 
             return res;
-        }catch (Exception e){
-            res = null;
-        }
-        finally {
+        } catch (Exception e) {
+            return res = null;
+        } finally {
             em.close();
         }
     }
+
     /**
      * METHODS FOR THIS CLASS
      */
