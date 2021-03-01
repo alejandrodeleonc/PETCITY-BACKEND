@@ -2,6 +2,9 @@ package Services;
 
 import Encapsulaciones.*;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +39,7 @@ public class InitializeBDService {
         this.createDefaultDogs();
         this.vacunar();
         this.createDefaultRoles();
+//        this.deleteStaticFiles();
     }
 
     private void createDefaultUsers() {
@@ -133,7 +137,7 @@ public class InitializeBDService {
                 List<Perro> perros = new ArrayList<Perro>();
                 perros.add(new Perro("484849535648495350491310", "Billy", new Date(), 2));
                 for (int i = 0; i < 40; i++) {
-                    perros.add(new Perro("QWERTYUIOPASDFGG" + i, "PERRO" + i + 1, new Date(), 2));
+                    perros.add(new Perro("QWERTYUIOPASDFGG" + i, "PERRO" + (i + 1), new Date(), 2));
 
                 }
 
@@ -185,7 +189,7 @@ public class InitializeBDService {
         System.out.print(acciones.size() > 0);
         System.out.print("roles == nul ->");
         System.out.print(roles == null);
-        if (roles == null && acciones.size() > 0) {
+        if (roles.size() == 0 && acciones.size() > 0) {
             Rol rol = new Rol("ADMINISTRADOR", true);
             RolServices.getInstancia().crear(rol);
             rol.setAcciones(acciones);
@@ -198,23 +202,63 @@ public class InitializeBDService {
 
 
             acciones = new ArrayList<Accion>();
-            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'"+PermisosyAcciones.getInstancia().getAccion("perro", "ver")+"'"));
-            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'"+PermisosyAcciones.getInstancia().getAccion("perro", "crear")+"'"));
-            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'"+PermisosyAcciones.getInstancia().getAccion("perro", "editar")+"'"));
-            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'"+PermisosyAcciones.getInstancia().getAccion("perro", "borrar")+"'"));
-            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'"+PermisosyAcciones.getInstancia().getAccion("persona", "ver")+"'"));
-            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'"+PermisosyAcciones.getInstancia().getAccion("persona", "editar")+"'"));
-            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'"+PermisosyAcciones.getInstancia().getAccion("factura", "ver")+"'"));
-            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'"+PermisosyAcciones.getInstancia().getAccion("factura", "crear")+"'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("perro", "ver") + "'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("perro", "crear") + "'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("perro", "editar") + "'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("perro", "borrar") + "'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("persona", "ver") + "'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("persona", "editar") + "'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("factura", "ver") + "'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("factura", "crear") + "'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("planes", "ver") + "'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("vacuna", "ver") + "'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("graficos", "ver") + "'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("socket", "ver") + "'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("socket", "editar") + "'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("socket", "crear") + "'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("suscripcion", "crear") + "'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("suscripcion", "editar") + "'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("suscripcion", "borrar") + "'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("suscripcion", "ver") + "'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("notificacion", "ver") + "'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("notificacion", "crear") + "'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("notificacion", "editar") + "'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("notificacion", "borrar") + "'"));
+
             rol = new Rol("USUARIO", true);
             RolServices.getInstancia().crear(rol);
             rol.setAcciones(acciones);
             RolServices.getInstancia().editar(rol);
 
+            System.out.println(rol.getNombre());
+            for (Accion accion : rol.getAcciones()) {
+                System.out.println(accion.getNombre());
+            }
         }
 
 
     }
+
+//    public void deleteStaticFiles() {
+//        String aux = FakeServices.getInstancia().getRutaProyecto() + "/src/main/resources/public" + "/";
+//        System.out.println(aux);
+//
+//        File folder = new File(aux);
+//        File[] listOfFiles = folder.listFiles();
+//
+//        if (listOfFiles.length > 0) {
+//            for (File file : listOfFiles) {
+//                if (file.isFile()) {
+//                    System.out.println(file.getAbsolutePath());
+//                    try {
+//                        Files.delete(Paths.get(file.getAbsolutePath()));
+//                    } catch (Exception e){
+//                        System.out.println("No borro");
+//                    }
+//                }
+//            }
+//        }
+//    }
 
 
 //    private void createDefaultDispensadores(){

@@ -2,6 +2,7 @@ package Controladores;
 
 import Encapsulaciones.Persona;
 import Encapsulaciones.UsuariosConectados;
+import Services.FakeServices;
 import io.javalin.Javalin;
 import io.javalin.http.sse.SseClient;
 import org.eclipse.jetty.websocket.api.Session;
@@ -9,6 +10,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -34,7 +36,7 @@ public class WebSocketControlador {
             String mensaje = ctx.queryParam("mensaje");
 //            enviarMensajeAClientesConectados(mensaje, "rojo");
             ctx.result("Enviando mensaje: " + mensaje);
-        });
+        }, Collections.singleton(new FakeServices.RolApp("socket", "ver")) );
 
         app.wsBefore("/webSocketServidor", wsHandler -> {
             System.out.println("Filtro para WS antes de la llamada ws");

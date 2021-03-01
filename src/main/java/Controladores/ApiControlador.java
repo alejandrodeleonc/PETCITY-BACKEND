@@ -50,7 +50,7 @@ public class ApiControlador {
 
 
         app.config.accessManager((handler, ctx, permittedAccion) -> {
-            if(ctx.path().contains("auth")){
+            if(ctx.path().contains("auth") || ctx.path().contains("rutas") ||  ctx.path().contains("webSocketServidor")   ||ctx.path().contains("mensajeServidor") || ctx.path().contains("roles")){
                 handler.handle(ctx);
             }else {
                 final Persona usuario = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));

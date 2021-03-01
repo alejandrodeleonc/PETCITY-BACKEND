@@ -30,11 +30,14 @@ public class Main {
 //            config.addStaticFiles("/public"); //STATIC FILES -> /resources/public
             config.registerPlugin(new RouteOverviewPlugin("/rutas")); //aplicando plugins de las rutas
             config.enableCorsForAllOrigins();
+            config.requestCacheSize = new Long(9999999);
+            config.addStaticFiles("/public");
         });
+
+        
         app.start(8000);
         DBStart.getInstancia().init();
         InitializeBDService.getInstancia().intialize();
-
 
         new ApiControlador(app).aplicarRutas();
         /*

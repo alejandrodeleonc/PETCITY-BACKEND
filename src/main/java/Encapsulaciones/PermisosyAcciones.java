@@ -26,7 +26,9 @@ public class PermisosyAcciones {
             "planes: {'crear':'Crear Planes', 'editar':'Actualizar Planes', 'borrar':'Eliminar Planes', 'ver':'Ver Planes'}, "+
             "suscripcion: {'crear':'Crear Suscripcion', 'editar':'Actualizar Suscripcion', 'borrar':'Eliminar Suscripcion', 'ver':'Ver Suscripcion'}, " +
             "vacuna: {'crear':'Crear Vacuna', 'editar':'Actualizar Vacuna', 'borrar':'Eliminar Vacuna', 'ver':'Ver Vacuna'},"+
-            "notificacion: {'crear':'Crear Notificacion', 'editar':'Actualizar Notificacion', 'borrar':'Eliminar Notificacion', 'ver':'Ver Notificacion'}";
+            "notificacion: {'crear':'Crear Notificacion', 'editar':'Actualizar Notificacion', 'borrar':'Eliminar Notificacion', 'ver':'Ver Notificacion'}," +
+            "graficos: {'crear':'Crear Graficos', 'editar':'Actualizar Graficos', 'borrar':'Eliminar Graficos', 'ver':'Ver Graficos'}," +
+            "socket: {'crear':'Crear socket', 'editar':'Actualizar socket', 'borrar':'Eliminar socket', 'ver':'Ver socket'}";
     ;
 //    String jsonPerro   = "{'crear':'Crear ', 'editar':'Actualizar', 'borrar':'Eliminar', 'ver':'Ver'}";
 //    String jsonPerro   = "{'crear':'Crear ', 'editar':'Actualizar', 'borrar':'Eliminar', 'ver':'Ver'}";

@@ -11,6 +11,7 @@ import io.javalin.http.Handler;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
+import java.nio.file.FileSystems;
 import java.text.DateFormat;
 import java.text.Format;
 import java.text.DateFormat;
@@ -32,6 +33,8 @@ import com.twilio.type.PhoneNumber;
 //import org.h2.engine.Role;
 import io.javalin.core.security.Role;
 
+import javax.swing.filechooser.FileSystemView;
+
 public class MantenimientoControlador {
     private Javalin app;
     public static final String ACCOUNT_SID = "ACeaeeb50fe25fb5888ac39ca76cbd8315";
@@ -49,6 +52,17 @@ public class MantenimientoControlador {
 
         app.routes(() -> {
             path("/api/v1/mantenimiento", () -> {
+
+                get("/roles", ctx ->{
+
+                    List<Rol> roles = RolServices.getInstancia().findAll();
+                    if(roles.size() > 0) {
+                        ctx.json(roles);
+                    }else{
+                        ctx.result("No hay roles");
+                    }
+                });
+
 
                 get("/informacion_persona", ctx -> {
                     Persona per = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
@@ -131,7 +145,7 @@ public class MantenimientoControlador {
 
                     ctx.status(200);
                     ctx.json(json);
-                });
+                }, Collections.singleton(new FakeServices.RolApp("graficos", "ver")));
 
                 get("/perros_en_donacion", ctx -> {
 
@@ -171,6 +185,35 @@ public class MantenimientoControlador {
                     ctx.status(status);
                 }, Collections.singleton(new FakeServices.RolApp("historial_de_visitas", "ver")));
 
+
+                post("/foto", ctx ->{
+                    Gson g = new Gson();
+//                    try{
+                        String base64 = ctx.formParam("fotoBase64") ;
+//                        Foto foto = g.fromJson(ctx.body(), Foto.class) != null ? g.fromJson(ctx.body(), Foto.class) : null;
+                        if(base64 != null){
+                            Foto foto = new Foto();
+                            FotoServices.getInstancia().crear(foto);
+                            String nombre = "foto_" + foto.getId();
+                            FakeServices.getInstancia().guardarFoto(base64, nombre);
+                            foto.setNombre(nombre+".png");
+                            FotoServices.getInstancia().editar(foto);
+
+                        }else{
+                            System.out.println("Foto nula");
+                        }
+
+//                    }catch(Exception e){
+//
+//                            System.out.println("Entro en el catch");
+//                            System.out.println(e);
+//
+//                    }
+
+//                        System.out.println("foto.getNombre() =>");
+//                        System.out.println(foto.getNombre());
+                }, Collections.singleton(new FakeServices.RolApp("perro", "crear")));
+
                 post("/registrar_perro", ctx -> {
                     int status = 200;
                     Persona per = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
@@ -181,11 +224,13 @@ public class MantenimientoControlador {
 //                    System.out.println("Perro inf =>");
 //                    System.out.println(perroData.getNombre());
 
+
                     if (per != null) {
 
                         String id_perro = ctx.formParam("RFID_CODE");
                         String nombre = ctx.formParam("nombre");
                         Date fecha_registro = new Date();
+                        String base64 = ctx.formParam("fotoBase64") ;
                         int limite_repeticion_comida = 2;
 
                         System.out.println("El RFID_CODE =>" + id_perro);
@@ -193,7 +238,11 @@ public class MantenimientoControlador {
                         Perro perro = new Perro(id_perro, nombre, fecha_registro, limite_repeticion_comida);
 
 
+
                         if (PerroServices.getInstancia().crear(perro)) {
+                            if(base64 != null){
+                                FakeServices.getInstancia().setFotoToEntity(base64, perro);
+                            }
                             Subscripcion sub = per.getSubcripciones();
                             int cantidad_de_perros = sub.getPlan().getCantidad_maxima_de_perros();
                             if (per.getUsuario().equalsIgnoreCase("admin") || per.getUsuario().equalsIgnoreCase("pi")) {
@@ -669,7 +718,8 @@ public class MantenimientoControlador {
 
                     ctx.status(status);
                     ctx.json(res.toMap());
-                });
+                },
+                        Collections.singleton(new FakeServices.RolApp("perro", "editar")));
 
                 get("/notificaciones_no_vistas", ctx -> {
                     Persona perso = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
@@ -788,7 +838,7 @@ public class MantenimientoControlador {
 
                 get("/vacunas", ctx -> {
                     ctx.json(VacunaServices.getInstancia().findAll());
-                }, Collections.singleton(new FakeServices.RolApp("vacunas", "ver")));
+                }, Collections.singleton(new FakeServices.RolApp("vacuna", "ver")));
 
                 post("/limpiar_notificaciones", ctx -> {
                     Persona per = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));

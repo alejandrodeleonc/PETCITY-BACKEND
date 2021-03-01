@@ -1,8 +1,10 @@
 package Controladores;
 
+import Encapsulaciones.Foto;
 import Encapsulaciones.LoginResponse;
 import Encapsulaciones.Persona;
 import Services.FakeServices;
+import Services.FotoServices;
 import Services.PersonaServices;
 import Services.RolServices;
 import io.javalin.Javalin;
@@ -71,13 +73,20 @@ public class AutenticacionControlador {
                     Date fecha_nacimiento = format.parse(fecha);
                     String usuario = ctx.formParam("usuario");
                     String password = ctx.formParam("password");
+                    String base64 = ctx.formParam("fotoBase64") ;
+
+
                     String coddigo_retiro = enc.encodeToString(usuario.getBytes());
 
                     if (!PersonaServices.getInstancia().userExists(usuario)) {
+
                         Persona persona_registrada = new Persona(nombre, identificacion, correo, fecha_nacimiento, direccion, usuario, password, coddigo_retiro);
 
                         if (PersonaServices.getInstancia().crear(persona_registrada)) {
                             persona_registrada.addRol(RolServices.getInstancia().find(2));
+                            if(base64 != null){
+                                FakeServices.getInstancia().setFotoToEntity(base64, persona_registrada);
+                            }
                             PersonaServices.getInstancia().editar(persona_registrada);
                                 res.put("msg", "Usuario Registrado correctamente!");
                         } else {

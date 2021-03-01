@@ -173,7 +173,7 @@ public class DBManage<T> {
             CriteriaQuery<T> criteriaQuery = em.getCriteriaBuilder().createQuery(claseEntidad);
             criteriaQuery.select(criteriaQuery.from(claseEntidad));
 
-            return em.createQuery(criteriaQuery).getResultList().size() > 0 ? em.createQuery(criteriaQuery).getResultList() : null ;
+            return em.createQuery(criteriaQuery).getResultList();
         } finally {
             em.close();
         }

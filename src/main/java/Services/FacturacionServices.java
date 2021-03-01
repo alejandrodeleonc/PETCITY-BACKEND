@@ -59,10 +59,11 @@ public class FacturacionServices extends DBManage<Factura> {
         Float res = 0.0f;
         try {
             List<Factura> facturas = FacturacionServices.getInstancia().findAll();
-
-            if (facturas.size() > 0) {
-                for (Factura factura : facturas) {
-                    res += factura.getMonto();
+            if(facturas != null){
+                if (facturas.size() > 0) {
+                    for (Factura factura : facturas) {
+                        res += factura.getMonto();
+                    }
                 }
             }
 

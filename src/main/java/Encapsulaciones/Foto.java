@@ -9,20 +9,17 @@ public class Foto implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nombre;
-    private String mimeType;
-    @Lob
-    private String fotoBase64;
 
+
+
+    private String nombre;
 
     public Foto() {
 
     }
 
-    public Foto(String nombre, String mimeType, String fotoBase64){
+    public Foto(String nombre) {
         this.nombre = nombre;
-        this.mimeType = mimeType;
-        this.fotoBase64 = fotoBase64;
     }
 
     public Long getId() {
@@ -39,21 +36,5 @@ public class Foto implements Serializable {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public String getMimeType() {
-        return mimeType;
-    }
-
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
-    }
-
-    public String getFotoBase64() {
-        return fotoBase64;
-    }
-
-    public void setFotoBase64(String fotoBase64) {
-        this.fotoBase64 = fotoBase64;
     }
 }
