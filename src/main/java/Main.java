@@ -34,7 +34,7 @@ public class Main {
             config.addStaticFiles("/public");
         });
 
-        
+
         app.start(8000);
         DBStart.getInstancia().init();
         InitializeBDService.getInstancia().intialize();
