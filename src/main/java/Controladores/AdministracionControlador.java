@@ -1,13 +1,7 @@
 package Controladores;
 
-import Encapsulaciones.Dispensador;
-import Encapsulaciones.Persona;
-import Encapsulaciones.Plan;
-import Encapsulaciones.Vacuna;
-import Services.DispensadorServices;
-import Services.FakeServices;
-import Services.PlanServices;
-import Services.VacunaServices;
+import Encapsulaciones.*;
+import Services.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -16,10 +10,7 @@ import kong.unirest.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
 import static java.lang.Integer.parseInt;
@@ -78,7 +69,7 @@ public class AdministracionControlador {
                     String latitud = ctx.formParam("latitud");
                     String direccion = ctx.formParam("direccion");
 
-                    Dispensador dispensador = new Dispensador(id_dispensador, longitud, latitud, direccion);
+                    Dispensador dispensador = new Dispensador(id_dispensador, longitud, latitud, direccion, null);
 
 
                     if (DispensadorServices.getInstancia().crear(dispensador)) {
@@ -120,14 +111,30 @@ public class AdministracionControlador {
 
                     Map<String, Object> json = new HashMap();
 
-                    json.put("persona", dispensadores);
+                    json.put("dispensadores", dispensadores);
 
                     ctx.status(200);
                     ctx.json(json);
-                });
+                }, Collections.singleton(new FakeServices.RolApp("dispensador", "ver")));
 
+                get("/sectores", ctx -> {
+
+                    List<Sector> sectores = SectorServices.getInstancia().findAll();
+
+
+                    Map<String, Object> json = new HashMap();
+
+                    json.put("sectores", sectores);
+
+                    ctx.status(200);
+                    ctx.json(json);
+                }, Collections.singleton(new FakeServices.RolApp("dispensador", "ver")));
 
             });
+
+
+
+
         });
 
     }

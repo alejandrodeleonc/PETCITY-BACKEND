@@ -28,7 +28,8 @@ public class PermisosyAcciones {
             "vacuna: {'crear':'Crear Vacuna', 'editar':'Actualizar Vacuna', 'borrar':'Eliminar Vacuna', 'ver':'Ver Vacuna'},"+
             "notificacion: {'crear':'Crear Notificacion', 'editar':'Actualizar Notificacion', 'borrar':'Eliminar Notificacion', 'ver':'Ver Notificacion'}," +
             "graficos: {'crear':'Crear Graficos', 'editar':'Actualizar Graficos', 'borrar':'Eliminar Graficos', 'ver':'Ver Graficos'}," +
-            "socket: {'crear':'Crear socket', 'editar':'Actualizar socket', 'borrar':'Eliminar socket', 'ver':'Ver socket'}";
+            "socket: {'crear':'Crear socket', 'editar':'Actualizar socket', 'borrar':'Eliminar socket', 'ver':'Ver socket'}," +
+            "sectores: {'crear':'Crear Sectores', 'editar':'Actualizar Sectores', 'borrar':'Eliminar Sectores', 'ver':'Ver Sectores'}";
     ;
 //    String jsonPerro   = "{'crear':'Crear ', 'editar':'Actualizar', 'borrar':'Eliminar', 'ver':'Ver'}";
 //    String jsonPerro   = "{'crear':'Crear ', 'editar':'Actualizar', 'borrar':'Eliminar', 'ver':'Ver'}";

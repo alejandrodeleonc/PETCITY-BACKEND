@@ -11,6 +11,7 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 
 import io.javalin.core.util.RouteOverviewPlugin;
+import io.javalin.http.staticfiles.Location;
 
 import static j2html.TagCreator.a;
 
@@ -31,7 +32,8 @@ public class Main {
             config.registerPlugin(new RouteOverviewPlugin("/rutas")); //aplicando plugins de las rutas
             config.enableCorsForAllOrigins();
             config.requestCacheSize = new Long(9999999);
-            config.addStaticFiles("/public");
+//            config.addStaticFiles("/public");
+            config.addStaticFiles("src/main/resources/public", Location.EXTERNAL);
         });
 
 

@@ -9,6 +9,10 @@ import Services.RolServices;
 import io.javalin.Javalin;
 import kong.unirest.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Collections;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
@@ -47,10 +51,16 @@ public class ApiControlador {
 //            });
 
 
-
+//        app.get("/:name", ctx -> {
+////            File localFile = new File(FakeServices.getInstancia().getRutaProyecto() + "/src/main/resources/public" + "/" +ctx.pathParam("name"));
+////            InputStream inputStream = new BufferedInputStream(new FileInputStream(localFile));
+////            ctx.header("Content-Disposition", "attachment; filename=\"" + localFile.getName() + "\"");
+////            ctx.header("Content-Length", String.valueOf(localFile.length()));
+////            ctx.result(inputStream);
+//        });
 
         app.config.accessManager((handler, ctx, permittedAccion) -> {
-            if(ctx.path().contains("auth") || ctx.path().contains("rutas") ||  ctx.path().contains("webSocketServidor")   ||ctx.path().contains("mensajeServidor") || ctx.path().contains("roles")){
+            if(ctx.path().contains("auth") || ctx.path().contains("rutas") ||  ctx.path().contains("webSocketServidor")   ||ctx.path().contains("mensajeServidor") || ctx.path().contains("roles") || ctx.path().contains("foto")){
                 handler.handle(ctx);
             }else {
                 final Persona usuario = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));

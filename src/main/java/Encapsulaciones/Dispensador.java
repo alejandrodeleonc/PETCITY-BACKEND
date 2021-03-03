@@ -13,19 +13,33 @@ public class Dispensador implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id_dispensador;
+
+
+
     private String dispensador;
     private String longitud;
     private String latitud;
     private String direccion;
+    @ManyToOne
+    private Sector sector;
 
     public Dispensador() {
     }
 
-    public Dispensador(String dispensador, String longitud, String latitud, String direccion) {
+    public Dispensador(String dispensador, String longitud, String latitud, String direccion, Sector sector) {
         this.dispensador = dispensador;
         this.longitud = longitud;
         this.latitud = latitud;
         this.direccion = direccion;
+        this.sector = sector;
+    }
+
+    public int getId_dispensador() {
+        return id_dispensador;
+    }
+
+    public void setId_dispensador(int id_dispensador) {
+        this.id_dispensador = id_dispensador;
     }
 
     public String getDispensador() {
@@ -33,14 +47,6 @@ public class Dispensador implements Serializable {
     }
 
     public void setDispensador(String dispensador) {
-        this.dispensador = dispensador;
-    }
-
-    public String getId_dispensador() {
-        return dispensador;
-    }
-
-    public void setId_dispensador(String dispensador) {
         this.dispensador = dispensador;
     }
 
@@ -66,5 +72,13 @@ public class Dispensador implements Serializable {
 
     public void setDireccion(String direccion) {
         this.direccion = direccion;
+    }
+
+    public Sector getSector() {
+        return sector;
+    }
+
+    public void setSector(Sector sector) {
+        this.sector = sector;
     }
 }
