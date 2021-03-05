@@ -98,6 +98,15 @@ public class PerroServices extends DBManage<Perro> {
         return perros;
     }
 
+    public boolean agregarCambiosAPerro(Perro perroEnBD, Perro perroConCambio){
+        boolean status = false;
+
+
+
+        return status;
+    }
+
+
     /**
      * METHODS FOR THIS CLASS
      */

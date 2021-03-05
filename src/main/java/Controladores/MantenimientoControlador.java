@@ -47,18 +47,15 @@ public class MantenimientoControlador {
     public void aplicarRutas() {
 
 
-
-
-
         app.routes(() -> {
             path("/api/v1/mantenimiento", () -> {
 
-                get("/roles", ctx ->{
+                get("/roles", ctx -> {
 
                     List<Rol> roles = RolServices.getInstancia().findAll();
-                    if(roles.size() > 0) {
+                    if (roles.size() > 0) {
                         ctx.json(roles);
-                    }else{
+                    } else {
                         ctx.result("No hay roles");
                     }
                 });
@@ -136,7 +133,7 @@ public class MantenimientoControlador {
 
                     ctx.status(200);
                     ctx.json(json);
-                },Collections.singleton(new FakeServices.RolApp("factura", "ver")));
+                }, Collections.singleton(new FakeServices.RolApp("factura", "ver")));
 
                 get("/graficos", ctx -> {
                     Map<String, Object> json = new HashMap();
@@ -152,7 +149,6 @@ public class MantenimientoControlador {
                     ctx.json(PerroServices.getInstancia().getPerrosParaDonacion());
                     ctx.status(200);
                 }, Collections.singleton(new FakeServices.RolApp("persona", "ver")));
-
 
 
                 get("/planes", ctx -> {
@@ -186,22 +182,22 @@ public class MantenimientoControlador {
                 }, Collections.singleton(new FakeServices.RolApp("historial_de_visitas", "ver")));
 
 
-                post("/foto", ctx ->{
+                post("/foto", ctx -> {
                     Gson g = new Gson();
 //                    try{
-                        String base64 = ctx.formParam("fotoBase64") ;
+                    String base64 = ctx.formParam("fotoBase64");
 //                        Foto foto = g.fromJson(ctx.body(), Foto.class) != null ? g.fromJson(ctx.body(), Foto.class) : null;
-                        if(base64 != null){
-                            Foto foto = new Foto();
-                            FotoServices.getInstancia().crear(foto);
-                            String nombre = "foto_" + foto.getId();
-                            FakeServices.getInstancia().guardarFoto(base64, nombre);
-                            foto.setNombre(nombre+".png");
-                            FotoServices.getInstancia().editar(foto);
+                    if (base64 != null) {
+                        Foto foto = new Foto();
+                        FotoServices.getInstancia().crear(foto);
+                        String nombre = "foto_" + foto.getId();
+                        FakeServices.getInstancia().guardarFoto(base64, nombre);
+                        foto.setNombre(nombre + ".png");
+                        FotoServices.getInstancia().editar(foto);
 
-                        }else{
-                            System.out.println("Foto nula");
-                        }
+                    } else {
+                        System.out.println("Foto nula");
+                    }
 
 //                    }catch(Exception e){
 //
@@ -230,7 +226,7 @@ public class MantenimientoControlador {
                         String id_perro = ctx.formParam("RFID_CODE");
                         String nombre = ctx.formParam("nombre");
                         Date fecha_registro = new Date();
-                        String base64 = ctx.formParam("fotoBase64") ;
+                        String base64 = ctx.formParam("fotoBase64");
                         int limite_repeticion_comida = 2;
 
                         System.out.println("El RFID_CODE =>" + id_perro);
@@ -238,9 +234,8 @@ public class MantenimientoControlador {
                         Perro perro = new Perro(id_perro, nombre, fecha_registro, limite_repeticion_comida);
 
 
-
                         if (PerroServices.getInstancia().crear(perro)) {
-                            if(base64 != null){
+                            if (base64 != null) {
                                 FakeServices.getInstancia().setFotoToEntity(base64, perro);
                             }
                             Subscripcion sub = per.getSubcripciones();
@@ -462,7 +457,7 @@ public class MantenimientoControlador {
                     ctx.status(status);
                     ctx.json(res.toMap());
 
-                },Collections.singleton(new FakeServices.RolApp("suscripcion", "editar")) );
+                }, Collections.singleton(new FakeServices.RolApp("suscripcion", "editar")));
 
                 post("/visita", ctx -> {
                     JSONObject res = new JSONObject();
@@ -503,17 +498,17 @@ public class MantenimientoControlador {
                     ctx.status(status);
                 });
 
-                post("perro/:id_perro/adoptar", ctx->{
+                post("perro/:id_perro/adoptar", ctx -> {
                     Persona persona = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
                     int perro_id = Integer.valueOf(ctx.pathParam("id_perro"));
                     JSONObject res = new JSONObject();
                     int status = 200;
 
-                    if(persona != null){
+                    if (persona != null) {
                         Perro perro = PerroServices.getInstancia().find(perro_id);
-                        if(perro != null){
+                        if (perro != null) {
 
-                            if(persona.getSubcripciones().cuposDePerrosRestantes() > 0){
+                            if (persona.getSubcripciones().cuposDePerrosRestantes() > 0) {
                                 Persona dueno = PerroServices.getInstancia().buscarDueno(perro);
                                 dueno.getSubcripciones().borrarPerro(perro);
                                 SubcripcionServices.getInstancia().editar(dueno.getSubcripciones());
@@ -524,18 +519,18 @@ public class MantenimientoControlador {
                                 persona.getSubcripciones().addPerro(perro);
                                 SubcripcionServices.getInstancia().editar(persona.getSubcripciones());
                                 res.put("msg", "Felicidades ha adoptado a: " + perro.getNombre());
-                            }else{
+                            } else {
                                 status = 409;
                                 res.put("msg", "No tiene espacio suficciente en su plan");
 
                             }
 
-                        }else{
-                        status = 404;
-                        res.put("msg", "El perro buscado no ha sido encontrado");
+                        } else {
+                            status = 404;
+                            res.put("msg", "El perro buscado no ha sido encontrado");
 
                         }
-                    }else{
+                    } else {
                         status = 401;
                         res.put("msg", "No tiene permiso para realizar esta accion");
                     }
@@ -684,41 +679,41 @@ public class MantenimientoControlador {
                 }, Collections.singleton(new FakeServices.RolApp("perro", "editar")));
 
                 post("/perro/:id/encontrado", ctx -> {
-                    JSONObject res = new JSONObject();
-                    int status = 200;
-                    String header = ctx.header("Authorization");
-                    int id = Integer.valueOf(ctx.pathParam("id"));
-                    Perro perro = PerroServices.getInstancia().find(id);
+                            JSONObject res = new JSONObject();
+                            int status = 200;
+                            String header = ctx.header("Authorization");
+                            int id = Integer.valueOf(ctx.pathParam("id"));
+                            Perro perro = PerroServices.getInstancia().find(id);
 
-                    if (perro != null) {
-                        if (perro.getPerdido()) {
-                            Persona dueno = PerroServices.getInstancia().buscarDueno(perro);
-                            System.out.println("El dueno => " + dueno.getNombre());
-                            if (dueno != null) {
-                                if (FakeServices.getInstancia().compararHeaderUser(header, dueno)) {
-                                    perro.setPerdido(false);
-                                    PerroServices.getInstancia().editar(perro);
-                                    res.put("msg", "El perro ha sido encontrado");
+                            if (perro != null) {
+                                if (perro.getPerdido()) {
+                                    Persona dueno = PerroServices.getInstancia().buscarDueno(perro);
+                                    System.out.println("El dueno => " + dueno.getNombre());
+                                    if (dueno != null) {
+                                        if (FakeServices.getInstancia().compararHeaderUser(header, dueno)) {
+                                            perro.setPerdido(false);
+                                            PerroServices.getInstancia().editar(perro);
+                                            res.put("msg", "El perro ha sido encontrado");
+                                        } else {
+                                            res.put("msg", "No tiene permiso para modificar este perro");
+                                            status = 401;
+                                        }
+                                    } else {
+                                        res.put("msg", "Este perro es callejero");
+                                    }
+
                                 } else {
-                                    res.put("msg", "No tiene permiso para modificar este perro");
-                                    status = 401;
+                                    res.put("msg", "Este perro no ha sido reportado como perdido");
+                                    status = 409;
                                 }
                             } else {
-                                res.put("msg", "Este perro es callejero");
+                                status = 409;
+                                res.put("msg", "El perro que busca no existe");
                             }
 
-                        } else {
-                            res.put("msg", "Este perro no ha sido reportado como perdido");
-                            status = 409;
-                        }
-                    } else {
-                        status = 409;
-                        res.put("msg", "El perro que busca no existe");
-                    }
-
-                    ctx.status(status);
-                    ctx.json(res.toMap());
-                },
+                            ctx.status(status);
+                            ctx.json(res.toMap());
+                        },
                         Collections.singleton(new FakeServices.RolApp("perro", "editar")));
 
                 get("/notificaciones_no_vistas", ctx -> {
@@ -856,7 +851,7 @@ public class MantenimientoControlador {
                     ctx.json(res);
                     ctx.status(status);
 
-                },Collections.singleton(new FakeServices.RolApp("notificaciones", "editar")));
+                }, Collections.singleton(new FakeServices.RolApp("notificaciones", "editar")));
                 post("/limpiar_notificaciones/:id_notificacion", ctx -> {
                     Persona per = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
                     JSONObject res = new JSONObject();
@@ -873,13 +868,52 @@ public class MantenimientoControlador {
                     ctx.json(res);
                     ctx.status(status);
 
-                },Collections.singleton(new FakeServices.RolApp("notificaciones", "editar")));
+                }, Collections.singleton(new FakeServices.RolApp("notificaciones", "editar")));
+
+                patch("/perro/editar_perro", ctx -> {
+
+                    Persona persona = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
+                    Gson g = new Gson();
+                    Perro perroConCambios = g.fromJson(ctx.body(), Perro.class);
+
+
+                    int status = 200;
+                    Map<String, Object> json = new HashMap();
+
+                    if (persona != null) {
+                        if (perroConCambios != null) {
+                            if (perroConCambios != null) {
+                                Perro perro = PerroServices.getInstancia().find(perroConCambios.getId_perro());
+                                if (perro !=null) {
+                                    Persona dueno = PerroServices.getInstancia().buscarDueno(perroConCambios);
+                                    if (dueno.getId_persona() == persona.getId_persona()) {
+                                        PerroServices.getInstancia().editar(perroConCambios);
+                                    } else {
+                                        json.put("msg", "No tiene permisos para realizar esta edicion");
+                                        status = 405;
+                                    }
+                                } else {
+                                    json.put("msg", "El perro no existe");
+                                    status = 403;
+                                }
+                            }
+                        } else {
+                            json.put("msg", "No se recibio informacion");
+                            status = 400;
+                        }
+                    } else {
+                        json.put("msg", "Su usuario no es valido!");
+                        status = 401;
+
+                    }
+                    ctx.json(json);
+                    ctx.status(status);
+
+                }, Collections.singleton(new FakeServices.RolApp("perro", "editar")));
 
             });
 
         });
-
-
     }
 
 

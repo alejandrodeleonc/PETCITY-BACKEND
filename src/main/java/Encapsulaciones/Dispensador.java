@@ -23,6 +23,12 @@ public class Dispensador implements Serializable {
     @ManyToOne
     private Sector sector;
 
+    private boolean estado;
+
+    private boolean refil;
+
+    private boolean existe;
+
     public Dispensador() {
     }
 
@@ -32,6 +38,9 @@ public class Dispensador implements Serializable {
         this.latitud = latitud;
         this.direccion = direccion;
         this.sector = sector;
+        this.estado = true;
+        this.refil = false;
+        this.existe = true;
     }
 
     public int getId_dispensador() {
@@ -80,5 +89,29 @@ public class Dispensador implements Serializable {
 
     public void setSector(Sector sector) {
         this.sector = sector;
+    }
+
+    public boolean isEstado() {
+        return estado;
+    }
+
+    public void setEstado(boolean estado) {
+        this.estado = estado;
+    }
+
+    public boolean isRefil() {
+        return refil;
+    }
+
+    public void setRefil(boolean refil) {
+        this.refil = refil;
+    }
+
+    public boolean isExiste() {
+        return existe;
+    }
+
+    public void setExiste(boolean existe) {
+        this.existe = existe;
     }
 }
