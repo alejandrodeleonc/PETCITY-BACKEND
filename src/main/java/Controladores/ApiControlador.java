@@ -58,9 +58,9 @@ public class ApiControlador {
 ////            ctx.header("Content-Length", String.valueOf(localFile.length()));
 ////            ctx.result(inputStream);
 //        });
-
+//        webSocketSectores
         app.config.accessManager((handler, ctx, permittedAccion) -> {
-            if(ctx.path().contains("auth") || ctx.path().contains("rutas") ||  ctx.path().contains("webSocketServidor")   ||ctx.path().contains("mensajeServidor") || ctx.path().contains("roles") || ctx.path().contains("foto")){
+            if(ctx.path().contains("auth") || ctx.path().contains("rutas") ||  ctx.path().contains("webSocketServidor")   ||ctx.path().contains("mensajeServidor") || ctx.path().contains("roles") || ctx.path().contains("foto") ||  ctx.path().contains("webSocketServidor")){
                 handler.handle(ctx);
             }else {
                 final Persona usuario = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));

@@ -147,9 +147,9 @@ public class FakeServices {
     }
 
     public static void sendToTelegram(String text) {
-
+        System.out.println("Enviando mensaje telegram ...");
         //Add Telegram token
-        String apiToken = "1496018742:AAFuNAzbZFO37FVLcGLzEx66WMNv7FVrJQk";
+        String apiToken = "1684685968:AAEFm_TjBzaxH8gGRXfkg0JmdU2t6eHd8oA";
 
         //Add chatId
         String chatId = "1170228172";
@@ -158,6 +158,9 @@ public class FakeServices {
 
         try {
             URL url = new URL(urlString);
+            System.out.println(url);
+            System.out.println("Peticion api telegram");
+
             URLConnection conn = url.openConnection();
             InputStream is = new BufferedInputStream(conn.getInputStream());
 
@@ -166,7 +169,30 @@ public class FakeServices {
             e.printStackTrace();
         }
     }
+    public static void sendLocationToTelegram(String latitude, String longitud) {
+        System.out.println("Enviando mensaje telegram ...");
+        //Add Telegram token
+        String apiToken = "1684685968:AAEFm_TjBzaxH8gGRXfkg0JmdU2t6eHd8oA";
 
+        //Add chatId
+        String chatId = "1170228172";
+
+//        https://api.telegram.org/bot[botToken]/sendlocation?chat_id=[UserID]&latitude=51.6680&longitude=32.6546
+        String urlString = "https://api.telegram.org/bot" + apiToken + "/sendlocation?chat_id=" + chatId + "&latitude=" + latitude + "&longitude="+longitud;
+
+        try {
+            URL url = new URL(urlString);
+            System.out.println(url);
+            System.out.println("Peticion api telegram");
+
+            URLConnection conn = url.openConnection();
+            InputStream is = new BufferedInputStream(conn.getInputStream());
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public LoginResponse generacionJsonWebToken(String usuario) {
         LoginResponse loginResponse = new LoginResponse();
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;

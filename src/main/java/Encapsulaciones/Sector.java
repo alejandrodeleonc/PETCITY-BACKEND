@@ -1,6 +1,11 @@
 package Encapsulaciones;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="SECTOR")
@@ -20,7 +25,13 @@ public class Sector {
     private boolean estado;
     private String color;
 
+    public String ultimaIp;
+
     private boolean existe;
+
+    @OneToMany()
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<HistorialSectores> historialSectores;
 
     public Sector() {
     }
@@ -31,9 +42,11 @@ public class Sector {
         this.longitud = longitud;
         this.radio = radio;
         this.cantidadDispensadores = 0;
-        this.estado = true;
+        this.estado = false;
         this.color = color;
         this.existe = true;
+        this.historialSectores = new ArrayList<HistorialSectores>();
+        this.ultimaIp = "";
     }
 
     public int getCantidadDispensadores() {
@@ -109,5 +122,25 @@ public class Sector {
 
     public void setExiste(boolean existe) {
         this.existe = existe;
+    }
+
+    public List<HistorialSectores> getHistorialSectores() {
+        return historialSectores;
+    }
+
+    public void setHistorialSectores(List<HistorialSectores> historialSectores) {
+        this.historialSectores = historialSectores;
+    }
+
+    public void addRegistroAHistorial(HistorialSectores sectorRegistro ){
+        this.historialSectores.add(sectorRegistro);
+    }
+
+    public String getUltimaIp() {
+        return ultimaIp;
+    }
+
+    public void setUltimaIp(String ultimaIp) {
+        this.ultimaIp = ultimaIp;
     }
 }

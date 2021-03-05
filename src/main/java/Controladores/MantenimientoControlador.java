@@ -589,7 +589,7 @@ public class MantenimientoControlador {
                                 FakeServices.getInstancia().enviarCorreoByPersona(dueno, "Alerta de visita de " + perro.getNombre() + "!", "" +
                                         "https://www.google.com/maps?q=" + dispensador.getLatitud() + "," + dispensador.getLongitud() + "&z=17&hl=es\n" + not.getContenido());
 //                                FakeServices.getInstancia().sendToTelegram("https://www.google.com/maps?q=" + dispensador.getLatitud() + "," + dispensador.getLongitud() + "&z=17&hl=es\n" + not.getContenido());
-                                FakeServices.getInstancia().sendToTelegram("holA");
+
 
 //                                Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
 ////                                https://www.google.com/maps?q=19.22111701965332,-70.52653503417969&z=17&hl=es
@@ -888,6 +888,7 @@ public class MantenimientoControlador {
                                     Persona dueno = PerroServices.getInstancia().buscarDueno(perroConCambios);
                                     if (dueno.getId_persona() == persona.getId_persona()) {
                                         PerroServices.getInstancia().editar(perroConCambios);
+                                        json.put("msg", "Cambios guardados correctamente");
                                     } else {
                                         json.put("msg", "No tiene permisos para realizar esta edicion");
                                         status = 405;
@@ -911,7 +912,51 @@ public class MantenimientoControlador {
 
                 }, Collections.singleton(new FakeServices.RolApp("perro", "editar")));
 
+
+                /* DELETES
+
+                 * */
+                delete("/perro/:id_perro", ctx ->{
+                    Perro perro = PerroServices.getInstancia().find(ctx.pathParam("id_perro"));
+                    Persona persona = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
+
+                    int status = 200;
+                    Map<String, Object> json = new HashMap();
+
+                    if(persona != null){
+                        if(perro != null){
+                            Persona dueno = PerroServices.getInstancia().buscarDueno(perro);
+                            if(persona.getId_persona() == dueno.getId_persona()){
+                                PerroServices.getInstancia().eliminar(perro.getId_perro());
+
+                                json.put("msg", "Perro eliminado correctamente");
+                            }else{
+                                json.put("msg", "Usted no puede borrar este perro");
+                                status = 401;
+                            }
+                        }else{
+                            json.put("msg", "El perro no existe");
+                            status = 400;
+                        }
+
+                    }else{
+                        json.put("msg", "Su usuario no es valido!");
+                        status = 403;
+                    }
+                    ctx.json(json);
+                    ctx.status(status);
+                },Collections.singleton(new FakeServices.RolApp("perro", "borrar")));
+
+
+
             });
+
+
+
+
+
+
+
 
         });
     }

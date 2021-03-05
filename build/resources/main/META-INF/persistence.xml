@@ -22,6 +22,7 @@
         <class>Encapsulaciones.PaypalInfo</class>
         <class>Encapsulaciones.Accion</class>
         <class>Encapsulaciones.Sector</class>
+        <class>Encapsulaciones.HistorialSectores</class>
 
 
         <properties>
