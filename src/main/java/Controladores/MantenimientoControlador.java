@@ -873,7 +873,7 @@ public class MantenimientoControlador {
                 patch("/perro/editar_perro", ctx -> {
 
                     Persona persona = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
-                    Gson g = new Gson();
+                    Gson g =  new Gson();
                     Perro perroConCambios = g.fromJson(ctx.body(), Perro.class);
 
 
@@ -887,8 +887,27 @@ public class MantenimientoControlador {
                                 if (perro !=null) {
                                     Persona dueno = PerroServices.getInstancia().buscarDueno(perroConCambios);
                                     if (dueno.getId_persona() == persona.getId_persona()) {
-                                        PerroServices.getInstancia().editar(perroConCambios);
-                                        json.put("msg", "Cambios guardados correctamente");
+                                        if(perro.getFoto() == null ){
+                                            if(perroConCambios.getFoto().getId() == null){
+                                                Foto foto = new Foto();
+                                                FotoServices.getInstancia().crear(foto);
+                                                String nombre = "foto_" + foto.getId();
+                                                FakeServices.getInstancia().guardarFoto(perroConCambios.getFoto().getNombre(), nombre);
+                                                foto.setNombre(nombre + ".png");
+                                                FotoServices.getInstancia().editar(foto);
+                                                perroConCambios.setFoto(foto);
+                                            }
+                                        }else{
+                                            Foto foto = perro.getFoto();
+                                            System.out.println(foto.getNombre());
+                                            FakeServices.getInstancia().guardarFoto(perroConCambios.getFoto().getNombre(),foto.getNombre().split("\\.")[0] );
+
+//                                            FotoServices.getInstancia().editar(foto);
+                                            perroConCambios.setFoto(foto);
+                                        }
+
+                                            PerroServices.getInstancia().editar(perroConCambios);
+                                            json.put("msg", "Cambios guardados correctamente");
                                     } else {
                                         json.put("msg", "No tiene permisos para realizar esta edicion");
                                         status = 405;

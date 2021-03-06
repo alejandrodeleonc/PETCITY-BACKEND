@@ -29,7 +29,7 @@ public class Perro implements Serializable {
     private boolean adoptado;
     private Date fecha_adopcion;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.ALL})
     private Foto foto;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
