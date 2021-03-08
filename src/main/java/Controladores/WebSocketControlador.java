@@ -1,12 +1,15 @@
 package Controladores;
 
 import Encapsulaciones.*;
+import Services.DispensadorServices;
 import Services.FakeServices;
 import Services.HistorialSectoresServices;
 import Services.SectorServices;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonArray;
+
 import io.javalin.Javalin;
 import io.javalin.http.sse.SseClient;
 import org.eclipse.jetty.websocket.api.Session;
@@ -124,7 +127,36 @@ public class WebSocketControlador {
                     } else {
                         enviarMensajeUnicast(ctx.session, "Error -> Sector invalido");
                         ctx.session.close();
+
                     }
+                }else if(sectorJson.get("dispensadoresApagados")!=null){
+                    JsonParser parser = new JsonParser();
+                    JsonArray gsonArr = parser.parse(String.valueOf(sectorJson.get("dispensadoresApagados").toString())).getAsJsonArray();
+
+                    List<Dispensador> dispensadoresApagados =  new ArrayList<Dispensador>();
+                    for(JsonElement element : gsonArr){
+                        Dispensador dispensador = DispensadorServices.getInstancia().find(element.getAsJsonObject().get("id_dispensador").getAsInt());
+                        if(dispensador !=null ){
+                            dispensadoresApagados.add(dispensador);
+                        }
+                    }
+                    List<Sector> sectores = SectorServices.getInstancia().findAll();
+                    if(sectores.size() > 0){
+                        for(Sector sector : SectorServices.getInstancia().findAll()){
+                            String mensaje ="";
+                            for(Dispensador dispensador : dispensadoresApagados){
+                                if(dispensador.getSector().getId_sector() == sector.getId_sector() ){
+                                    mensaje +="SECTOR_"+sector.getId_sector() +"%0D%0ADISPENSADOR+-%3E"+dispensador.getId_dispensador()+"%0D%0A++++LATITUD%3A+"+ dispensador.getLatitud() + "%0D%0A++++LONGITUD%3A+"+ dispensador.getLongitud()  + "%0D%0AESTA+FUERA+DE+SERVICIO";
+
+
+                                }
+                            }
+                            FakeServices.getInstancia().sendToTelegram(mensaje);
+
+                        }
+                    }
+
+
                 }
 
 

@@ -5,6 +5,7 @@ package Services;
 
 
 import Encapsulaciones.Dispensador;
+import Encapsulaciones.Sector;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -41,7 +42,21 @@ public class DispensadorServices extends DBManage<Dispensador>{
     }
 
 
+    public List<Dispensador> getDispensadoresBySector(Sector sector){
+        List<Dispensador> dispensadores = new ArrayList<Dispensador>();
+        EntityManager em = getEntityManager();
+        try{
+            dispensadores = em.createNativeQuery("SELECT * FROM DISPENSADOR d  WHERE (d.SECTOR_ID_SECTOR = " + sector.getId_sector() +")", Dispensador.class).getResultList();
+
+        } finally {
+            em.close();
+        }
+
+        return dispensadores;
+    }
+
     /**
+     *
      * METHODS FOR THIS CLASS
      */
 }
