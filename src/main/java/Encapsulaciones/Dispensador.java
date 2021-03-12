@@ -20,7 +20,7 @@ public class Dispensador implements Serializable {
     private String longitud;
     private String latitud;
     private String direccion;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     private Sector sector=null;
 
     private boolean estado=false;

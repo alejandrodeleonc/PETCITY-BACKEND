@@ -588,8 +588,6 @@ public class MantenimientoControlador {
                                 dueno.addNotificacion(not);
                                 NotificacionesServices.getInstancia().crear(not);
                                 PersonaServices.getInstancia().editar(dueno);
-                                JsonParser parser = new JsonParser();
-                                JsonObject gsonArr = parser.parse(String.valueOf("{type:'message', data:'"+not.getContenido() +"'}")).getAsJsonObject();
                                 FakeServices.getInstancia().enviarCorreoByPersona(dueno, "Alerta de visita de " + perro.getNombre() + "!", "" +
                                         "https://www.google.com/maps?q=" + dispensador.getLatitud() + "," + dispensador.getLongitud() + "&z=17&hl=es\n" + not.getContenido());
 //                                FakeServices.getInstancia().sendToTelegram("https://www.google.com/maps?q=" + dispensador.getLatitud() + "," + dispensador.getLongitud() + "&z=17&hl=es\n" + not.getContenido());
@@ -608,9 +606,16 @@ public class MantenimientoControlador {
 
                                 List<UsuariosConectados> conexionesDelDueno = WebSocketControlador.buscarConexionesDeUsuarioConectadoByUser(dueno);
                                 System.out.println("Conexiones =>" + conexionesDelDueno.size());
+
+                                Persona per = PersonaServices.getInstancia().find(1);
                                 if (conexionesDelDueno.size() > 0) {
+                                    Gson gson = new Gson();
+                                    JsonParser parser = new JsonParser();
+                                    String noti = gson.toJson(not);
+                                    JsonObject gsonArr = parser.parse("{type:'notiPerro', data:" + noti +"}").getAsJsonObject();
+
                                     System.out.println("Enviando  mensaje al dueno");
-                                    enviarMensajeAunGrupo(conexionesDelDueno, gsonArr.toString());
+                                    enviarMensajeAunGrupo(conexionesDelDueno,gsonArr.toString());
                                 }
                             }
                             boolean puede_comer = HistorialDeVisitasService.getInstancia().canEat(perro);
@@ -877,9 +882,12 @@ public class MantenimientoControlador {
                 patch("/perro/editar_perro", ctx -> {
 
                     Persona persona = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
+                    System.out.println(ctx.body());
+
                     Gson g =  new Gson();
                     Perro perroConCambios = g.fromJson(ctx.body(), Perro.class);
 
+                    System.out.println(perroConCambios.getNombre());
 
                     int status = 200;
                     Map<String, Object> json = new HashMap();
@@ -930,6 +938,7 @@ public class MantenimientoControlador {
                         status = 401;
 
                     }
+
                     ctx.json(json);
                     ctx.status(status);
 

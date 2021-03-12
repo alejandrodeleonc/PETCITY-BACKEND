@@ -6,6 +6,7 @@ package Services;
 
 import Encapsulaciones.Dispensador;
 import Encapsulaciones.Sector;
+import com.google.gson.JsonParser;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -14,13 +15,13 @@ import java.util.List;
 public class DispensadorServices extends DBManage<Dispensador>{
     private static DispensadorServices instancia;
 
-    private DispensadorServices() { super(Dispensador.class); }
+    private DispensadorServices() { super(Dispensador.class);
+    }
 
     public static DispensadorServices getInstancia(){
         if(instancia==null){
             instancia = new DispensadorServices();
         }
-
         return instancia;
     }
 

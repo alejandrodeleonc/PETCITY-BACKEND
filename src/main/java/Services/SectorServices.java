@@ -17,6 +17,8 @@ public class SectorServices extends DBManage<Sector> {
 
     private SectorServices() {
         super(Sector.class);
+        this.padres.add(new JsonParser().parse("{'tabla':'DISPENSADOR', 'colum': 'SECTOR_ID_SECTOR'}"));
+
     }
 
     public static SectorServices getInstancia() {
