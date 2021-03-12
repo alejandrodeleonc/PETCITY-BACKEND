@@ -41,6 +41,8 @@ public class InitializeBDService {
         this.createDefaultRoles();
         this.createDefaultSectores();
 //        this.deleteStaticFiles();
+
+//        System.out.println("Solapa =>"+SectorServices.getInstancia().calculoSolape());
     }
 
     private void createDefaultUsers() {
@@ -90,9 +92,9 @@ public class InitializeBDService {
 
 
 
-            sectores.add(new Sector("SECTOR 1","19.441788045504467","-70.68310568230103", 75 , SectorServices.getInstancia().getRandomColor()));
-            sectores.add(new Sector("SECTOR 2","19.44277905959261", "-70.68417868862701", 75, SectorServices.getInstancia().getRandomColor() ));
-            sectores.add(new Sector("SECTOR 3","19.445352992807486","-70.6820583739056", 75, SectorServices.getInstancia().getRandomColor() ));
+            sectores.add(new Sector("SECTOR 1","19.441788045504467","-70.68310568230103", 75 ));
+            sectores.add(new Sector("SECTOR 2","19.44277905959261", "-70.68417868862701", 75 ));
+            sectores.add(new Sector("SECTOR 3","19.445352992807486","-70.6820583739056", 75 ));
 
             for(Sector sector : sectores){
                 SectorServices.getInstancia().crear(sector);

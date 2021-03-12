@@ -65,7 +65,7 @@ public class ApiControlador {
             }else {
                 final Persona usuario = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
 
-                System.out.println("permittedAccion -> ");
+
                 FakeServices.RolApp rr = permittedAccion.toArray().length > 0 ? (FakeServices.RolApp) permittedAccion.toArray()[0] : null;
                 Boolean is_accept;
                 if (rr != null) {
@@ -76,16 +76,12 @@ public class ApiControlador {
                     is_accept = false;
                 }
 
-                System.out.println(ctx.path().contains("auth"));
+
                 if (is_accept) {
                     is_accept = false;
                     for (Rol rol : usuario.getPersonasroles()) {
-                        System.out.println("PASO 2:");
                         for (Accion accion : rol.getAcciones()) {
-                            System.out.println("PASO 3:");
                             if (accion.getId_accion() == rr.accion.getId_accion()) {
-                                System.out.println("PASO 4:");
-                                System.out.println(String.format("El Usuario: %s - con el Rol: %s tiene permiso", usuario.getUsuario(), rol.getNombre()));
                                 is_accept = true;
                                 break;
                             }
@@ -103,7 +99,6 @@ public class ApiControlador {
                     ctx.status(401).result("No tiene permiso para acceder...");
                     return;
                 }
-                System.out.println("PASO 5:");
             }
         });
 

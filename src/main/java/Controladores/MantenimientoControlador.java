@@ -276,6 +276,8 @@ public class MantenimientoControlador {
                 }, Collections.singleton(new FakeServices.RolApp("perro", "crear")));
 
 
+
+
                 post("/subscribirme", ctx -> {
                     int status = 200;
                     JSONObject res = new JSONObject();
@@ -496,7 +498,7 @@ public class MantenimientoControlador {
                     }
 
                     ctx.status(status);
-                });
+                }, Collections.singleton(new FakeServices.RolApp("perro", "ver")));
 
                 post("perro/:id_perro/adoptar", ctx -> {
                     Persona persona = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
@@ -586,6 +588,8 @@ public class MantenimientoControlador {
                                 dueno.addNotificacion(not);
                                 NotificacionesServices.getInstancia().crear(not);
                                 PersonaServices.getInstancia().editar(dueno);
+                                JsonParser parser = new JsonParser();
+                                JsonObject gsonArr = parser.parse(String.valueOf("{type:'message', data:'"+not.getContenido() +"'}")).getAsJsonObject();
                                 FakeServices.getInstancia().enviarCorreoByPersona(dueno, "Alerta de visita de " + perro.getNombre() + "!", "" +
                                         "https://www.google.com/maps?q=" + dispensador.getLatitud() + "," + dispensador.getLongitud() + "&z=17&hl=es\n" + not.getContenido());
 //                                FakeServices.getInstancia().sendToTelegram("https://www.google.com/maps?q=" + dispensador.getLatitud() + "," + dispensador.getLongitud() + "&z=17&hl=es\n" + not.getContenido());
@@ -606,7 +610,7 @@ public class MantenimientoControlador {
                                 System.out.println("Conexiones =>" + conexionesDelDueno.size());
                                 if (conexionesDelDueno.size() > 0) {
                                     System.out.println("Enviando  mensaje al dueno");
-                                    enviarMensajeAunGrupo(conexionesDelDueno, not.getContenido());
+                                    enviarMensajeAunGrupo(conexionesDelDueno, gsonArr.toString());
                                 }
                             }
                             boolean puede_comer = HistorialDeVisitasService.getInstancia().canEat(perro);
@@ -936,7 +940,7 @@ public class MantenimientoControlador {
 
                  * */
                 delete("/perro/:id_perro", ctx ->{
-                    Perro perro = PerroServices.getInstancia().find(ctx.pathParam("id_perro"));
+                    Perro perro = PerroServices.getInstancia().find(Integer.valueOf(ctx.pathParam("id_perro")));
                     Persona persona = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
 
                     int status = 200;

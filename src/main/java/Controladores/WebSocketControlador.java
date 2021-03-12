@@ -1,10 +1,7 @@
 package Controladores;
 
 import Encapsulaciones.*;
-import Services.DispensadorServices;
-import Services.FakeServices;
-import Services.HistorialSectoresServices;
-import Services.SectorServices;
+import Services.*;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -115,6 +112,11 @@ public class WebSocketControlador {
                             SectoresConectados sectoConectado = new SectoresConectados(sector, ctx.session);
                             sectores.add(sectoConectado);
                             this.registrarCambiosEnUnSector(sectoConectado, 0);
+                            JsonParser parser = new JsonParser();
+                            JsonObject gsonArr = parser.parse(String.valueOf("{type:'estado', data:{sector:"+sectoConectado.getSector().getId_sector() +", estado:"+true + "}}")).getAsJsonObject();
+                            Persona per = PersonaServices.getInstancia().find(1);
+                            enviarMensajeAunGrupo(this.buscarConexionesDeUsuarioConectadoByUser(per),gsonArr.toString() );
+
                             enviarMensajeUnicast(ctx.session, "Exito -> El sector ya esta en linea");
 
 
@@ -146,9 +148,12 @@ public class WebSocketControlador {
                             String mensaje ="";
                             for(Dispensador dispensador : dispensadoresApagados){
                                 if(dispensador.getSector().getId_sector() == sector.getId_sector() ){
-                                    mensaje +="SECTOR_"+sector.getId_sector() +"%0D%0ADISPENSADOR+-%3E"+dispensador.getId_dispensador()+"%0D%0A++++LATITUD%3A+"+ dispensador.getLatitud() + "%0D%0A++++LONGITUD%3A+"+ dispensador.getLongitud()  + "%0D%0AESTA+FUERA+DE+SERVICIO";
+//                                    mensaje +="SECTOR_"+sector.getId_sector() +"%0D%0ADISPENSADOR+-%3E"+dispensador.getId_dispensador()+"%0D%0A++++LATITUD%3A+"+ dispensador.getLatitud() + "%0D%0A++++LONGITUD%3A+"+ dispensador.getLongitud()  + "%0D%0AESTA+FUERA+DE+SERVICIO";
 
+                                    dispensador.setEstado(false);
 
+                                }else{
+                                    dispensador.setEstado(true);
                                 }
                             }
                             FakeServices.getInstancia().sendToTelegram(mensaje);
@@ -167,8 +172,13 @@ public class WebSocketControlador {
                 for (SectoresConectados s : sectores) {
                     if (s.getSesion() == ctx.session) {
                         System.out.println("El sector SECTOR - " + s.getSector().getNombre() + " Esta fuera de linea");
-                        FakeServices.getInstancia().sendToTelegram("**SECTOR-CAIDO** : "+ s.getSector().getNombre() + "Por lo que **"+s.getSector().getCantidadDispensadores() + " dispensadores** estan fuera de linea" );
-                        FakeServices.getInstancia().sendLocationToTelegram(s.getSector().getLatitud(), s.getSector().getLongitud());
+//                        FakeServices.getInstancia().sendToTelegram("**SECTOR-CAIDO** : "+ s.getSector().getNombre() + "Por lo que **"+s.getSector().getCantidadDispensadores() + " dispensadores** estan fuera de linea" );
+//                        FakeServices.getInstancia().sendLocationToTelegram(s.getSector().getLatitud(), s.getSector().getLongitud());
+                        Persona per = PersonaServices.getInstancia().find(1);
+                        JsonParser parser = new JsonParser();
+                        JsonObject gsonArr = parser.parse(String.valueOf("{type:'estado', data:{sector:"+s.getSector().getId_sector() +", estado:"+false + "}}")).getAsJsonObject();
+
+                        enviarMensajeAunGrupo(this.buscarConexionesDeUsuarioConectadoByUser(per),gsonArr.toString() );
 
                         this.registrarCambiosEnUnSector(s, 1);
                         sectores.remove(s);
@@ -284,4 +294,6 @@ public class WebSocketControlador {
             SectorServices.getInstancia().editar(sector);
         }
     }
+
+
 }

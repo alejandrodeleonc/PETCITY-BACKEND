@@ -60,8 +60,6 @@ public class Perro implements Serializable {
         return id_perro;
     }
 
-
-
     public String getRfid_code() {
         return rfid_code;
     }

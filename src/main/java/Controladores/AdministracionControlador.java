@@ -33,7 +33,7 @@ public class AdministracionControlador {
 //                    Persona usuarioDeLaPeticion = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
                     JSONObject body = new JSONObject(ctx.body().toString());
 
-                    if (body !=null) {
+                    if (body != null) {
                         System.out.println("Vacunas para domingo =>");
                         System.out.println(body.getJSONArray("vacunas"));
 
@@ -52,35 +52,51 @@ public class AdministracionControlador {
                         res.put("msg", "Vacuna creada correctamente");
 
                     } else {
-                        status=409;
+                        status = 409;
                         res.put("msg", "Error no ha propocionado data");
                     }
                     ctx.status(status);
                     ctx.json(res.toMap());
 
 
-
                 });
                 post("/crear_dispensador", ctx -> {
                     int status = 200;
                     JSONObject res = new JSONObject();
-                    String id_dispensador = ctx.formParam("dispensador");
-                    String longitud = ctx.formParam("longitud");
-                    String latitud = ctx.formParam("latitud");
-                    String direccion = ctx.formParam("direccion");
+//                    String id_dispensador = ctx.formParam("dispensador");
+//                    String longitud = ctx.formParam("longitud");
+//                    String latitud = ctx.formParam("latitud");
+//                    String direccion = ctx.formParam("direccion");
+//
+//                    Dispensador dispensador = new Dispensador(id_dispensador, longitud, latitud, direccion, null);
+                    Gson g = new Gson();
 
-                    Dispensador dispensador = new Dispensador(id_dispensador, longitud, latitud, direccion, null);
+                    Dispensador dispensador = g.fromJson(ctx.body(), Dispensador.class);
 
-
-                    if (DispensadorServices.getInstancia().crear(dispensador)) {
-                        res.put("resultado", "Dispensador creado correctamente!");
+                    Dispensador dispensadorAux = DispensadorServices.getInstancia().findBy("DISPENSADOR", dispensador.getDispensador());
+                    Sector sector = SectorServices.getInstancia().getSectorAlquePertenece(dispensador);
+                    if (dispensadorAux == null) {
+                        if (sector != null) {
+                            dispensador.setSector(sector);
+                            if (DispensadorServices.getInstancia().crear(dispensador)) {
+                                res.put("msg", "Dispensador creado correctamente!");
+                            } else {
+                                status = 401;
+                                res.put("msg", "Fallo la insercion en la base de datos!");
+                            }
+                        } else {
+                            status = 403;
+                            res.put("msg", "El dispensador necesita pertenecer a un sector");
+                        }
                     } else {
-                        status = 401;
-                        res.put("msg", "Fallo la insercion en la base de datos!");
+                        status = 409;
+                        res.put("msg", "Ya existe un dispensador con esta direccion Zigbee");
                     }
+
+
                     ctx.status(status);
                     ctx.json(res.toMap());
-                });
+                }, Collections.singleton(new FakeServices.RolApp("dispensador", "crear")));
 
                 post("/crear_plan", ctx -> {
                     int status = 200;
@@ -104,7 +120,36 @@ public class AdministracionControlador {
                     ctx.json(res.toMap());
                 });
 
-                get("/dispensadores",ctx->{
+                post("/crear_sectores", ctx -> {
+
+                    int status = 200;
+                    JSONObject res = new JSONObject();
+                    Gson g = new Gson();
+                    System.out.println(ctx.body());
+                    Sector sector = g.fromJson(ctx.body(), Sector.class);
+
+                    if (sector != null) {
+                        sector.generarColor();
+                        SectorServices.auxNotificacion sectorSolapante = SectorServices.getInstancia().calculoSolape(sector);
+                        if (sectorSolapante.isError() == false) {
+                            SectorServices.getInstancia().crear(sector);
+                            res.put("msg", "Se ha registrado el sector correctamente");
+                        } else {
+                            status = 409;
+                            res.put("msg", sectorSolapante.getDetalle());
+                        }
+                    } else {
+                        status = 405;
+                        res.put("msg", "Datos proporcionados incorrectos");
+
+                    }
+                    ctx.status(status);
+                    ctx.json(res.toMap());
+
+
+                }, Collections.singleton(new FakeServices.RolApp("sectores", "crear")));
+
+                get("/dispensadores", ctx -> {
 
                     List<Dispensador> dispensadores = DispensadorServices.getInstancia().findAll();
 
@@ -130,12 +175,44 @@ public class AdministracionControlador {
                     ctx.json(json);
                 }, Collections.singleton(new FakeServices.RolApp("dispensador", "ver")));
 
+                delete("dispensador/:id_dispensador", ctx -> {
+                    int status = 200;
+                    Map<String, Object> json = new HashMap();
+                    Dispensador dispensador = DispensadorServices.getInstancia().find(Integer.valueOf(ctx.pathParam("id_dispensador")));
+                    if (dispensador != null) {
+                        DispensadorServices.getInstancia().eliminar(dispensador.getId_dispensador());
+                        json.put("msg", "Se ha eliminado el dispensador correctamente");
+                    } else {
+                        json.put("msg", "No existe el dispensador que intenta borrar");
+                        status = 409;
+                    }
+
+                    ctx.status(status);
+                    ctx.json(json);
+                }, Collections.singleton(new FakeServices.RolApp("dispensador", "borrar")));
+
+
+
+                delete("sector/:id_sector", ctx -> {
+                    int status = 200;
+                    Map<String, Object> json = new HashMap();
+                    Sector sector = SectorServices.getInstancia().find(Integer.valueOf(ctx.pathParam("id_sector")));
+                    if (sector != null) {
+                        SectorServices.getInstancia().eliminar(sector.getId_sector());
+                        json.put("msg", "Se ha eliminado el sector correctamente");
+                    } else {
+                        json.put("msg", "No existe el sector que intenta borrar");
+                        status = 409;
+                    }
+
+                    ctx.status(status);
+                    ctx.json(json);
+                }, Collections.singleton(new FakeServices.RolApp("sectores", "borrar")));
+
+
+            });
             });
 
-
-
-
-        });
 
     }
 }

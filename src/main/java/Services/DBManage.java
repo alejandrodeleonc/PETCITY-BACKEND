@@ -1,18 +1,22 @@
 package Services;
 
+import Encapsulaciones.Dispensador;
 import Encapsulaciones.Persona;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaQuery;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by vacax on 03/06/16.
  */
 public class DBManage<T> {
-
+    public List<JsonElement> padres = new ArrayList<JsonElement>();
     private static EntityManagerFactory emf;
     private Class<T> claseEntidad;
 
@@ -123,6 +127,8 @@ public class DBManage<T> {
      */
     public boolean eliminar(Object entidadId) throws PersistenceException{
         boolean ok = false;
+        if (this.padres.size() > 0 && !this.eliminarPadres(entidadId)) return false;
+
         EntityManager em = getEntityManager();
         em.getTransaction().begin();
         try {
@@ -178,4 +184,35 @@ public class DBManage<T> {
             em.close();
         }
     }
+
+    public boolean eliminarPadres(Object id) throws PersistenceException{
+        boolean ok = true;
+        EntityManager em = getEntityManager();
+        try{
+            System.out.println("eliminarPadres -> ");
+
+            System.out.println(this.padres.size());
+            for(JsonElement element : this.padres){
+                String tabla = element.getAsJsonObject().get("tabla").getAsString();
+                System.out.println(tabla);
+                String colum = element.getAsJsonObject().get("colum").getAsString();
+                System.out.println(colum);
+
+                em.getTransaction().begin();
+//                Object ob = em.createQuery("DELETE FROM "+ tabla +" where "+colum+"= "+id).;
+                Object ob = em.createNativeQuery("DELETE FROM "+ tabla +" where "+colum+"= "+id).executeUpdate();
+                em.getTransaction().commit();
+//                        .createQuery("DELETE FROM "+ tabla +" where "+colum+"= "+id).
+//                        .createNativeQuery().executeUpdate();
+                System.out.println(ob);
+            }
+        }catch(Exception e){
+            ok = false;
+        } finally {
+            em.close();
+        }
+        return ok;
+    }
+
+
 }

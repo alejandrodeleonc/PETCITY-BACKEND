@@ -1,15 +1,18 @@
 package Encapsulaciones;
 
+import Services.FakeServices;
+import Services.SectorServices;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name="SECTOR")
-public class Sector {
+public class Sector implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id_sector;
@@ -22,33 +25,36 @@ public class Sector {
     private int radio;
 
     private int cantidadDispensadores;
-    private boolean estado;
-    private String color;
+    private boolean estado=false;
+    private String color= "";
 
-    public String ultimaIp;
+    public String ultimaIp="";
 
-    private boolean existe;
+    private boolean existe=true;
 
-    @OneToMany()
+    @OneToMany(cascade = {CascadeType.ALL})
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<HistorialSectores> historialSectores;
 
     public Sector() {
     }
 
-    public Sector(String nombre, String latitud, String longitud, int radio, String color) {
+    public Sector(String nombre, String latitud, String longitud, int radio) {
         this.nombre = nombre;
         this.latitud = latitud;
         this.longitud = longitud;
         this.radio = radio;
         this.cantidadDispensadores = 0;
         this.estado = false;
-        this.color = color;
+        this.color = SectorServices.getInstancia().getRandomColor();
         this.existe = true;
         this.historialSectores = new ArrayList<HistorialSectores>();
         this.ultimaIp = "";
     }
 
+    public void generarColor(){
+        this.color = SectorServices.getInstancia().getRandomColor();
+    }
     public int getCantidadDispensadores() {
         return cantidadDispensadores;
     }

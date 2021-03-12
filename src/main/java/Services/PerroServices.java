@@ -4,6 +4,8 @@ import Encapsulaciones.Factura;
 import Encapsulaciones.Notificaciones;
 import Encapsulaciones.Perro;
 import Encapsulaciones.Persona;
+import com.google.gson.JsonParser;
+import kong.unirest.json.JSONObject;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -14,13 +16,19 @@ public class PerroServices extends DBManage<Perro> {
 
     private PerroServices() {
         super(Perro.class);
+//        this.padres = []//{"SUBSCRIPCION_PERRO", "PERROS_ID_PERRO"}, {"HISTORIAL_DE_VISITAS", "ID_PERRO"}};
+        this.padres.add(new JsonParser().parse("{'tabla':'SUBSCRIPCION_PERRO', 'colum': 'PERROS_ID_PERRO'}"));
+        this.padres.add(new JsonParser().parse("{'tabla':'HISTORIAL_DE_VISITAS', 'colum': 'ID_PERRO'}"));
     }
+
 
     public static PerroServices getInstancia() {
         if (instancia == null) {
             instancia = new PerroServices();
 
         }
+
+
 
         return instancia;
     }
