@@ -36,6 +36,7 @@ public class Sector implements Serializable {
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<HistorialSectores> historialSectores;
 
+
     public Sector() {
     }
 
