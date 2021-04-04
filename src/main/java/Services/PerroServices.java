@@ -10,6 +10,7 @@ import kong.unirest.json.JSONObject;
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class PerroServices extends DBManage<Perro> {
     private static PerroServices instancia;
@@ -113,6 +114,40 @@ public class PerroServices extends DBManage<Perro> {
 
         return status;
     }
+
+    public int getCantidadDePerrosEnElSistema(){
+        EntityManager em = getEntityManager();
+        int cantidad_de_perros;
+        try{
+            cantidad_de_perros =Integer.valueOf(em.createNativeQuery("SELECT COUNT(*) FROM PERRO").getSingleResult().toString());
+        } finally {
+            em.close();
+        }
+        return cantidad_de_perros;
+    }
+
+    public int getCantidadDePerrosAdoptados(){
+        EntityManager em = getEntityManager();
+        int cantidad_de_perros;
+        try{
+            cantidad_de_perros =Integer.valueOf(em.createNativeQuery("SELECT COUNT(*) FROM PERRO p WHERE P.ADOPTADO = TRUE").getSingleResult().toString());
+        } finally {
+            em.close();
+        }
+        return cantidad_de_perros;
+    }
+    public int getCantidadDePerrosPerdidos(){
+        EntityManager em = getEntityManager();
+        int cantidad_de_perros;
+        try{
+            cantidad_de_perros =Integer.valueOf(em.createNativeQuery("SELECT COUNT(*) FROM PERRO p WHERE P.PERDIDO = TRUE").getSingleResult().toString());
+        } finally {
+            em.close();
+        }
+        return cantidad_de_perros;
+    }
+
+
 
 
     /**

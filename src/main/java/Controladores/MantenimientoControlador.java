@@ -3,6 +3,8 @@ package Controladores;
 import Encapsulaciones.*;
 import Services.*;
 import com.google.gson.*;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import com.twilio.http.TwilioRestClient;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
@@ -11,11 +13,11 @@ import io.javalin.http.Handler;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.file.FileSystems;
+import java.text.*;
 import java.text.DateFormat;
-import java.text.Format;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -883,8 +885,22 @@ public class MantenimientoControlador {
 
                     Persona persona = FakeServices.getInstancia().getUserFromHeader(ctx.header("Authorization"));
                     System.out.println(ctx.body());
+                    GsonBuilder gsonBuilder = new GsonBuilder();
 
-                    Gson g =  new Gson();
+                    gsonBuilder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
+                        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                        @Override
+                        public Date deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
+                                throws JsonParseException {
+                            try {
+                                return df.parse(json.getAsString());
+                            } catch (ParseException e) {
+                                return null;
+                            }
+                        }
+                    });
+                    Gson g = gsonBuilder.create();
+//                    final Gson g =  new GsonBuilder().registerTypeAdapter(Date.class, UnixEpochDateTypeAdapter.getUnixEpochDateTypeAdapter()).create();
                     Perro perroConCambios = g.fromJson(ctx.body(), Perro.class);
 
                     System.out.println(perroConCambios.getNombre());
@@ -994,4 +1010,7 @@ public class MantenimientoControlador {
     }
 
 
+
+
 }
+

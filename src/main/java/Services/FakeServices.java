@@ -242,9 +242,12 @@ public class FakeServices {
         Map<String, Object> graficos = new HashMap();
 
         graficos.put("ganancias", FacturacionServices.getInstancia().getGanancias());
-        graficos.put("perros_beneficiados", PerroServices.getInstancia().cantidadDePerrosSinDueno());
-        graficos.put("total_visitas", HistorialDeVisitasService.getInstancia().getCantidadDeVisitas());
         graficos.put("ganancias_mensuales", FacturacionServices.getInstancia().getGananciasMensuales());
+        graficos.put("perros_beneficiados", PerroServices.getInstancia().cantidadDePerrosSinDueno());
+        graficos.put("perros_adoptados", PerroServices.getInstancia().getCantidadDePerrosAdoptados());
+        graficos.put("perros_perdidos", PerroServices.getInstancia().getCantidadDePerrosPerdidos());
+        graficos.put("total_visitas", HistorialDeVisitasService.getInstancia().getCantidadDeVisitas());
+        graficos.put("total_perros", PerroServices.getInstancia().getCantidadDePerrosEnElSistema());
 
 
         return graficos;
@@ -323,5 +326,6 @@ public class FakeServices {
 
         return status;
     }
+
 
 }

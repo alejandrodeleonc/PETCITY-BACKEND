@@ -37,11 +37,14 @@ public class AutenticacionControlador {
                     JSONObject res = new JSONObject();
                     String user = ctx.formParam("usuario");
                     String pass = ctx.formParam("password");
+                    int status = 200;
                     Map<String, Object> json = new HashMap();
                     if (PersonaServices.getInstancia().verifyUser(pass, user) == null) {
                         //TODO: BAD LOGIN VIA REST API
+                        status = 401;
 
-                        ctx.json("Datos proporcionados incorrectos");
+                       json.put("msg","Datos proporcionados incorrectos");
+
 
                     } else {
                         LoginResponse lr = FakeServices.getInstancia().generacionJsonWebToken(user);
@@ -49,8 +52,11 @@ public class AutenticacionControlador {
                         json.put("persona", persona);
 //                        json.put("pagos_atrasados", FakeServices.getInstancia().u);
                         json.put("token", lr.getToken());
-                        ctx.json(json);
+
+
                     }
+                    ctx.status(status);
+                    ctx.json(json);
                 });
 
 
