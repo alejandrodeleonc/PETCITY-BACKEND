@@ -888,7 +888,7 @@ public class MantenimientoControlador {
                     GsonBuilder gsonBuilder = new GsonBuilder();
 
                     gsonBuilder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
-                        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         @Override
                         public Date deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
                                 throws JsonParseException {
@@ -916,14 +916,16 @@ public class MantenimientoControlador {
                                     Persona dueno = PerroServices.getInstancia().buscarDueno(perroConCambios);
                                     if (dueno.getId_persona() == persona.getId_persona()) {
                                         if(perro.getFoto() == null ){
-                                            if(perroConCambios.getFoto().getId() == null){
-                                                Foto foto = new Foto();
-                                                FotoServices.getInstancia().crear(foto);
-                                                String nombre = "foto_" + foto.getId();
-                                                FakeServices.getInstancia().guardarFoto(perroConCambios.getFoto().getNombre(), nombre);
-                                                foto.setNombre(nombre + ".png");
-                                                FotoServices.getInstancia().editar(foto);
-                                                perroConCambios.setFoto(foto);
+                                            if(perroConCambios.getFoto() != null){
+                                                if (perroConCambios.getFoto().getId() == null) {
+                                                    Foto foto = new Foto();
+                                                    FotoServices.getInstancia().crear(foto);
+                                                    String nombre = "foto_" + foto.getId();
+                                                    FakeServices.getInstancia().guardarFoto(perroConCambios.getFoto().getNombre(), nombre);
+                                                    foto.setNombre(nombre + ".png");
+                                                    FotoServices.getInstancia().editar(foto);
+                                                    perroConCambios.setFoto(foto);
+                                                }
                                             }
                                         }else{
                                             Foto foto = perro.getFoto();
