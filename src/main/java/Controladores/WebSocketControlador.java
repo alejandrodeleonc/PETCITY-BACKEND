@@ -148,7 +148,7 @@ public class WebSocketControlador {
                             String mensaje ="";
                             for(Dispensador dispensador : dispensadoresApagados){
                                 if(dispensador.getSector().getId_sector() == sector.getId_sector() ){
-//                                    mensaje +="SECTOR_"+sector.getId_sector() +"%0D%0ADISPENSADOR+-%3E"+dispensador.getId_dispensador()+"%0D%0A++++LATITUD%3A+"+ dispensador.getLatitud() + "%0D%0A++++LONGITUD%3A+"+ dispensador.getLongitud()  + "%0D%0AESTA+FUERA+DE+SERVICIO";
+                                    mensaje +="SECTOR_"+sector.getId_sector() +"%0D%0ADISPENSADOR+-%3E"+dispensador.getId_dispensador()+"%0D%0A++++LATITUD%3A+"+ dispensador.getLatitud() + "%0D%0A++++LONGITUD%3A+"+ dispensador.getLongitud()  + "%0D%0AESTA+FUERA+DE+SERVICIO";
 
                                     dispensador.setEstado(false);
 
@@ -172,8 +172,8 @@ public class WebSocketControlador {
                 for (SectoresConectados s : sectores) {
                     if (s.getSesion() == ctx.session) {
                         System.out.println("El sector SECTOR - " + s.getSector().getNombre() + " Esta fuera de linea");
-//                        FakeServices.getInstancia().sendToTelegram("**SECTOR-CAIDO** : "+ s.getSector().getNombre() + "Por lo que **"+s.getSector().getCantidadDispensadores() + " dispensadores** estan fuera de linea" );
-//                        FakeServices.getInstancia().sendLocationToTelegram(s.getSector().getLatitud(), s.getSector().getLongitud());
+                        FakeServices.getInstancia().sendToTelegram("**SECTOR-CAIDO** : "+ s.getSector().getNombre() + "Por lo que **"+s.getSector().getCantidadDispensadores() + " dispensadores** estan fuera de linea" );
+                        FakeServices.getInstancia().sendLocationToTelegram(s.getSector().getLatitud(), s.getSector().getLongitud());
                         Persona per = PersonaServices.getInstancia().find(1);
                         JsonParser parser = new JsonParser();
                         JsonObject gsonArr = parser.parse(String.valueOf("{type:'estado', data:{sector:"+s.getSector().getId_sector() +", estado:"+false + "}}")).getAsJsonObject();

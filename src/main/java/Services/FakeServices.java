@@ -149,7 +149,7 @@ public class FakeServices {
     public static void sendToTelegram(String text) {
         System.out.println("Enviando mensaje telegram ...");
         //Add Telegram token
-        String apiToken = "1684685968:AAEFm_TjBzaxH8gGRXfkg0JmdU2t6eHd8oA";
+        String apiToken = "1623611175:AAGmN_YJJtSC-EUJRdAy_OgmogzCKqGcGis";
 
         //Add chatId
         String chatId = "1170228172";
@@ -172,7 +172,7 @@ public class FakeServices {
     public static void sendLocationToTelegram(String latitude, String longitud) {
         System.out.println("Enviando mensaje telegram ...");
         //Add Telegram token
-        String apiToken = "1684685968:AAEFm_TjBzaxH8gGRXfkg0JmdU2t6eHd8oA";
+        String apiToken = "1623611175:AAGmN_YJJtSC-EUJRdAy_OgmogzCKqGcGis";
 
         //Add chatId
         String chatId = "1170228172";

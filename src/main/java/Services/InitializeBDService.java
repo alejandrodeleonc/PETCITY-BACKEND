@@ -270,6 +270,7 @@ public class InitializeBDService {
             acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("notificacion", "crear") + "'"));
             acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("notificacion", "editar") + "'"));
             acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("notificacion", "borrar") + "'"));
+            acciones.add(AccionServices.getInstancia().findBy("NOMBRE", "'" + PermisosyAcciones.getInstancia().getAccion("historial_de_visitas", "ver") + "'"));
 
             rol = new Rol("USUARIO", true);
             RolServices.getInstancia().crear(rol);
